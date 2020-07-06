@@ -1,7 +1,7 @@
 
 export interface IComSocket {
     // Variables
-    oVisuVariables: Map<string,{addr: string, value: string|undefined}>;
+    oVisuVariables: Map<string, {addr: string, value: string|undefined}>;
     // Functions
     addObservableVar(varName : string | undefined, varAddr : string) : void;
     addGlobalVar(varName : string | undefined, varAddr : string) : void;
@@ -16,11 +16,11 @@ export interface IComSocket {
 }
 
 export interface IBasicObject{
-    absCornerCoord : {x1:number,y1:number,x2:number,y2:number},
+    absCornerCoord : {x1:number, y1:number, x2:number, y2:number},
     absCenterCoord : {x:number, y:number},
-    transformedCornerCoord : {x1:number,y1:number,x2:number,y2:number},
-    relCoord : {width:number,height:number}
-    relMidpointCoord : {x:number,y:number}
+    transformedCornerCoord : {x1:number, y1:number, x2:number, y2:number},
+    relCoord : {width:number, height:number}
+    relMidpointCoord : {x:number, y:number}
     left : number,
     right : number,
     top : number,
@@ -65,10 +65,10 @@ export interface IPolyObject extends IBasicObject{
 }
 
 export interface IScrollbarObject {
-    absCornerCoord : {x1:number,y1:number,x2:number,y2:number},
-    relCornerCoord : {x1:number,y1:number,x2:number,y2:number},
+    absCornerCoord : {x1:number, y1:number, x2:number, y2:number},
+    relCornerCoord : {x1:number, y1:number, x2:number, y2:number},
     relMidpointCoord : {x : number, y:number},
-    relCoord : {width:number,height:number},
+    relCoord : {width:number, height:number},
     lowerBound : number,
     upperBound : number,
     value : number,

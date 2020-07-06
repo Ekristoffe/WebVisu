@@ -1,6 +1,4 @@
-import HTML5Visu from './controlcenter';
+import HTML5Visu from './controlcenter'
 
-const objHTML5Visu = new HTML5Visu();
-objHTML5Visu.showMainVisu();
-
-
+const objHTML5Visu = new HTML5Visu()
+objHTML5Visu.showMainVisu()

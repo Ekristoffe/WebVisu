@@ -13,7 +13,7 @@ import { getVisuxml, stringifyVisuXML } from './visu/pars/Utils/fetchfunctions'
 import { Spinner } from './supplements/Spinner/spinner';
 
 export default class HTML5Visu {
-    rootDir: string;
+    rootDir:string;
     @observable windowWidth : number;
     @observable windowsHeight : number;
     loading : boolean;
