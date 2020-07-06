@@ -1,0 +1,15 @@
+# Ignore artifacts:
+.git
+dist
+img
+node_modules
+.eslintrc
+.gitignore
+.prettierignore
+.prettierrc.json
+LICENSE
+package.json
+package-lock.json
+README.md
+tsconfig.json
+webpack.config.js
