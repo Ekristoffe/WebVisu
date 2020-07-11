@@ -1,47 +1,39 @@
 import ComSocket from '../../../communication/comsocket';
-import { IPiechartObject } from '../../../Interfaces/jsinterfaces';
-import { IPiechartShape } from '../../../Interfaces/javainterfaces'
-import { numberToHexColor, computeMinMaxCoord, pointArrayToPiechartString } from '../../Utils/utilfunctions'
+import { ISubvisuObject } from '../../../Interfaces/jsinterfaces';
+import { ISubvisuShape } from '../../../Interfaces/javainterfaces'
+import { numberToHexColor } from '../../Utils/utilfunctions'
 
-export function createPiechartObject(piechartShape: IPiechartShape, dynamicElements : Map<string,string[][]>) : IPiechartObject{
-
+export function createSubvisuObject(subvisuShape: ISubvisuShape, dynamicElements : Map<string,string[][]>) : ISubvisuObject{
     // absCornerCoord are the absolute coordinates of the <div> element in relation to the origin in the top left 
-    let absCornerCoord = {x1:piechartShape.rect[0],y1:piechartShape.rect[1],x2:piechartShape.rect[2],y2:piechartShape.rect[3]};
+    let absCornerCoord = {x1:subvisuShape.rect[0],y1:subvisuShape.rect[1],x2:subvisuShape.rect[2],y2:subvisuShape.rect[3]};
     // absCenterCoord are the coordinates of the rotation and scale center
-    let absCenterCoord = {x:piechartShape.center[0], y:piechartShape.center[1]};
+    let absCenterCoord = {x:subvisuShape.center[0], y:subvisuShape.center[1]};
     // relCoord are the width and the height in relation the div
-    let relCoord = {width:piechartShape.rect[2] - piechartShape.rect[0], height:piechartShape.rect[3] - piechartShape.rect[1]};
+    let relCoord = {width:subvisuShape.rect[2] - subvisuShape.rect[0], height:subvisuShape.rect[3] - subvisuShape.rect[1]};
     // the relCenterCoord are the coordinates of the midpoint of the div
-    let relMidpointCoord = {x:(piechartShape.rect[2] - piechartShape.rect[0]) / 2, y:(piechartShape.rect[3]-piechartShape.rect[1]) / 2};
+    let relMidpointCoord = {x:(subvisuShape.rect[2] - subvisuShape.rect[0]) / 2, y:(subvisuShape.rect[3] - subvisuShape.rect[1]) / 2};
     // The line_width is 0 in the xml if border width is 1 in the codesys dev env. Otherwise line_width is equal to the target border width. Very strange.
-    let edge = (piechartShape.line_width === 0) ? 1 :piechartShape.line_width;
+    let edge = (subvisuShape.line_width === 0) ? 1 : subvisuShape.line_width;
     // Compute the strokeWidth through has_frame_color
-    let lineWidth = (piechartShape.has_frame_color) ? edge : 0;
+    let lineWidth = (subvisuShape.has_frame_color) ? edge : 0;
     // Compute the fill color through has_fill_color
-    let fillColor = (piechartShape.has_inside_color) ? piechartShape.fill_color : 'none';
+    let fillColor = (subvisuShape.has_inside_color) ? subvisuShape.fill_color : 'none';
     // Tooltip
-    let tooltip = piechartShape.tooltip;
-    let relPoints = [] as number[][];
-    
-    // The polyshape specific values will be generated if necessary
-    piechartShape.points.forEach(function(item, index){
-        relPoints.push([item[0]-absCornerCoord.x1, item[1]-absCornerCoord.y1]);
-    })
+    let tooltip = subvisuShape.tooltip;
     
     // Create an object with the initial parameters
-    let initial : IPiechartObject= {
+    let initial : ISubvisuObject= {
         // Variables will be initialised with the parameter values 
-        normalFillColor : piechartShape.fill_color,
-        alarmFillColor : piechartShape.fill_color_alarm,
-        normalFrameColor : piechartShape.frame_color,
-        alarmFrameColor : piechartShape.frame_color_alarm,
-        hasFillColor : piechartShape.has_inside_color,
-        hasFrameColor : piechartShape.has_frame_color,
+        normalFillColor : subvisuShape.fill_color,
+        alarmFillColor : subvisuShape.fill_color_alarm,
+        normalFrameColor : subvisuShape.frame_color,
+        alarmFrameColor : subvisuShape.frame_color_alarm,
+        hasFillColor : subvisuShape.has_inside_color,
+        hasFrameColor : subvisuShape.has_frame_color,
         lineWidth : lineWidth,
         // Positional arguments
         absCornerCoord : absCornerCoord,
         absCenterCoord : absCenterCoord,
-        absPoints :piechartShape.points, 
         left : 0,
         right : 0,
         top : 0,
@@ -55,7 +47,7 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
         // Computed
         fill : fillColor,
         edge : edge,
-        stroke : piechartShape.frame_color,
+        stroke : subvisuShape.frame_color,
         strokeDashArray : "0",
         display : "visible" as any,
         alarm : false,
@@ -65,15 +57,11 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
         transformedCornerCoord : absCornerCoord,
         relCoord : relCoord,
         relMidpointCoord : relMidpointCoord,
-        relPoints : relPoints,
-        // Variables for piechart
-        startAngle : 0,
-        endAngle : 0,
-        piechartPath : "",
         // Access variables
         writeAccess : true,
-        readAccess : true
-    
+        readAccess : true,
+        // Scaling
+        visuScale : "scale(1)"
     }
     
     // Processing the variables for visual elements
@@ -202,8 +190,7 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
                         return "5,5";
                     } else if (value == "1"){
                         return "10,10";
-                    } 
-                    else {
+                    } else {
                         return "0";
                     }
                 } else {
@@ -396,6 +383,7 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
     });
     
     // The transformed corner coordinates depends on the shapetype. The rotating operation is different for simpleshapes and polyshapes
+    // Simpleshape:
     Object.defineProperty(initial, "transformedCornerCoord", {
         get: function() {
             let x1 = initial.absCornerCoord.x1;
@@ -451,23 +439,13 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
         }
     });
     
-    // Piechart path calculation
-    if(['piechart'].includes(piechartShape.shape)){
-        Object.defineProperty(initial, "piechartPath", {
-            get: function(){
-                let interim = pointArrayToPiechartString(initial.relPoints, initial.startAngle, initial.endAngle, initial.edge)
-                return interim;
-            }
-        });
-    }
-    
     // Define the object access variables
     Object.defineProperty(initial, "writeAccess", {
         get: function() {
             let current = ComSocket.singleton().oVisuVariables.get(".currentuserlevel")!.value;
             let currentNum = Number(current);
             if (currentNum !== NaN){
-                if (piechartShape.access_levels[currentNum].includes("w")){
+                if (subvisuShape.access_levels[currentNum].includes("w")){
                     return true
                 } else {
                     return false
@@ -483,7 +461,7 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
             let current = ComSocket.singleton().oVisuVariables.get(".currentuserlevel")!.value;
             let currentNum = Number(current);
             if (currentNum !== NaN){
-                if (piechartShape.access_levels[currentNum].includes("r")){
+                if (subvisuShape.access_levels[currentNum].includes("r")){
                     return true
                 } else {
                     return false
@@ -494,5 +472,20 @@ export function createPiechartObject(piechartShape: IPiechartShape, dynamicEleme
         }
     });
     
+    
+    Object.defineProperty(initial, "visuScale", {
+        get: function() {
+            let xscaleFactor = relCoord.width / (subvisuShape.visu_size[0]);
+            let yscaleFactor = relCoord.height / (subvisuShape.visu_size[1]);
+            if (subvisuShape.original_frame) {
+                return("scale(1)");
+            } else if (subvisuShape.iso_frame) {
+                return("scale(" + Math.min(xscaleFactor, yscaleFactor).toString() + ")");
+            } else {
+                return("scale(" + xscaleFactor.toString() + "," + yscaleFactor.toString() + ")");
+            }
+        }
+    });
+
     return initial;
 }
