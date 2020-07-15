@@ -3,6 +3,8 @@
     "version": "1.0.11",
     "description": "",
     "scripts": {
+        "prettier-check": "npx prettier --config .prettierrc \"src/**/*\" --check",
+        "prettier-format": "npx prettier --config .prettierrc \"src/**/*\" --write",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "webpack"
     },
