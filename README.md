@@ -3,25 +3,26 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## Introduction
 
-This is a single page application (SPA) for displaying the web visualisation pages build with the **CoDeSys 2** or **WAGO-I/O-PRO** IDE without using Java. With this solution it's possible to display the existing visualisations on mobile devices or modern browsers that doesn't support Java applets anymore.
+This is a single page application (SPA) for displaying the web visualisation pages build with the **CoDeSys 2.3** or **WAGO-I/O-PRO CAA** IDE without using Java. With this solution it's possible to display the existing visualisations on mobile devices or modern browsers that doesn't support Java applets anymore.
 
 > :point_right: : Every release has been tested with bigger CoDeSys projects but the components are currently not automatically tested. Create an issue or send me a mail to \_tristan.nentwig+webvisu@gmail.com* if you encounter a problem.
 
 ## How to use
 
-Just copy the webvisu.html and webvisu.js from the release tab to the folder which contents are deployed by the webserver. **The path to this folder differentate by the used Wago PLC**. The FTP transfer could be made with FileZilla at example.
+Just copy the webvisu.html and webvisu.js from the release tab to the folder which contents are deployed by the webserver. **The webvisu folder path depend on which WAGO PLC is used**. The FTP transfer could be made with FileZilla for example.
 
 For displaying on client use a modern browser like Chrome, Firefox or Edge that supports ES6 constructs.
 
-#### For the non Linux PLCs (like 750-880):
+#### For the non Linux PLCs (like 750-88x, 750-89x series):
 
-Transfer them to the _/webserv_ folder. The visualisation is available afterwards on  
-_http://\<ip-address-of-your-plc>/webserv/webvisu.html_
+Transfer them to the _/PLC_ folder. The visualisation is available afterwards on  
+_http://\<ip-address-of-your-plc>/PLC/webvisu.html_
 
-#### For the Linux PLCs (like PFC200 or PFC100):
+#### For the Linux PLCs (like IPC or PFC200):
 
 Transfer it to _/home/codesys_. The visualisation is available afterwards on  
-_http://\<ip-address-of-your-plc>/webvisu/webvisu.html_
+_http://\<ip-address-of-your-plc>:8080/webvisu.html_ (IPC)
+_http://\<ip-address-of-your-plc>/webvisu/webvisu.html_ (PFC200)
 
 ## How it works
 

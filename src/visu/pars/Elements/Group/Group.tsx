@@ -13,6 +13,59 @@ type Props = {
     section: Element;
 };
 
+function getDimension(
+    actualDimension: Array<number>,
+    newRect: Array<number>,
+) {
+    const len = newRect.length;
+    if (len === 4) {
+        actualDimension[0] < newRect[2]
+            ? (actualDimension[0] = newRect[2])
+            : (newRect[0] = newRect[0]);
+        actualDimension[1] < newRect[3]
+            ? (actualDimension[1] = newRect[3])
+            : (newRect[1] = newRect[1]);
+    } else if (len === 2) {
+        for (let i = 0; i < 2; i++) {
+            actualDimension[i] < newRect[i]
+                ? (actualDimension[i] = newRect[0])
+                : (newRect[0] = newRect[0]);
+        }
+    }
+}
+
+function createInitial(section: Element) {
+    // Create a mobx store for the variables that are dependent on the comsocket variables
+    const initial = {
+        display: 'hidden' as any,
+    };
+
+    const dynamicElements = parseDynamicShapeParameters(section);
+    // Invisble?
+    if (dynamicElements.has('expr-invisible')) {
+        const element = dynamicElements!.get('expr-invisible');
+        const returnFunc = ComSocket.singleton().evalFunction(
+            element,
+        );
+        const wrapperFunc = () => {
+            const value = returnFunc();
+            if (value !== undefined) {
+                if (value == 0) {
+                    return 'visible';
+                } else {
+                    return 'hidden';
+                }
+            }
+        };
+        Object.defineProperty(initial, 'display', {
+            get: () => wrapperFunc(),
+        });
+    } else {
+        initial.display = 'visible';
+    }
+    return initial;
+}
+
 export const Group: React.FunctionComponent<Props> = React.memo(
     ({ section }) => {
         let scale = 'scale(1)';
@@ -20,19 +73,22 @@ export const Group: React.FunctionComponent<Props> = React.memo(
             section.getElementsByTagName('rect')[0].innerHTML,
         );
         // The rightdown corner coordinates of the subvisu will be stored
-        let rightDownCorner = [0, 0];
+        const rightDownCorner = [0, 0];
 
-        let visuObjects: Array<{ obj: JSX.Element; id: string }> = [];
+        const visuObjects: Array<{
+            obj: JSX.Element;
+            id: string;
+        }> = [];
         const addVisuObject = (visuObject: JSX.Element) => {
-            let obj = { obj: visuObject, id: uid(visuObject) };
+            const obj = { obj: visuObject, id: uid(visuObject) };
             visuObjects.push(obj);
         };
 
         for (let i = 0; i < section.children.length; i++) {
-            let element = section.children[i];
+            const element = section.children[i];
             if (element.nodeName === 'element') {
                 // Determine the type of the element
-                let type = element.getAttribute('type');
+                const type = element.getAttribute('type');
                 switch (type) {
                     case 'simple':
                         addVisuObject(
@@ -53,7 +109,7 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <PolyShape section={element}></PolyShape>,
                         );
-                        let points = element.getElementsByTagName(
+                        const points = element.getElementsByTagName(
                             'point',
                         );
                         for (let i = 0; i < points.length; i++) {
@@ -86,17 +142,17 @@ export const Group: React.FunctionComponent<Props> = React.memo(
         }
 
         // Calculate the scalefactor
-        let setY = rectParent[3] - rectParent[1];
-        let setX = rectParent[2] - rectParent[0];
-        let scaleOrientation = setX / setY;
+        const setY = rectParent[3] - rectParent[1];
+        const setX = rectParent[2] - rectParent[0];
+        const scaleOrientation = setX / setY;
         if (
             scaleOrientation <
             rightDownCorner[0] / rightDownCorner[1]
         ) {
-            let factor = setX / rightDownCorner[0];
+            const factor = setX / rightDownCorner[0];
             scale = 'scale(' + factor + ')';
         } else {
-            let factor = setY / rightDownCorner[1];
+            const factor = setY / rightDownCorner[1];
             scale = 'scale(' + factor + ')';
         }
 
@@ -134,54 +190,3 @@ export const Group: React.FunctionComponent<Props> = React.memo(
         );
     },
 );
-
-function getDimension(
-    actualDimension: Array<number>,
-    newRect: Array<number>,
-) {
-    let len = newRect.length;
-    if (len === 4) {
-        actualDimension[0] < newRect[2]
-            ? (actualDimension[0] = newRect[2])
-            : (newRect[0] = newRect[0]);
-        actualDimension[1] < newRect[3]
-            ? (actualDimension[1] = newRect[3])
-            : (newRect[1] = newRect[1]);
-    } else if (len === 2) {
-        for (let i = 0; i < 2; i++) {
-            actualDimension[i] < newRect[i]
-                ? (actualDimension[i] = newRect[0])
-                : (newRect[0] = newRect[0]);
-        }
-    }
-}
-
-function createInitial(section: Element) {
-    // Create a mobx store for the variables that are dependent on the comsocket variables
-    let initial = {
-        display: 'hidden' as any,
-    };
-
-    let dynamicElements = parseDynamicShapeParameters(section);
-    // Invisble?
-    if (dynamicElements.has('expr-invisible')) {
-        let element = dynamicElements!.get('expr-invisible');
-        let returnFunc = ComSocket.singleton().evalFunction(element);
-        let wrapperFunc = () => {
-            let value = returnFunc();
-            if (value !== undefined) {
-                if (value == 0) {
-                    return 'visible';
-                } else {
-                    return 'hidden';
-                }
-            }
-        };
-        Object.defineProperty(initial, 'display', {
-            get: () => wrapperFunc(),
-        });
-    } else {
-        initial.display = 'visible';
-    }
-    return initial;
-}

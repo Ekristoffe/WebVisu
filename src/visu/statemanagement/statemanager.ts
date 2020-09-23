@@ -36,7 +36,7 @@ export default class StateManager implements IStateManager {
         this.oState.set('ISONLINE', 'TRUE');
         /* hier besteht noch ein Problem, aus welchem Grund auch immer wird Comsocket nur einmal observiert.
         Wenn Wert einmal verändert wurde wird autorun nicht mehr ausgeführt. Ursache musss noch geklärt werden.
-        Bis dahin wird per intervallabfrage manuell observiert*/
+        Bis dahin wird per intervallabfrage manuell observiert */
         if (this.oState.get('USECURRENTVISU') === 'TRUE') {
             ComSocket.singleton().setValue(
                 '.currentvisu',
@@ -47,15 +47,15 @@ export default class StateManager implements IStateManager {
                 StateManager.singleton().oState.get('STARTVISU'),
             );
             setInterval(() => {
-                let value = ComSocket.singleton().oVisuVariables.get(
+                const value = ComSocket.singleton().oVisuVariables.get(
                     '.currentvisu',
                 ).value;
-                let visuname = this.oState
+                const visuName = this.oState
                     .get('CURRENTVISU')
                     .toLowerCase();
                 if (value !== undefined) {
                     if (
-                        visuname !== value.toLowerCase() &&
+                        visuName !== value.toLowerCase() &&
                         value != ''
                     ) {
                         this.oState.set(

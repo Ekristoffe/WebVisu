@@ -40,4 +40,7 @@ module.exports = {
     stats: {
         children: false,
     },
+    performance: {
+        hints: false
+    }
 };

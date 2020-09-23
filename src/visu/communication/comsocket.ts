@@ -17,7 +17,7 @@ export default class ComSocket implements IComSocket {
     >;
     // the actual list and map
     private lutKeyVariable: Array<string>;
-    private requestFrame: { frame: String; listings: number };
+    private requestFrame: { frame: string; listings: number };
     private serverURL: string;
     // The ID of cyclic request
     private intervalID: number;
@@ -71,14 +71,14 @@ export default class ComSocket implements IComSocket {
     }
 
     evalFunction(stack: string[][]): Function {
-        var returnFunc = function () {
-            let interim: Array<string> = [];
+        const returnFunc = function () {
+            const interim: Array<string> = [];
             for (
                 let position = 0;
                 position < stack.length;
                 position++
             ) {
-                let value = stack[position][1];
+                const value = stack[position][1];
                 switch (stack[position][0]) {
                     case 'var':
                         if (
@@ -137,11 +137,11 @@ export default class ComSocket implements IComSocket {
                     response
                         .arrayBuffer()
                         .then((buffer: ArrayBuffer) => {
-                            let decoder = new TextDecoder(
+                            const decoder = new TextDecoder(
                                 'iso-8859-1',
                             );
-                            let text = decoder.decode(buffer);
-                            let transferarray: Array<string> = text
+                            const text = decoder.decode(buffer);
+                            const transferarray: Array<string> = text
                                 .slice(1, text.length - 1)
                                 .split('|');
                             if (
@@ -153,9 +153,8 @@ export default class ComSocket implements IComSocket {
                                     i < transferarray.length;
                                     i++
                                 ) {
-                                    let varName = this.lutKeyVariable[
-                                        i
-                                    ];
+                                    const varName = this
+                                        .lutKeyVariable[i];
                                     if (
                                         this.oVisuVariables.get(
                                             varName,
@@ -220,12 +219,12 @@ export default class ComSocket implements IComSocket {
 
     // toggleValue : Wechselt den Wert einer boolschen Variablen
     toggleValue(varName: string) {
-        let variableName = varName.toLowerCase();
+        const variableName = varName.toLowerCase();
         if (this.oVisuVariables.has(variableName)) {
             let value = Number(
                 this.oVisuVariables.get(variableName)!.value,
             );
-            if (value === 0 || 1) {
+            if (value === 0 || value === 1) {
                 value === 0 ? (value = 1) : (value = 0);
                 this.setValue(varName, value);
             } else {
