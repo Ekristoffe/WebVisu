@@ -60,15 +60,18 @@ export function parseDynamicShapeParameters(
                 const ident = expressions[j].tagName;
                 const value = expressions[j].textContent;
                 switch (ident) {
-                    case 'var':
+                    case 'var': {
                         stack.push(['var', value.toLowerCase()]);
                         break;
-                    case 'const':
+                    }
+                    case 'const': {
                         stack.push(['const', value]);
                         break;
-                    case 'op':
+                    }
+                    case 'op': {
                         stack.push(['op', value]);
                         break;
+                    }
                 }
             }
             exprMap.set(exprName, stack);
@@ -265,18 +268,21 @@ export function parseClickEvent(section: Element): Function {
                         const ident = rvalue[j].tagName;
                         const value = rvalue[j].textContent;
                         switch (ident) {
-                            case 'var':
+                            case 'var': {
                                 rpnStack.push([
                                     'var',
                                     value.toLowerCase(),
                                 ]);
                                 break;
-                            case 'const':
+                            }
+                            case 'const': {
                                 rpnStack.push(['const', value]);
                                 break;
-                            case 'op':
+                            }
+                            case 'op': {
                                 rpnStack.push(['op', value]);
                                 break;
+                            }
                         }
                     }
                     clickFunction = function (): void {
@@ -299,7 +305,7 @@ export function parseClickEvent(section: Element): Function {
                 for (let i = 0; i < executes.length; i++) {
                     const execName = executes[i].textContent;
                     switch (execName) {
-                        case 'INTERN CHANGEUSERLEVEL':
+                        case 'INTERN CHANGEUSERLEVEL': {
                             clickFunction = function (): void {
                                 StateManager.singleton().openPopup.set(
                                     true,
@@ -308,6 +314,7 @@ export function parseClickEvent(section: Element): Function {
                             stack.push(clickFunction);
                             clickEventDetected = true;
                             break;
+                        }
                     }
                 }
             }
@@ -317,9 +324,10 @@ export function parseClickEvent(section: Element): Function {
                     'expr-link',
                 );
                 for (let i = 0; i < links.length; i++) {
+                    // prettier-ignore
                     const link = actionList
-                        .getElementsByTagName('expr-link')
-                        [i].getElementsByTagName('expr')[0]
+                        .getElementsByTagName('expr-link')[i]
+                        .getElementsByTagName('expr')[0]
                         .children[0];
                     const type = link.tagName;
                     const content = link.textContent;

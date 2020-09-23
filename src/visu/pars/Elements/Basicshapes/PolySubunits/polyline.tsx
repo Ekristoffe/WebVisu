@@ -53,20 +53,25 @@ export const Polyline: React.FunctionComponent<Props> = ({
                 >
                     <svg
                         onClick={
-                            onclick == null ? null : () => onclick()
+                            onclick === undefined || onclick === null
+                                ? null
+                                : () => onclick()
                         }
                         onMouseDown={
-                            onmousedown == null
+                            onmousedown === undefined ||
+                            onmousedown === null
                                 ? null
                                 : () => onmousedown()
                         }
                         onMouseUp={
-                            onmouseup == null
+                            onmouseup === undefined ||
+                            onmouseup === null
                                 ? null
                                 : () => onmouseup()
                         }
                         onMouseLeave={
-                            onmouseup == null
+                            onmouseup === undefined ||
+                            onmouseup === null
                                 ? null
                                 : () => onmouseup()
                         } // We have to reset if somebody leaves the object with pressed key
@@ -82,7 +87,8 @@ export const Polyline: React.FunctionComponent<Props> = ({
                         />
                         <title>{state.tooltip}</title>
                     </svg>
-                    {textField == null ? null : (
+                    {textField === undefined ||
+                    textField === null ? null : (
                         <svg
                             width={
                                 state.relCoord.width + 2 * state.edge

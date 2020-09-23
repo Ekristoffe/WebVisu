@@ -122,7 +122,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
         ) {
             if (
                 section.getElementsByTagName('enable-text-input')[0]
-                    .innerHTML == 'true'
+                    .innerHTML === 'true'
             ) {
                 inputField = (
                     <Inputfield section={section}></Inputfield>
@@ -146,7 +146,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
 
         // Return of the React-Node
         switch (shape) {
-            case 'polygon':
+            case 'polygon': {
                 return (
                     <Polygon
                         polyShape={polyShapeBasis}
@@ -158,8 +158,9 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     />
                 );
-            // break;
-            case 'bezier':
+                // break;
+            }
+            case 'bezier': {
                 return (
                     <Bezier
                         polyShape={polyShapeBasis}
@@ -171,8 +172,9 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     />
                 );
-            // break;
-            case 'polyline':
+                // break;
+            }
+            case 'polyline': {
                 return (
                     <Polyline
                         polyShape={polyShapeBasis}
@@ -184,7 +186,8 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     />
                 );
-            // break;
+                // break;
+            }
         }
     } else {
         console.log('Poly-Shape: <' + shape + '> is not supported!');

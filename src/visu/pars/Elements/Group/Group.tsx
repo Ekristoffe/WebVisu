@@ -21,15 +21,15 @@ function getDimension(
     if (len === 4) {
         actualDimension[0] < newRect[2]
             ? (actualDimension[0] = newRect[2])
-            : (newRect[0] = newRect[0]);
+            : 0;
         actualDimension[1] < newRect[3]
             ? (actualDimension[1] = newRect[3])
-            : (newRect[1] = newRect[1]);
+            : 0;
     } else if (len === 2) {
         for (let i = 0; i < 2; i++) {
             actualDimension[i] < newRect[i]
                 ? (actualDimension[i] = newRect[0])
-                : (newRect[0] = newRect[0]);
+                : 0;
         }
     }
 }
@@ -50,7 +50,7 @@ function createInitial(section: Element) {
         const wrapperFunc = () => {
             const value = returnFunc();
             if (value !== undefined) {
-                if (value == 0) {
+                if (parseInt(value) === 0) {
                     return 'visible';
                 } else {
                     return 'hidden';
@@ -90,7 +90,7 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                 // Determine the type of the element
                 const type = element.getAttribute('type');
                 switch (type) {
-                    case 'simple':
+                    case 'simple': {
                         addVisuObject(
                             <SimpleShape
                                 section={element}
@@ -105,7 +105,8 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                             ),
                         );
                         break;
-                    case 'polygon':
+                    }
+                    case 'polygon': {
                         addVisuObject(
                             <PolyShape section={element}></PolyShape>,
                         );
@@ -119,12 +120,14 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                             );
                         }
                         break;
-                    case 'button':
+                    }
+                    case 'button': {
                         addVisuObject(
                             <Button section={element}></Button>,
                         );
                         break;
-                    case 'group':
+                    }
+                    case 'group': {
                         addVisuObject(
                             <Group section={element}></Group>,
                         );
@@ -137,6 +140,7 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                             ),
                         );
                         break;
+                    }
                 }
             }
         }
@@ -160,7 +164,7 @@ export const Group: React.FunctionComponent<Props> = React.memo(
         const state = useLocalStore(() => createInitial(section));
 
         return useObserver(() =>
-            state.display == 'visible' ? (
+            state.display === 'visible' ? (
                 <div
                     style={{
                         pointerEvents: 'none',

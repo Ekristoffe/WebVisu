@@ -32,54 +32,62 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                 const type = section.getAttribute('type');
                 switch (type) {
                     // Is a simple shape like rectangle, round-rectangle, circle or line
-                    case 'simple':
+                    case 'simple': {
                         addVisuObject(
                             <SimpleShape
                                 section={section}
                             ></SimpleShape>,
                         );
                         break;
+                    }
                     // Is a bitmap
-                    case 'bitmap':
+                    case 'bitmap': {
                         addVisuObject(
                             <Bitmap section={section}></Bitmap>,
                         );
                         break;
+                    }
                     // Is a button
-                    case 'button':
+                    case 'button': {
                         addVisuObject(
                             <Button section={section}></Button>,
                         );
                         break;
+                    }
                     // Is a polygon - As polygon, polyline or bezier
-                    case 'polygon':
+                    case 'polygon': {
                         addVisuObject(
                             <PolyShape section={section}></PolyShape>,
                         );
                         break;
+                    }
                     // Is a piechart
-                    case 'piechart':
+                    case 'piechart': {
                         addVisuObject(
                             <Piechart section={section}></Piechart>,
                         );
                         break;
+                    }
                     // Is a group (Dynamic elements like a graph)
-                    case 'group':
+                    case 'group': {
                         addVisuObject(
                             <Group section={section}></Group>,
                         );
                         break;
+                    }
                     // Is a Scrollbar
-                    case 'scrollbar':
+                    case 'scrollbar': {
                         addVisuObject(
                             <Scrollbar section={section}></Scrollbar>,
                         );
                         break;
-                    case 'reference':
+                    }
+                    case 'reference': {
                         addVisuObject(
                             <Subvisu section={section}></Subvisu>,
                         );
                         break;
+                    }
                 }
             }
         }

@@ -19,7 +19,7 @@ export const Scrollbar: React.FunctionComponent<Props> = ({
         section.getElementsByTagName('rect')[0].innerHTML,
     );
     const horzPosition: boolean =
-        rect[1] - rect[0] > rect[3] - rect[2] ? true : false;
+        rect[1] - rect[0] > rect[3] - rect[2];
     // Parsing of the fixed parameters
     const scrollbar: IScrollbarShape = {
         shape: 'scrollbar',

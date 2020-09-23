@@ -16,7 +16,7 @@ function replacePlaceholders(
         const regEx = new RegExp(/\$(.*)\$/gm);
         const match = regEx.exec(placeholder.textContent);
         // Replacement
-        if (match != null) {
+        if (match !== undefined && match !== null) {
             const replace = match[1].toLowerCase();
             if (replacements.has(replace)) {
                 const variable = data.createElement('var');
@@ -159,15 +159,18 @@ export function getImage(url: string): Promise<string> {
     let mimeType = '';
     const fileFormat = url.split('.').pop();
     switch (fileFormat) {
-        case 'bmp':
+        case 'bmp': {
             mimeType = 'image/bmp';
             break;
-        case 'jpeg':
+        }
+        case 'jpeg': {
             mimeType = 'image/jpeg';
             break;
-        case 'jpg':
+        }
+        case 'jpg': {
             mimeType = 'image/jpeg';
             break;
+        }
     }
 
     return new Promise((resolve) => {

@@ -5,20 +5,26 @@ import { evalRPN } from '../pars/Utils/utilfunctions';
 
 export default class ComSocket implements IComSocket {
     private static instance: IComSocket = new ComSocket();
+
     // objList contains all variables as objects with the name as key and addr & value of the variable
     oVisuVariables: Map<
         string,
         { addr: string; value: string | undefined }
     >;
+
     // The objList has no clear sequence. To get the possibily of correct access with numbers as indices use the look up table
     private globalVariables: Map<
         string,
         { addr: string; key: string }
     >;
+
     // the actual list and map
     private lutKeyVariable: Array<string>;
+
     private requestFrame: { frame: string; listings: number };
+
     private serverURL: string;
+
     // The ID of cyclic request
     private intervalID: number;
 
@@ -80,7 +86,7 @@ export default class ComSocket implements IComSocket {
             ) {
                 const value = stack[position][1];
                 switch (stack[position][0]) {
-                    case 'var':
+                    case 'var': {
                         if (
                             ComSocket.singleton().oVisuVariables.has(
                                 value,
@@ -97,12 +103,15 @@ export default class ComSocket implements IComSocket {
                             interim.push('0');
                         }
                         break;
-                    case 'const':
+                    }
+                    case 'const': {
                         interim.push(value);
                         break;
-                    case 'op':
+                    }
+                    case 'op': {
                         interim.push(value);
                         break;
+                    }
                 }
             }
             return evalRPN(interim);

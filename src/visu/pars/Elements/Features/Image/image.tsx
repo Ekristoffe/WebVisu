@@ -69,19 +69,22 @@ export const Image: React.FunctionComponent<Props> = ({
     */
 
     switch (initial.frameType) {
-        case 'static':
+        case 'static': {
             break;
-        case 'isotropic':
+        }
+        case 'isotropic': {
             initial.maxWidth = initial.inlineDimensions;
             initial.maxHeight = initial.inlineDimensions;
             if (!inlineElement) {
                 initial.margin = 'top';
             }
             break;
-        case 'anisotropic':
+        }
+        case 'anisotropic': {
             initial.percWidth = initial.inlineDimensions;
             initial.percHeight = initial.inlineDimensions;
             break;
+        }
     }
 
     const state = useLocalStore(() => initial);

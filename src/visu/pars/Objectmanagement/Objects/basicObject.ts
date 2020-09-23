@@ -172,7 +172,7 @@ export function createBasicObject(
         const wrapperFunc = () => {
             const value = returnFunc();
             if (value !== undefined) {
-                if (value == 0) {
+                if (parseInt(value) === 0) {
                     return 'visible';
                 } else {
                     return 'hidden';
@@ -191,7 +191,7 @@ export function createBasicObject(
         );
         const wrapperFunc = () => {
             const value = returnFunc();
-            if (value == '1') {
+            if (value === '1') {
                 return false;
             } else {
                 return true;
@@ -209,7 +209,7 @@ export function createBasicObject(
         );
         Object.defineProperty(initial, 'hasFrameColor', {
             get: function () {
-                const value = returnFunc() == '8' ? false : true;
+                const value = returnFunc() !== '8';
                 return value;
             },
         });
@@ -217,13 +217,13 @@ export function createBasicObject(
             get: function () {
                 const value = returnFunc();
                 if (initial.lineWidth <= 1) {
-                    if (value == '4') {
+                    if (value === '4') {
                         return '20,10,5,5,5,10';
-                    } else if (value == '3') {
+                    } else if (value === '3') {
                         return '20,5,5,5';
-                    } else if (value == '2') {
+                    } else if (value === '2') {
                         return '5,5';
-                    } else if (value == '1') {
+                    } else if (value === '1') {
                         return '10,10';
                     } else {
                         return '0';
@@ -243,7 +243,7 @@ export function createBasicObject(
         const wrapperFunc = () => {
             const value = returnFunc();
             const width = Number(value);
-            if (width == 0) {
+            if (width === 0) {
                 return 1;
             } else {
                 return width;
@@ -352,7 +352,7 @@ export function createBasicObject(
         );
         const wrapperFunc = () => {
             const value = returnFunc();
-            if (value == '1') {
+            if (value === '1') {
                 return 'none';
             } else {
                 return 'visible';
@@ -391,14 +391,14 @@ export function createBasicObject(
         });
     }
 
-    // We have to compute the dependent values after all the required static values ​​have been replaced by variables, placeholders or constant values
+    // We have to compute the dependent values after all the required static values have been replaced by variables, placeholders or constant values
     // E.g. the fillcolor depends on hasFillColor and alarm. This variables are called "computed" values. MobX will track their dependents and rerender the object by change.
     // We have to note that the rotation of polylines is not the same like simpleshapes. Simpleshapes keep their originally alignment, polyhapes transform every coordinate.
 
     // The fill color
     Object.defineProperty(initial, 'fill', {
         get: function () {
-            if (initial.alarm == false) {
+            if (initial.alarm === false) {
                 if (initial.hasFillColor) {
                     return initial.normalFillColor;
                 } else {
@@ -417,7 +417,7 @@ export function createBasicObject(
 
     Object.defineProperty(initial, 'stroke', {
         get: function () {
-            if (initial.alarm == false) {
+            if (initial.alarm === false) {
                 if (initial.hasFrameColor) {
                     return initial.normalFrameColor;
                 } else {
@@ -432,7 +432,7 @@ export function createBasicObject(
     Object.defineProperty(initial, 'edge', {
         get: function () {
             if (initial.hasFrameColor || initial.alarm) {
-                if (initial.lineWidth == 0) {
+                if (initial.lineWidth === 0) {
                     return 1;
                 } else {
                     return initial.lineWidth;

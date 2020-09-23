@@ -12,6 +12,7 @@ import {
 import { createVisuObject } from '../../Objectmanagement/objectManager';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
 import { Image } from '../Features/Image/image';
+import { untracked } from 'mobx';
 
 type Props = {
     section: Element;
@@ -80,6 +81,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             : ['rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw'],
     };
 
+    // TODO: implement the use of textField
     // Parsing the textfields and returning a jsx object if it exists
     let textField: JSX.Element;
     if (section.getElementsByTagName('text-format').length) {
@@ -97,12 +99,13 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         textField = null;
     }
 
+    // TODO: implement the use of inputfield
     // Parsing the inputfield
     let inputField: JSX.Element;
     if (section.getElementsByTagName('enable-text-input').length) {
         if (
             section.getElementsByTagName('enable-text-input')[0]
-                .textContent == 'true'
+                .textContent === 'true'
         ) {
             inputField = <Inputfield section={section}></Inputfield>;
         } else {
@@ -135,13 +138,25 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                 width: state.relCoord.width + 2 * state.edge,
                 height: state.relCoord.height + 2 * state.edge,
             }}
-            onClick={onclick == null ? null : () => onclick()}
-            onMouseDown={
-                onmousedown == null ? null : () => onmousedown()
+            onClick={
+                onclick === undefined || onclick === null
+                    ? null
+                    : () => onclick()
             }
-            onMouseUp={onmouseup == null ? null : () => onmouseup()}
+            onMouseDown={
+                onmousedown === undefined || onmousedown === null
+                    ? null
+                    : () => onmousedown()
+            }
+            onMouseUp={
+                onmouseup === undefined || onmouseup === null
+                    ? null
+                    : () => onmouseup()
+            }
             onMouseLeave={
-                onmouseup == null ? null : () => onmouseup()
+                onmouseup === undefined || onmouseup === null
+                    ? null
+                    : () => onmouseup()
             }
         >
             <Image section={section} inlineElement={false}></Image>

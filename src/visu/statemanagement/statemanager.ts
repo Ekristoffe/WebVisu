@@ -16,9 +16,12 @@ interface IStateManager {
 
 export default class StateManager implements IStateManager {
     private static instance: IStateManager = new StateManager();
+
     // objList contains all variables as objects with the name as key and addr & value of the variable
     oState: Map<string, string>;
+
     xmlDict: Map<string, string>;
+
     openPopup: IObservableValue<boolean>;
 
     // this class shall be a singleton
@@ -56,7 +59,7 @@ export default class StateManager implements IStateManager {
                 if (value !== undefined) {
                     if (
                         visuName !== value.toLowerCase() &&
-                        value != ''
+                        value !== ''
                     ) {
                         this.oState.set(
                             'CURRENTVISU',

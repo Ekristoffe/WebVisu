@@ -99,7 +99,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                 let plainxml: string;
                 if ((await get(visuName)) === undefined) {
                     const xml = await getVisuxml(url);
-                    if (xml == null) {
+                    if (xml === undefined || xml === null) {
                         console.warn(
                             'The requested visualisation ' +
                                 visuName +

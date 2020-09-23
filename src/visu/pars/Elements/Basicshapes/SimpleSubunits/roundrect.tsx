@@ -58,28 +58,32 @@ export const Roundrect: React.FunctionComponent<Props> = React.memo(
                         >
                             <svg
                                 onClick={
-                                    onclick == null
+                                    onclick === undefined ||
+                                    onclick === null
                                         ? null
                                         : state.writeAccess
                                         ? () => onclick()
                                         : null
                                 }
                                 onMouseDown={
-                                    onmousedown == null
+                                    onmousedown === undefined ||
+                                    onmousedown === null
                                         ? null
                                         : state.writeAccess
                                         ? () => onmousedown()
                                         : null
                                 }
                                 onMouseUp={
-                                    onmouseup == null
+                                    onmouseup === undefined ||
+                                    onmouseup === null
                                         ? null
                                         : state.writeAccess
                                         ? () => onmouseup()
                                         : null
                                 }
                                 onMouseLeave={
-                                    onmouseup == null
+                                    onmouseup === undefined ||
+                                    onmouseup === null
                                         ? null
                                         : state.writeAccess
                                         ? () => onmouseup()
@@ -110,7 +114,8 @@ export const Roundrect: React.FunctionComponent<Props> = React.memo(
                                 >
                                     <title>{state.tooltip}</title>
                                 </rect>
-                                {textField == null ? null : (
+                                {textField === undefined ||
+                                textField === null ? null : (
                                     <svg>{textField}</svg>
                                 )}
                             </svg>

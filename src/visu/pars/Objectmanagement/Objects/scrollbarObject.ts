@@ -78,7 +78,7 @@ export function createScrollbarObject(
         const wrapperFunc = () => {
             const value = returnFunc();
             if (value !== undefined) {
-                if (value == 0) {
+                if (parseInt(value) === 0) {
                     return 'visible';
                 } else {
                     return 'hidden';

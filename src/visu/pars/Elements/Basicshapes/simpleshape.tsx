@@ -112,7 +112,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
         ) {
             if (
                 section.getElementsByTagName('enable-text-input')[0]
-                    .innerHTML == 'true'
+                    .innerHTML === 'true'
             ) {
                 inputField = (
                     <Inputfield section={section}></Inputfield>
@@ -135,7 +135,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
 
         // Return of the React-Node
         switch (shape) {
-            case 'round-rect':
+            case 'round-rect': {
                 return (
                     <Roundrect
                         simpleShape={simpleShapeBasis}
@@ -147,8 +147,9 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     />
                 );
-            // break;
-            case 'circle':
+                // break;
+            }
+            case 'circle': {
                 return (
                     <Circle
                         simpleShape={simpleShapeBasis}
@@ -160,8 +161,9 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     />
                 );
-            // break;
-            case 'line':
+                // break;
+            }
+            case 'line': {
                 return (
                     <Line
                         simpleShape={simpleShapeBasis}
@@ -173,8 +175,9 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     ></Line>
                 );
-            // break;
-            case 'rectangle':
+                // break;
+            }
+            case 'rectangle': {
                 return (
                     <Rectangle
                         simpleShape={simpleShapeBasis}
@@ -186,7 +189,8 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         onmouseup={onmouseup}
                     />
                 );
-            // break;
+                // break;
+            }
         }
     }
     // Else the name of the shape is not known

@@ -130,28 +130,31 @@ export const Button: React.FunctionComponent<Props> = ({
                     <button
                         title={state.tooltip}
                         onClick={
-                            onclick == null
+                            onclick === undefined || onclick === null
                                 ? null
                                 : state.writeAccess
                                 ? () => onclick()
                                 : null
                         }
                         onMouseDown={
-                            onmousedown == null
+                            onmousedown === undefined ||
+                            onmousedown === null
                                 ? null
                                 : state.writeAccess
                                 ? () => onmousedown()
                                 : null
                         }
                         onMouseUp={
-                            onmouseup == null
+                            onmouseup === undefined ||
+                            onmouseup === null
                                 ? null
                                 : state.writeAccess
                                 ? () => onmouseup()
                                 : null
                         }
                         onMouseLeave={
-                            onmouseup == null
+                            onmouseup === undefined ||
+                            onmouseup === null
                                 ? null
                                 : state.writeAccess
                                 ? () => onmouseup()

@@ -231,31 +231,35 @@ export function evalRPN(
             let result: number;
             let interim: number;
             switch (operator) {
-                case '*':
+                case '*': {
                     result = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         result = result * operatingStack.pop();
                     }
                     break;
-                case '/':
+                }
+                case '/': {
                     result = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         result = result / operatingStack.pop();
                     }
                     break;
-                case '-':
+                }
+                case '-': {
                     result = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         result = -result + operatingStack.pop();
                     }
                     break;
-                case '+':
+                }
+                case '+': {
                     result = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         result = result + operatingStack.pop();
                     }
                     break;
-                case 'MAX':
+                }
+                case 'MAX': {
                     result = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         const y = result;
@@ -263,7 +267,8 @@ export function evalRPN(
                         result = x > y ? x : y;
                     }
                     break;
-                case 'MIN':
+                }
+                case 'MIN': {
                     result = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         const y = result;
@@ -271,15 +276,20 @@ export function evalRPN(
                         result = x < y ? x : y;
                     }
                     break;
-                case '=':
+                }
+                case '=': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < 2; i++) {
                         const y = interim;
                         const x = operatingStack.pop();
-                        result = x == y ? 1 : 0;
+                        result =
+                            x !== undefined && x !== null && x === y
+                                ? 1
+                                : 0;
                     }
                     break;
-                case '<':
+                }
+                case '<': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < 2; i++) {
                         const y = interim;
@@ -287,7 +297,8 @@ export function evalRPN(
                         result = x < y ? 1 : 0;
                     }
                     break;
-                case '>':
+                }
+                case '>': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < 2; i++) {
                         const y = interim;
@@ -295,7 +306,8 @@ export function evalRPN(
                         result = x > y ? 1 : 0;
                     }
                     break;
-                case '<=':
+                }
+                case '<=': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < 2; i++) {
                         const y = interim;
@@ -303,7 +315,8 @@ export function evalRPN(
                         result = x <= y ? 1 : 0;
                     }
                     break;
-                case '>=':
+                }
+                case '>=': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < 2; i++) {
                         const y = interim;
@@ -311,7 +324,8 @@ export function evalRPN(
                         result = x >= y ? 1 : 0;
                     }
                     break;
-                case '<>':
+                }
+                case '<>': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < 2; i++) {
                         const y = interim;
@@ -319,7 +333,8 @@ export function evalRPN(
                         result = x !== y ? 1 : 0;
                     }
                     break;
-                case 'AND':
+                }
+                case 'AND': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         const swap = operatingStack.pop();
@@ -327,7 +342,8 @@ export function evalRPN(
                     }
                     result = interim;
                     break;
-                case 'OR':
+                }
+                case 'OR': {
                     interim = operatingStack.pop();
                     for (let i = 1; i < numberOfOperands; i++) {
                         const swap = operatingStack.pop();
@@ -335,16 +351,19 @@ export function evalRPN(
                     }
                     result = interim;
                     break;
-                case 'NOT':
+                }
+                case 'NOT': {
                     // Has only on operand
-                    result = Number(!Boolean(operatingStack.pop()));
+                    result = Number(!operatingStack.pop());
                     break;
-                default:
+                }
+                default: {
                     console.warn(
                         'The RPN-token: ' +
                             token +
                             ' is not a valid one!',
                     );
+                }
             }
             operatingStack.push(result);
         }
@@ -376,5 +395,7 @@ export function getTextLines(text: string) {
             );
         }
     } while (match);
-    return stringStack.filter((el) => el != '');
+    return stringStack.filter(
+        (el) => el !== undefined && el !== null && el !== '',
+    );
 }

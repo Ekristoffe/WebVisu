@@ -114,7 +114,7 @@ export const Piechart: React.FunctionComponent<Props> = ({
     if (section.getElementsByTagName('enable-text-input').length) {
         if (
             section.getElementsByTagName('enable-text-input')[0]
-                .textContent == 'true'
+                .textContent === 'true'
         ) {
             inputField = <Inputfield section={section}></Inputfield>;
         } else {
@@ -160,28 +160,29 @@ export const Piechart: React.FunctionComponent<Props> = ({
             >
                 <svg
                     onClick={
-                        onclick == null
+                        onclick === undefined || onclick === null
                             ? null
                             : state.writeAccess
                             ? () => onclick()
                             : null
                     }
                     onMouseDown={
-                        onmousedown == null
+                        onmousedown === undefined ||
+                        onmousedown === null
                             ? null
                             : state.writeAccess
                             ? () => onmousedown()
                             : null
                     }
                     onMouseUp={
-                        onmouseup == null
+                        onmouseup === undefined || onmouseup === null
                             ? null
                             : state.writeAccess
                             ? () => onmouseup()
                             : null
                     }
                     onMouseLeave={
-                        onmouseup == null
+                        onmouseup === undefined || onmouseup === null
                             ? null
                             : state.writeAccess
                             ? () => onmouseup()
