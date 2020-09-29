@@ -195,7 +195,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
     }
     // Else the name of the shape is not known
     else {
-        console.log(
+        console.warn(
             'Simple-Shape: <' + shape + '> is not supported!',
         );
         return null;

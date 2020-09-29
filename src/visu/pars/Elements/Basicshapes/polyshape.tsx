@@ -190,7 +190,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
             }
         }
     } else {
-        console.log('Poly-Shape: <' + shape + '> is not supported!');
+        console.warn('Poly-Shape: <' + shape + '> is not supported!');
         return null;
     }
 };

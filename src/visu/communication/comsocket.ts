@@ -186,7 +186,7 @@ export default class ComSocket implements IComSocket {
                         });
                 })
                 .catch(() => {
-                    console.log('Connection lost');
+                    console.error('Connection lost');
                     StateManager.singleton().oState.set(
                         'ISONLINE',
                         'FALSE',

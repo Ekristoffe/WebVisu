@@ -400,7 +400,7 @@ export function createSubvisuObject(
     // The fill color
     Object.defineProperty(initial, 'fill', {
         get: function () {
-            if (initial.alarm === false) {
+            if ((initial.alarm ? 1 : 0) === 0) {
                 if (initial.hasFillColor) {
                     return initial.normalFillColor;
                 } else {
@@ -419,7 +419,7 @@ export function createSubvisuObject(
 
     Object.defineProperty(initial, 'stroke', {
         get: function () {
-            if (initial.alarm === false) {
+            if ((initial.alarm ? 1 : 0) === 0) {
                 if (initial.hasFrameColor) {
                     return initial.normalFrameColor;
                 } else {

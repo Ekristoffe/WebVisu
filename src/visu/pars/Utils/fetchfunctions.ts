@@ -13,28 +13,35 @@ function replacePlaceholders(
     const placeholders = data.getElementsByTagName('placeholder');
     // Replace all Placeholders
     Array.from(placeholders).forEach(function (placeholder) {
-        const regEx = new RegExp(/\$(.*)\$/gm);
-        const match = regEx.exec(placeholder.textContent);
+        const regEx = new RegExp(/\$(.*?)\$/gm);
+        let content = placeholder.textContent;
+        let match = regEx.exec(content);
+        let replaced = false;
         // Replacement
-        if (match !== undefined && match !== null) {
-            const replace = match[1].toLowerCase();
-            if (replacements.has(replace)) {
-                const variable = data.createElement('var');
-                let content = placeholder.textContent
-                    .replace(/\$(.*)\$/, replacements.get(replace))
-                    .toLowerCase();
-
-                if (mainVariables.includes('.' + content)) {
-                    content = '.' + content;
+        while (match !== null) {
+            if (match !== undefined) {
+                const replace = match[1].toLowerCase();
+                if (replacements.has(replace)) {
+                    replaced = true;
+                    content = content
+                        .replace(match[0], replacements.get(replace))
+                        .toLowerCase();
                 }
-                // Schlechte Implementierung von Codesys, Doppelpunkte durch einfügen von referenzen möglich
-                const textContent = content.replace(/\.\./, '.');
-                variable.textContent = textContent;
-                placeholder.parentNode.replaceChild(
-                    variable,
-                    placeholder,
-                );
+                match = regEx.exec(placeholder.textContent);
             }
+        }
+        if (replaced) {
+            if (mainVariables.includes('.' + content)) {
+                content = '.' + content;
+            }
+            // Schlechte Implementierung von Codesys, Doppelpunkte durch einfügen von referenzen möglich
+            const textContent = content.replace(/\.\./, '.');
+            const variable = data.createElement('var');
+            variable.textContent = textContent;
+            placeholder.parentNode.replaceChild(
+                variable,
+                placeholder,
+            );
         }
     });
 }

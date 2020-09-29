@@ -119,7 +119,7 @@ export function parseDynamicTextParameters(
                     ) {
                         exprMap.set(exprName, varName);
                     } else {
-                        console.log(
+                        console.warn(
                             'A variable textfield has no valid variable attached!',
                         );
                     }
@@ -133,8 +133,8 @@ export function parseDynamicTextParameters(
                             .getElementsByTagName('const')[0]
                             .textContent.toLowerCase();
                     } else {
-                        console.log(
-                            'A variable textfield has no valid variable attached!',
+                        console.warn(
+                            'A variable textfield has no valid constant attached!',
                         );
                     }
                 }

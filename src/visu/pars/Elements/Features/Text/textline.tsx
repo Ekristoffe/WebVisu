@@ -348,11 +348,11 @@ export const Textline: React.FunctionComponent<Props> = ({
             } else {
                 try {
                     if (
-                        textLine.includes('%|<|') ||
+                        textLine.includes('|<|') ||
                         textLine.includes('|>|')
                     ) {
-                        textLine = textLine.replace('|<|', '<');
-                        textLine = textLine.replace('|>|', '>');
+                        textLine = textLine.replace(/\|<\|/g, '<');
+                        textLine = textLine.replace(/\|>\|/g, '>');
                         output = textLine;
                     } else {
                         output = sprintf(
