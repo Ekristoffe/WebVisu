@@ -34,7 +34,7 @@ function replacePlaceholders(
             if (mainVariables.includes('.' + content)) {
                 content = '.' + content;
             }
-            // Schlechte Implementierung von Codesys, Doppelpunkte durch einfügen von referenzen möglich
+            // Bad implementation of Codesys, colons possible by inserting references
             const textContent = content.replace(/\.\./, '.');
             const variable = data.createElement('var');
             variable.textContent = textContent;
@@ -119,7 +119,6 @@ export function getVisuxml2(url: string): Promise<XMLDocument> {
             fetch(urlStack.join('/'), {
                 headers: { 'Content-Type': 'binary;' },
             }).then((response) => {
-                // Try to fetch the xml as unzipped file
                 if (response.ok) {
                     response
                         .arrayBuffer()
@@ -182,60 +181,75 @@ export function getImage(url: string): Promise<string> {
 
     return new Promise((resolve) => {
         const base64Flag = 'data:' + mimeType + ';base64,';
-        fetch(url).then((response) => {
-            // Try to fetch the xml as unzipped file
-            if (response.ok) {
-                response.arrayBuffer().then((buffer) => {
-                    let binary = '';
-                    const bytes = new Uint8Array(buffer);
-                    bytes.forEach(
-                        (b) => (binary += String.fromCharCode(b)),
-                    );
-                    const base64 = window.btoa(binary);
-                    resolve(base64Flag + base64);
-                });
+        // Check if the compressed flag on statemanager is set
+        let compressed = false;
+        if (
+            StateManager.singleton().oState.get('COMPRESSION') !==
+            null
+        ) {
+            if (
+                StateManager.singleton().oState.get('COMPRESSION') ===
+                'TRUE'
+            ) {
+                compressed = true;
+            } else {
+                compressed = false;
             }
-            // Try to fetch the visu as zipped file
-            else {
-                const zip = new JsZip();
-                const urlStack = url.split('/');
-                const filename = urlStack.pop();
-                const zipName =
-                    filename.split('.')[0] +
-                    '_' +
-                    fileFormat +
-                    '.zip';
-                // Push the zip filename to stack
-                urlStack.push(zipName);
-                fetch(urlStack.join('/')).then((response) => {
-                    // Try to fetch the xml as unzipped file
-                    if (response.ok) {
-                        response
-                            .arrayBuffer()
-                            .then((buffer) => zip.loadAsync(buffer))
-                            .then((unzipped) =>
-                                unzipped
-                                    .file(filename)
-                                    .async('arraybuffer'),
-                            )
-                            .then((buffer) => {
-                                let binary = '';
-                                const bytes = new Uint8Array(buffer);
-                                bytes.forEach(
-                                    (b) =>
-                                        (binary += String.fromCharCode(
-                                            b,
-                                        )),
-                                );
-                                const base64 = window.btoa(binary);
-                                resolve(base64Flag + base64);
-                            });
-                    } else {
-                        resolve(null);
-                    }
-                });
-            }
-        });
+        }
+        // Fetch the image as unzipped file
+        if (!compressed) {
+            fetch(url).then((response) => {
+                if (response.ok) {
+                    response.arrayBuffer().then((buffer) => {
+                        let binary = '';
+                        const bytes = new Uint8Array(buffer);
+                        bytes.forEach(
+                            (b) => (binary += String.fromCharCode(b)),
+                        );
+                        const base64 = window.btoa(binary);
+                        resolve(base64Flag + base64);
+                    });
+                } else {
+                    resolve(null);
+                }
+            });
+        }
+        // Fetch the image as zipped file
+        else if (compressed) {
+            const zip = new JsZip();
+            const urlStack = url.split('/');
+            const filename = urlStack.pop();
+            const zipName =
+                filename.split('.')[0] + '_' + fileFormat + '.zip';
+            // Push the zip filename to stack
+            urlStack.push(zipName);
+            fetch(urlStack.join('/')).then((response) => {
+                if (response.ok) {
+                    response
+                        .arrayBuffer()
+                        .then((buffer) => zip.loadAsync(buffer))
+                        .then((unzipped) =>
+                            unzipped
+                                .file(filename)
+                                .async('arraybuffer'),
+                        )
+                        .then((buffer) => {
+                            let binary = '';
+                            const bytes = new Uint8Array(buffer);
+                            bytes.forEach(
+                                (b) =>
+                                    (binary += String.fromCharCode(
+                                        b,
+                                    )),
+                            );
+                            const base64 = window.btoa(binary);
+                            resolve(base64Flag + base64);
+                        });
+                } else {
+                    resolve(null);
+                }
+            });
+        }
     });
 }
 

@@ -182,11 +182,14 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                                 transform: scale,
                             }}
                         >
-                            {visuObjects.map((element, index) => (
-                                <React.Fragment key={element.id}>
-                                    {element.obj}
-                                </React.Fragment>
-                            ))}
+                            {
+                                // visuObjects.map((element, index) => (
+                                visuObjects.map((element) => (
+                                    <React.Fragment key={element.id}>
+                                        {element.obj}
+                                    </React.Fragment>
+                                ))
+                            }
                         </div>
                     </ErrorBoundary>
                 </div>

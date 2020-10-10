@@ -73,7 +73,10 @@ export const Subvisu: React.FunctionComponent<Props> = ({
         // Optional properties
         tooltip:
             section.getElementsByTagName('tooltip').length > 0
-                ? section.getElementsByTagName('tooltip')[0].innerHTML
+                ? util.parseText(
+                      section.getElementsByTagName('tooltip')[0]
+                          .textContent,
+                  )
                 : '',
         accessLevels: section.getElementsByTagName('access-levels')
             .length

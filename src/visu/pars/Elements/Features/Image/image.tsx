@@ -39,24 +39,6 @@ export const Image: React.FunctionComponent<Props> = ({
         filename: '',
         margin: 'auto',
     };
-
-    // Set the filename, it could be a variable or static
-    if (section.getElementsByTagName('expr-fill-color').length) {
-        const expression = section
-            .getElementsByTagName('expr-fill-color')[0]
-            .getElementsByTagName('expr');
-        const varName = expression[0].getElementsByTagName('var')[0]
-            .innerHTML;
-        Object.defineProperty(initial, 'filename', {
-            get: function () {
-                return (
-                    '/' +
-                    ComSocket.singleton().oVisuVariables.get(varName)!
-                        .value
-                );
-            },
-        });
-    }
     /*
     // With surrounding frame?
     if (inlineElement){
@@ -89,20 +71,89 @@ export const Image: React.FunctionComponent<Props> = ({
 
     const state = useLocalStore(() => initial);
 
-    if (
-        section.getElementsByTagName('file-name')[0].innerHTML.length
-    ) {
-        const rawFilename = section
-            .getElementsByTagName('file-name')[0]
-            .innerHTML.replace(/.*\\/, '');
-        const path =
-            ComSocket.singleton()
-                .getServerURL()
-                .replace('webvisu.htm', '') + rawFilename;
+    if (section.getElementsByTagName('file-name').length) {
+        if (
+            section.getElementsByTagName('file-name')[0].innerHTML
+                .length
+        ) {
+            console.log(
+                'file-name len',
+                section.getElementsByTagName('file-name').length,
+            );
+            console.log(
+                'file-name data',
+                section.getElementsByTagName('file-name'),
+            );
+            console.log(
+                'file-name inner',
+                section.getElementsByTagName('file-name')[0]
+                    .innerHTML,
+            );
+            const rawFilename = section
+                .getElementsByTagName('file-name')[0]
+                .innerHTML.replace(/.*\\/, '')
+                .replace(/].*/, '');
+            console.log('rawFilename', rawFilename);
+            // Try to get the image from cache
+            get(rawFilename).then((cacheReturn) => {
+                if (cacheReturn === undefined) {
+                    const path =
+                        ComSocket.singleton()
+                            .getServerURL()
+                            .replace('webvisu.htm', '') + rawFilename;
+                    console.log('get image', path);
+                    getImage(path).then((datauri) => {
+                        console.log(
+                            'got image',
+                            rawFilename,
+                            datauri,
+                        );
+                        state.filename = datauri;
+                        set(rawFilename, datauri);
+                    });
+                } else {
+                    state.filename = cacheReturn as any;
+                }
+            });
+        }
+    }
+
+    // Set the filename, it could be a variable or static
+    if (section.getElementsByTagName('expr-fill-color').length) {
+        /* */ console.log(
+            'expr-fill-color len',
+            section.getElementsByTagName('expr-fill-color').length,
+        );
+        /* */ console.log(
+            'expr-fill-color data',
+            section.getElementsByTagName('expr-fill-color'),
+        );
+        const expression = section
+            .getElementsByTagName('expr-fill-color')[0]
+            .getElementsByTagName('expr');
+        const varName = expression[0]
+            .getElementsByTagName('var')[0]
+            .innerHTML.toLocaleLowerCase();
+
+        /*
+        const rawFilename = ComSocket.singleton()
+            .oVisuVariables.get(varName)!
+            .value.toLocaleLowerCase();
+
         // Try to get the image from cache
         get(rawFilename).then((cacheReturn) => {
             if (cacheReturn === undefined) {
+                const path =
+                    ComSocket.singleton()
+                        .getServerURL()
+                        .replace('webvisu.htm', '') + rawFilename;
+                console.log('get variable image', path);
                 getImage(path).then((datauri) => {
+                    console.log(
+                        'got variable image',
+                        rawFilename,
+                        datauri,
+                    );
                     state.filename = datauri;
                     set(rawFilename, datauri);
                 });
@@ -110,8 +161,62 @@ export const Image: React.FunctionComponent<Props> = ({
                 state.filename = cacheReturn as any;
             }
         });
+        */
+        Object.defineProperty(state, 'filename', {
+            get: function () {
+                const rawFilename = ComSocket.singleton()
+                    .oVisuVariables.get(varName)!
+                    .value.toLocaleLowerCase();
+                // Try to get the image from cache
+                get(rawFilename).then((cacheReturn) => {
+                    if (cacheReturn === undefined) {
+                        const path =
+                            ComSocket.singleton()
+                                .getServerURL()
+                                .replace('webvisu.htm', '') +
+                            rawFilename;
+                        console.log('rawFilename', rawFilename);
+                        getImage(path).then((datauri) => {
+                            console.log('datauri', datauri);
+                            set(rawFilename, datauri);
+                            return datauri;
+                        });
+                    } else {
+                        return cacheReturn as any;
+                    }
+                });
+            },
+        });
+        /*
+        Object.defineProperty(state, 'filename', {
+            get: function () {
+                const rawFilename = ComSocket.singleton()
+                    .oVisuVariables.get(varName)!
+                    .value.toLocaleLowerCase();
+                // Try to get the image from cache
+                get(rawFilename).then((cacheReturn) => {
+                    if (cacheReturn === undefined) {
+                        const path =
+                            ComSocket.singleton()
+                                .getServerURL()
+                                .replace('webvisu.htm', '') +
+                            rawFilename;
+                        getImage(path).then((datauri) => {
+                            set(rawFilename, datauri);
+                            state.filename = datauri;
+                            return datauri;
+                        });
+                    } else {
+                        state.filename = cacheReturn as any;
+                        return cacheReturn as any;
+                    }
+                });
+            },
+        });
+        */
     }
 
+    /* */ console.log('state.filename', state.filename);
     return useObserver(() => (
         <React.Fragment>
             <img

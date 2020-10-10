@@ -1,7 +1,7 @@
 import {
     observable,
     autorun,
-    computed,
+    // computed,
     IObservableValue,
 } from 'mobx';
 import ComSocket from '../communication/comsocket';

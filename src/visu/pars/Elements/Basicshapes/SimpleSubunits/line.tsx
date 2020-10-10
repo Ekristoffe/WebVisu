@@ -186,7 +186,14 @@ export const Line: React.FunctionComponent<Props> = React.memo(
                                 </line>
                                 {textField === undefined ||
                                 textField === null ? null : (
-                                    <svg>{textField}</svg>
+                                    <svg
+                                        width={state.relCoord.width}
+                                        height={state.relCoord.height}
+                                        x={state.edge}
+                                        y={state.edge}
+                                    >
+                                        {textField}
+                                    </svg>
                                 )}
                             </svg>
                         </svg>

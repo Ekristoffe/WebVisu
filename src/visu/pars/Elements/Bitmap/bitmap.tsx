@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as util from '../../Utils/utilfunctions';
 import { IBasicShape } from '../../../Interfaces/javainterfaces';
+import { createVisuObject } from '../../Objectmanagement/objectManager';
+import { Image } from '../Features/Image/image';
 import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
 import {
@@ -9,10 +11,8 @@ import {
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
-import { createVisuObject } from '../../Objectmanagement/objectManager';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
-import { Image } from '../Features/Image/image';
-import { untracked } from 'mobx';
+import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
     section: Element;
@@ -70,7 +70,10 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         // Optional properties
         tooltip:
             section.getElementsByTagName('tooltip').length > 0
-                ? section.getElementsByTagName('tooltip')[0].innerHTML
+                ? util.parseText(
+                      section.getElementsByTagName('tooltip')[0]
+                          .textContent,
+                  )
                 : '',
         accessLevels: section.getElementsByTagName('access-levels')
             .length
@@ -81,14 +84,21 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             : ['rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw'],
     };
 
+    // Parsing the imagefield and returning a jsx object if it exists
+    console.log('imageField');
+    const imageField: JSX.Element = (
+        <Image section={section} inlineElement={false}></Image>
+    );
+
     // TODO: implement the use of textField
     // Parsing the textfields and returning a jsx object if it exists
     let textField: JSX.Element;
     if (section.getElementsByTagName('text-format').length) {
         const dynamicTextParameters = parseDynamicTextParameters(
             section,
-            bitmap.shape,
+            // bitmap.shape,
         );
+        console.log('textField');
         textField = (
             <Textfield
                 section={section}
@@ -132,34 +142,77 @@ export const Bitmap: React.FunctionComponent<Props> = ({
     return useObserver(() => (
         <div
             style={{
+                cursor: 'auto',
+                overflow: 'hidden',
+                pointerEvents: state.eventType,
+                visibility: state.display,
                 position: 'absolute',
                 left: state.transformedCornerCoord.x1 - state.edge,
                 top: state.transformedCornerCoord.y1 - state.edge,
                 width: state.relCoord.width + 2 * state.edge,
                 height: state.relCoord.height + 2 * state.edge,
             }}
-            onClick={
-                onclick === undefined || onclick === null
-                    ? null
-                    : () => onclick()
-            }
-            onMouseDown={
-                onmousedown === undefined || onmousedown === null
-                    ? null
-                    : () => onmousedown()
-            }
-            onMouseUp={
-                onmouseup === undefined || onmouseup === null
-                    ? null
-                    : () => onmouseup()
-            }
-            onMouseLeave={
-                onmouseup === undefined || onmouseup === null
-                    ? null
-                    : () => onmouseup()
-            }
         >
-            <Image section={section} inlineElement={false}></Image>
+            {state.readAccess ? (
+                <ErrorBoundary fallback={<div>Oh no</div>}>
+                    {imageField}
+                    {inputField}
+                    <svg
+                        style={{ float: 'left' }}
+                        width={state.relCoord.width + 2 * state.edge}
+                        height={
+                            state.relCoord.height + 2 * state.edge
+                        }
+                    >
+                        <svg
+                            onClick={
+                                onclick === undefined ||
+                                onclick === null
+                                    ? null
+                                    : state.writeAccess
+                                    ? () => onclick()
+                                    : null
+                            }
+                            onMouseDown={
+                                onmousedown === undefined ||
+                                onmousedown === null
+                                    ? null
+                                    : state.writeAccess
+                                    ? () => onmousedown()
+                                    : null
+                            }
+                            onMouseUp={
+                                onmouseup === undefined ||
+                                onmouseup === null
+                                    ? null
+                                    : state.writeAccess
+                                    ? () => onmouseup()
+                                    : null
+                            }
+                            onMouseLeave={
+                                onmouseup === undefined ||
+                                onmouseup === null
+                                    ? null
+                                    : state.writeAccess
+                                    ? () => onmouseup()
+                                    : null
+                            } // We have to reset if somebody leaves the object with pressed key
+                            width={
+                                state.relCoord.width + 2 * state.edge
+                            }
+                            height={
+                                state.relCoord.height + 2 * state.edge
+                            }
+                            strokeDasharray={state.strokeDashArray}
+                        >
+                            {textField === undefined ||
+                            textField === null ? null : (
+                                <svg>{textField}</svg>
+                            )}
+                        </svg>
+                    </svg>
+                </ErrorBoundary>
+            ) : null}
         </div>
     ));
 };

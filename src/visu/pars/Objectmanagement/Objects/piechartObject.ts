@@ -3,9 +3,10 @@ import { IPiechartObject } from '../../../Interfaces/jsinterfaces';
 import { IPiechartShape } from '../../../Interfaces/javainterfaces';
 import {
     numberToHexColor,
-    computeMinMaxCoord,
+    // computeMinMaxCoord,
     pointArrayToPiechartString,
 } from '../../Utils/utilfunctions';
+import { sprintf } from 'sprintf-js';
 
 export function createPiechartObject(
     piechartShape: IPiechartShape,
@@ -47,7 +48,8 @@ export function createPiechartObject(
     const relPoints = [] as number[][];
 
     // The polyshape specific values will be generated if necessary
-    piechartShape.points.forEach(function (item, index) {
+    // piechartShape.points.forEach(function (item, index) {
+    piechartShape.points.forEach(function (item) {
         relPoints.push([
             item[0] - absCornerCoord.x1,
             item[1] - absCornerCoord.y1,
@@ -112,8 +114,12 @@ export function createPiechartObject(
             element,
         );
         const wrapperFunc = () => {
-            const value = returnFunc();
-            return value;
+            const value = Number(returnFunc());
+            if (value !== null && value !== undefined) {
+                return value !== 0;
+            } else {
+                return false;
+            }
         };
         Object.defineProperty(initial, 'alarm', {
             get: () => wrapperFunc(),
@@ -189,13 +195,15 @@ export function createPiechartObject(
             element,
         );
         const wrapperFunc = () => {
-            const value = returnFunc();
-            if (value !== undefined) {
-                if (parseInt(value) === 0) {
+            const value = Number(returnFunc());
+            if (value !== null && value !== undefined) {
+                if (value === 0) {
                     return 'visible';
                 } else {
                     return 'hidden';
                 }
+            } else {
+                return 'visible';
             }
         };
         Object.defineProperty(initial, 'display', {
@@ -356,11 +364,45 @@ export function createPiechartObject(
     // 18) Tooltip
     if (dynamicElements.has('expr-tooltip-display')) {
         const element = dynamicElements!.get('expr-tooltip-display');
-        const returnFunc = ComSocket.singleton().evalFunction(
-            element,
-        );
         Object.defineProperty(initial, 'tooltip', {
-            get: () => returnFunc(),
+            get: function () {
+                let output = '';
+                let parsedTooltip =
+                    tooltip !== null || tooltip !== undefined
+                        ? tooltip
+                        : '';
+                const value = ComSocket.singleton().getFunction(
+                    element,
+                )();
+                try {
+                    if (
+                        parsedTooltip.includes('|<|') ||
+                        parsedTooltip.includes('|>|')
+                    ) {
+                        parsedTooltip = parsedTooltip.replace(
+                            /\|<\|/g,
+                            '<',
+                        );
+                        parsedTooltip = parsedTooltip.replace(
+                            /\|>\|/g,
+                            '>',
+                        );
+                        output = parsedTooltip;
+                    } else {
+                        output = sprintf(parsedTooltip, value);
+                    }
+                } catch {
+                    if (
+                        !(
+                            !parsedTooltip ||
+                            /^\s*$/.test(parsedTooltip)
+                        )
+                    ) {
+                        output = parsedTooltip;
+                    }
+                }
+                return output;
+            },
         });
     }
     // 19) Deactivate Input

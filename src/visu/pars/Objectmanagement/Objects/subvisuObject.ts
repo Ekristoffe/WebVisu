@@ -2,6 +2,7 @@ import ComSocket from '../../../communication/comsocket';
 import { ISubvisuObject } from '../../../Interfaces/jsinterfaces';
 import { ISubvisuShape } from '../../../Interfaces/javainterfaces';
 import { numberToHexColor } from '../../Utils/utilfunctions';
+import { sprintf } from 'sprintf-js';
 
 export function createSubvisuObject(
     subvisuShape: ISubvisuShape,
@@ -95,8 +96,12 @@ export function createSubvisuObject(
             element,
         );
         const wrapperFunc = () => {
-            const value = returnFunc();
-            return value;
+            const value = Number(returnFunc());
+            if (value !== null && value !== undefined) {
+                return value !== 0;
+            } else {
+                return false;
+            }
         };
         Object.defineProperty(initial, 'alarm', {
             get: () => wrapperFunc(),
@@ -172,13 +177,15 @@ export function createSubvisuObject(
             element,
         );
         const wrapperFunc = () => {
-            const value = returnFunc();
-            if (value !== undefined) {
-                if (parseInt(value) === 0) {
+            const value = Number(returnFunc());
+            if (value !== null && value !== undefined) {
+                if (value === 0) {
                     return 'visible';
                 } else {
                     return 'hidden';
                 }
+            } else {
+                return 'visible';
             }
         };
         Object.defineProperty(initial, 'display', {
@@ -339,11 +346,45 @@ export function createSubvisuObject(
     // 18) Tooltip
     if (dynamicElements.has('expr-tooltip-display')) {
         const element = dynamicElements!.get('expr-tooltip-display');
-        const returnFunc = ComSocket.singleton().evalFunction(
-            element,
-        );
         Object.defineProperty(initial, 'tooltip', {
-            get: () => returnFunc(),
+            get: function () {
+                let output = '';
+                let parsedTooltip =
+                    tooltip !== null || tooltip !== undefined
+                        ? tooltip
+                        : '';
+                const value = ComSocket.singleton().getFunction(
+                    element,
+                )();
+                try {
+                    if (
+                        parsedTooltip.includes('|<|') ||
+                        parsedTooltip.includes('|>|')
+                    ) {
+                        parsedTooltip = parsedTooltip.replace(
+                            /\|<\|/g,
+                            '<',
+                        );
+                        parsedTooltip = parsedTooltip.replace(
+                            /\|>\|/g,
+                            '>',
+                        );
+                        output = parsedTooltip;
+                    } else {
+                        output = sprintf(parsedTooltip, value);
+                    }
+                } catch {
+                    if (
+                        !(
+                            !parsedTooltip ||
+                            /^\s*$/.test(parsedTooltip)
+                        )
+                    ) {
+                        output = parsedTooltip;
+                    }
+                }
+                return output;
+            },
         });
     }
     // 19) Deactivate Input

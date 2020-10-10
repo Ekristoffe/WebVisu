@@ -5,7 +5,7 @@ import { PolyShape } from '../pars/Elements/Basicshapes/polyshape';
 import { Button } from '../pars/Elements/Button/button';
 import { Piechart } from '../pars/Elements/Piechart/piechart';
 import { Scrollbar } from '../pars/Elements/Scrollbar/scrollbar';
-import { ArrayTable } from './Elements/Arraytable/arraytable';
+// import { ArrayTable } from './Elements/Arraytable/arraytable';
 import { Bitmap } from './Elements/Bitmap/bitmap';
 import { Group } from './Elements/Group/group';
 import { Subvisu } from '../pars/Elements/Subvisu/subvisu';
@@ -94,11 +94,14 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
 
         return (
             <React.Fragment>
-                {visuObjects.map((element, index) => (
-                    <React.Fragment key={element.id}>
-                        {element.obj}
-                    </React.Fragment>
-                ))}
+                {
+                    // visuObjects.map((element, index) => (
+                    visuObjects.map((element) => (
+                        <React.Fragment key={element.id}>
+                            {element.obj}
+                        </React.Fragment>
+                    ))
+                }
             </React.Fragment>
         );
     },

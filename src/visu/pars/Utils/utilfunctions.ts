@@ -204,7 +204,7 @@ export function evalRPN(
     // Now we pop the tokens successively form the resting stack
     for (let i = 0; i < postfixStack.length; i++) {
         let token = postfixStack[i];
-        // The token could be "TRUE" or "FALSE". The we have to translate ist to 1 and 0.
+        // The token could be "TRUE" or "FALSE". The we have to translate it to 1 and 0.
         if (token.toLowerCase() === 'true') {
             token = '1';
         }
@@ -212,7 +212,7 @@ export function evalRPN(
             token = '0';
         }
 
-        // If the token is a number: psuh them to the operating stack
+        // If the token is a number: push them to the operating stack
         if (!isNaN(Number(token))) {
             operatingStack.push(parseFloat(token));
         }
@@ -226,7 +226,6 @@ export function evalRPN(
             }
             // Get the operator
             const operator = token.split('(')[0];
-
             // Choose the opration
             let result: number;
             let interim: number;
@@ -372,12 +371,35 @@ export function evalRPN(
     return output;
 }
 
+export function parseText(text: string) {
+    // Replace the \r\n by single \n
+    text = text.replace(/\r\n/g, '\n');
+    // Replace the \n\r by single \n
+    text = text.replace(/\n\r/g, '\n');
+    // Replace the \r by single \n
+    text = text.replace(/\r/g, '\n');
+    // We should only have \n as new line
+
+    // Replace the tabs
+    text = text.replace(/\n\t/g, '');
+    text = text.replace(/\t/g, '');
+
+    // Replace <![CDATA[
+    // text = text.replace(/\<\!\[CDATA\[/, '');
+    // Replace ]]>
+    // text = text.replace(/(\]\]\>)(?!.*\1)/, '');
+
+    return text;
+}
+
 export function getTextLines(text: string) {
     let match;
     let lastMatch = 0;
     const regEx = new RegExp(/(\n)/, 'g');
     const stringStack = [];
-    text = text.replace(/\t/g, '');
+
+    text = parseText(text);
+
     do {
         match = regEx.exec(text);
         if (match !== null) {
@@ -396,6 +418,6 @@ export function getTextLines(text: string) {
         }
     } while (match);
     return stringStack.filter(
-        (el) => el !== undefined && el !== null && el !== '',
+        (el) => el !== undefined && el !== null,
     );
 }

@@ -77,7 +77,10 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
             ),
             // Optional properties
             tooltip: section.getElementsByTagName('tooltip').length
-                ? section.getElementsByTagName('tooltip')[0].innerHTML
+                ? util.parseText(
+                      section.getElementsByTagName('tooltip')[0]
+                          .textContent,
+                  )
                 : '',
             accessLevels: section.getElementsByTagName(
                 'access-levels',
@@ -93,7 +96,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
         if (section.getElementsByTagName('text-format').length) {
             const dynamicTextParameters = parseDynamicTextParameters(
                 section,
-                shape,
+                // shape,
             );
             textField = (
                 <Textfield

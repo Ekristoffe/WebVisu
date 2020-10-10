@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ComSocket from '../../../communication/comsocket';
+// import ComSocket from '../../../communication/comsocket';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
 import { IScrollbarShape } from '../../../Interfaces/javainterfaces';
 import { createVisuObject } from '../../Objectmanagement/objectManager';

@@ -116,7 +116,14 @@ export const Roundrect: React.FunctionComponent<Props> = React.memo(
                                 </rect>
                                 {textField === undefined ||
                                 textField === null ? null : (
-                                    <svg>{textField}</svg>
+                                    <svg
+                                        width={state.relCoord.width}
+                                        height={state.relCoord.height}
+                                        x={state.edge}
+                                        y={state.edge}
+                                    >
+                                        {textField}
+                                    </svg>
                                 )}
                             </svg>
                         </svg>

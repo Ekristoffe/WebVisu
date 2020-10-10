@@ -48,7 +48,7 @@ export function parseDynamicShapeParameters(
     for (let i = 0; i < children.length; i++) {
         const exprName = children[i].nodeName;
         if (tags.includes(exprName)) {
-            // Now parse the expression stacky
+            // Now parse the expression stack
             // The stack is included in a <expr></expr>
             const expressions = children[i].getElementsByTagName(
                 'expr',
@@ -72,6 +72,17 @@ export function parseDynamicShapeParameters(
                         stack.push(['op', value]);
                         break;
                     }
+                    default: {
+                        console.warn(
+                            'The expression ' +
+                                exprName +
+                                ' with ident ' +
+                                ident +
+                                ' which has for value ' +
+                                value +
+                                ' is not attached!',
+                        );
+                    }
                 }
             }
             exprMap.set(exprName, stack);
@@ -82,9 +93,9 @@ export function parseDynamicShapeParameters(
 
 export function parseDynamicTextParameters(
     section: Element,
-    shape: string,
-): Map<string, string> {
-    const exprMap: Map<string, string> = new Map();
+    // shape: string,
+): Map<string, string[][]> {
+    const exprMap: Map<string, string[][]> = new Map();
     let tags: Array<string> = [];
     // Styling tags
     tags = [
@@ -100,45 +111,44 @@ export function parseDynamicTextParameters(
     for (let i = 0; i < children.length; i++) {
         const exprName = children[i].nodeName;
         if (tags.includes(exprName)) {
+            // Now parse the expression stack
+            // The stack is included in a <expr></expr>
             const expressions = children[i].getElementsByTagName(
                 'expr',
-            );
-            // The text could be dynamic with a expression reference
+            )[0].children;
+            // Init a helper stack
+            const stack: string[][] = [];
+            // Iterate over all expressions
             for (let j = 0; j < expressions.length; j++) {
-                if (
-                    expressions[j].getElementsByTagName('var')[0] !==
-                    undefined
-                ) {
-                    const varName = expressions[j]
-                        .getElementsByTagName('var')[0]
-                        .textContent.toLowerCase();
-                    if (
-                        ComSocket.singleton().oVisuVariables.has(
-                            varName,
-                        )
-                    ) {
-                        exprMap.set(exprName, varName);
-                    } else {
-                        console.warn(
-                            'A variable textfield has no valid variable attached!',
-                        );
+                const ident = expressions[j].tagName;
+                const value = expressions[j].textContent;
+                switch (ident) {
+                    case 'var': {
+                        stack.push(['var', value.toLowerCase()]);
+                        break;
                     }
-                } else {
-                    if (
-                        expressions[j].getElementsByTagName(
-                            'const',
-                        )[0] !== undefined
-                    ) {
-                        const constName = expressions[j]
-                            .getElementsByTagName('const')[0]
-                            .textContent.toLowerCase();
-                    } else {
+                    case 'const': {
+                        stack.push(['const', value]);
+                        break;
+                    }
+                    case 'op': {
+                        stack.push(['op', value]);
+                        break;
+                    }
+                    default: {
                         console.warn(
-                            'A variable textfield has no valid constant attached!',
+                            'The expression ' +
+                                exprName +
+                                ' with ident ' +
+                                ident +
+                                ' which has for value ' +
+                                value +
+                                ' is not attached!',
                         );
                     }
                 }
             }
+            exprMap.set(exprName, stack);
         }
     }
     return exprMap;
@@ -346,9 +356,11 @@ export function parseClickEvent(section: Element): Function {
                         };
                     } else {
                         clickFunction = function (): void {
+                            // TODO check if this is right ???
                             const value = ComSocket.singleton().evalFunction(
                                 [[type, content.toLowerCase()]],
                             )();
+                            // TODO shouldn't we open the value instead ???
                             window.open(content);
                         };
                     }

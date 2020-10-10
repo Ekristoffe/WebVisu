@@ -95,7 +95,11 @@ export default class ComSocket implements IComSocket {
                             let varContent = ComSocket.singleton().oVisuVariables.get(
                                 value,
                             )!.value;
-                            if (varContent === '') {
+                            if (
+                                varContent === null ||
+                                varContent === undefined ||
+                                varContent === ''
+                            ) {
                                 varContent = '0';
                             }
                             interim.push(varContent);
@@ -115,6 +119,49 @@ export default class ComSocket implements IComSocket {
                 }
             }
             return evalRPN(interim);
+        };
+        return returnFunc;
+    }
+
+    getFunction(stack: string[][]): Function {
+        const returnFunc = function () {
+            let interim = '';
+            for (
+                let position = 0;
+                position < stack.length;
+                position++
+            ) {
+                const value = stack[position][1];
+                switch (stack[position][0]) {
+                    case 'var': {
+                        if (
+                            ComSocket.singleton().oVisuVariables.has(
+                                value,
+                            )
+                        ) {
+                            const varContent = ComSocket.singleton().oVisuVariables.get(
+                                value,
+                            )!.value;
+                            if (
+                                varContent === null ||
+                                varContent !== undefined
+                            ) {
+                                interim = interim + varContent;
+                            }
+                        }
+                        break;
+                    }
+                    case 'const': {
+                        interim = interim + value;
+                        break;
+                    }
+                    case 'op': {
+                        interim = interim + value;
+                        break;
+                    }
+                }
+            }
+            return interim;
         };
         return returnFunc;
     }

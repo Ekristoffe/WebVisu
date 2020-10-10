@@ -69,12 +69,12 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
         visuName,
         width,
         height,
-        showFrame,
+        // showFrame,
         clipFrame,
         isoFrame,
         originalFrame,
-        originalScrollableFrame,
-        noFrameOffset,
+        // originalScrollableFrame,
+        // noFrameOffset,
     }) => {
         const [loading, setLoading] = React.useState<boolean>(true);
         const [adaptedXML, setAdaptedXML] = React.useState<Element>(

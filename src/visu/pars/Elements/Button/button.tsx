@@ -65,7 +65,10 @@ export const Button: React.FunctionComponent<Props> = ({
         // Optional properties
         tooltip:
             section.getElementsByTagName('tooltip').length > 0
-                ? section.getElementsByTagName('tooltip')[0].innerHTML
+                ? util.parseText(
+                      section.getElementsByTagName('tooltip')[0]
+                          .textContent,
+                  )
                 : '',
         accessLevels: section.getElementsByTagName('access-levels')
             .length
@@ -81,7 +84,7 @@ export const Button: React.FunctionComponent<Props> = ({
     if (section.getElementsByTagName('text-format').length) {
         const dynamicTextParameters = parseDynamicTextParameters(
             section,
-            button.shape,
+            // button.shape,
         );
         textField = (
             <Textfield

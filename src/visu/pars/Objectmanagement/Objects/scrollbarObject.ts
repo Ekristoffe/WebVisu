@@ -1,6 +1,7 @@
 import ComSocket from '../../../communication/comsocket';
 import { IScrollbarObject } from '../../../Interfaces/jsinterfaces';
 import { IScrollbarShape } from '../../../Interfaces/javainterfaces';
+import { sprintf } from 'sprintf-js';
 
 export function createScrollbarObject(
     scrollbarShape: IScrollbarShape,
@@ -50,6 +51,8 @@ export function createScrollbarObject(
     // Scrollelement width is a sixth of overall length, but maximum as long as 2/3 height
     interim = 0.167 * swap2;
     const b2 = interim < 0.667 * a ? interim : 0.667 * a;
+    // Tooltip
+    const tooltip = scrollbarShape.tooltip;
 
     // Create an object with the initial parameters
     const initial: IScrollbarObject = {
@@ -68,6 +71,7 @@ export function createScrollbarObject(
         value: 0,
         scrollvalue: 0,
         display: 'visible',
+        tooltip: tooltip,
     };
 
     if (dynamicElements.has('expr-invisible')) {
@@ -76,13 +80,15 @@ export function createScrollbarObject(
             element,
         );
         const wrapperFunc = () => {
-            const value = returnFunc();
-            if (value !== undefined) {
-                if (parseInt(value) === 0) {
+            const value = Number(returnFunc());
+            if (value !== null && value !== undefined) {
+                if (value === 0) {
                     return 'visible';
                 } else {
                     return 'hidden';
                 }
+            } else {
+                return 'visible';
             }
         };
         Object.defineProperty(initial, 'display', {
@@ -117,14 +123,48 @@ export function createScrollbarObject(
             get: () => wrapperFunc(),
         });
     }
-
+    // 18) Tooltip
     if (dynamicElements.has('expr-tooltip-display')) {
         const element = dynamicElements!.get('expr-tooltip-display');
-        const returnFunc = ComSocket.singleton().evalFunction(
-            element,
-        );
         Object.defineProperty(initial, 'tooltip', {
-            get: () => returnFunc(),
+            get: function () {
+                let output = '';
+                let parsedTooltip =
+                    tooltip !== null || tooltip !== undefined
+                        ? tooltip
+                        : '';
+                const value = ComSocket.singleton().getFunction(
+                    element,
+                )();
+                try {
+                    if (
+                        parsedTooltip.includes('|<|') ||
+                        parsedTooltip.includes('|>|')
+                    ) {
+                        parsedTooltip = parsedTooltip.replace(
+                            /\|<\|/g,
+                            '<',
+                        );
+                        parsedTooltip = parsedTooltip.replace(
+                            /\|>\|/g,
+                            '>',
+                        );
+                        output = parsedTooltip;
+                    } else {
+                        output = sprintf(parsedTooltip, value);
+                    }
+                } catch {
+                    if (
+                        !(
+                            !parsedTooltip ||
+                            /^\s*$/.test(parsedTooltip)
+                        )
+                    ) {
+                        output = parsedTooltip;
+                    }
+                }
+                return output;
+            },
         });
     }
 

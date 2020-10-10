@@ -120,7 +120,14 @@ export const Circle: React.FunctionComponent<Props> = React.memo(
                                 </ellipse>
                                 {textField === undefined ||
                                 textField === null ? null : (
-                                    <svg>{textField}</svg>
+                                    <svg
+                                        width={state.relCoord.width}
+                                        height={state.relCoord.height}
+                                        x={state.edge}
+                                        y={state.edge}
+                                    >
+                                        {textField}
+                                    </svg>
                                 )}
                             </svg>
                         </svg>
