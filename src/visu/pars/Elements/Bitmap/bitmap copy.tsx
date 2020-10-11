@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as util from '../../Utils/utilfunctions';
+import { IBasicShape } from '../../../Interfaces/javainterfaces';
+import { createVisuObject } from '../../Objectmanagement/objectManager';
 import { Image } from '../Features/Image/image';
 import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
-import { IBasicShape } from '../../../Interfaces/javainterfaces';
 import {
     parseDynamicShapeParameters,
     parseDynamicTextParameters,
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
-import { createVisuObject } from '../../Objectmanagement/objectManager';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -27,50 +27,54 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         shape: 'bitmap',
         hasInsideColor: util.stringToBoolean(
             section.getElementsByTagName('has-inside-color')[0]
-                .innerHTML,
+                .textContent,
         ),
         fillColor: util.rgbToHexString(
-            section.getElementsByTagName('fill-color')[0].innerHTML,
+            section.getElementsByTagName('fill-color')[0].textContent,
         ),
         fillColorAlarm: util.rgbToHexString(
             section.getElementsByTagName('fill-color-alarm')[0]
-                .innerHTML,
+                .textContent,
         ),
         hasFrameColor: util.stringToBoolean(
             section.getElementsByTagName('has-frame-color')[0]
-                .innerHTML,
+                .textContent,
         ),
         frameColor: util.rgbToHexString(
-            section.getElementsByTagName('frame-color')[0].innerHTML,
+            section.getElementsByTagName('frame-color')[0]
+                .textContent,
         ),
         frameColorAlarm: util.rgbToHexString(
             section.getElementsByTagName('frame-color-alarm')[0]
-                .innerHTML,
+                .textContent,
         ),
         lineWidth: Number(
-            section.getElementsByTagName('line-width')[0].innerHTML,
+            section.getElementsByTagName('line-width')[0].textContent,
         ),
-        elemId: section.getElementsByTagName('elem-id')[0].innerHTML,
+        elemId: section.getElementsByTagName('elem-id')[0]
+            .textContent,
         rect: util.stringToArray(
-            section.getElementsByTagName('rect')[0].innerHTML,
+            section.getElementsByTagName('rect')[0].textContent,
         ),
         center: util.stringToArray(
-            section.getElementsByTagName('center')[0].innerHTML,
+            section.getElementsByTagName('center')[0].textContent,
         ),
         hiddenInput: util.stringToBoolean(
-            section.getElementsByTagName('hidden-input')[0].innerHTML,
+            section.getElementsByTagName('hidden-input')[0]
+                .textContent,
         ),
         enableTextInput: util.stringToBoolean(
             section.getElementsByTagName('enable-text-input')[0]
-                .innerHTML,
+                .textContent,
         ),
         // Optional properties
-        tooltip: section.getElementsByTagName('tooltip').length
-            ? util.parseText(
-                  section.getElementsByTagName('tooltip')[0]
-                      .textContent,
-              )
-            : '',
+        tooltip:
+            section.getElementsByTagName('tooltip').length > 0
+                ? util.parseText(
+                      section.getElementsByTagName('tooltip')[0]
+                          .textContent,
+                  )
+                : '',
         accessLevels: section.getElementsByTagName('access-levels')
             .length
             ? util.parseAccessLevels(
@@ -80,6 +84,13 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             : ['rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw'],
     };
 
+    // Parsing the imagefield and returning a jsx object if it exists
+    console.log('imageField');
+    const imageField: JSX.Element = (
+        <Image section={section} inlineElement={false}></Image>
+    );
+
+    // TODO: implement the use of textField
     // Parsing the textfields and returning a jsx object if it exists
     let textField: JSX.Element;
     if (section.getElementsByTagName('text-format').length) {
@@ -87,6 +98,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             section,
             // bitmap.shape,
         );
+        console.log('textField');
         textField = (
             <Textfield
                 section={section}
@@ -97,12 +109,13 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         textField = null;
     }
 
+    // TODO: implement the use of inputfield
     // Parsing the inputfield
     let inputField: JSX.Element;
     if (section.getElementsByTagName('enable-text-input').length) {
         if (
             section.getElementsByTagName('enable-text-input')[0]
-                .innerHTML === 'true'
+                .textContent === 'true'
         ) {
             inputField = <Inputfield section={section}></Inputfield>;
         } else {
@@ -120,10 +133,10 @@ export const Bitmap: React.FunctionComponent<Props> = ({
     const onmousedown = parseTapEvent(section, 'down');
     const onmouseup = parseTapEvent(section, 'up');
 
+    const initial = createVisuObject(bitmap, dynamicShapeParameters);
+
     // Convert object to an observable one
-    const state = useLocalStore(() =>
-        createVisuObject(bitmap, dynamicShapeParameters),
-    );
+    const state = useLocalStore(() => initial);
 
     // Return of the react node
     return useObserver(() => (
@@ -139,37 +152,10 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                 width: state.relCoord.width + 2 * state.edge,
                 height: state.relCoord.height + 2 * state.edge,
             }}
-            onClick={
-                onclick === undefined || onclick === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onclick()
-                    : null
-            }
-            onMouseDown={
-                onmousedown === undefined || onmousedown === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onmousedown()
-                    : null
-            }
-            onMouseUp={
-                onmouseup === undefined || onmouseup === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onmouseup()
-                    : null
-            }
-            onMouseLeave={
-                onmouseup === undefined || onmouseup === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onmouseup()
-                    : null
-            } // We have to reset if somebody leaves the object with pressed key
         >
             {state.readAccess ? (
                 <ErrorBoundary fallback={<div>Oh no</div>}>
+                    {imageField}
                     {inputField}
                     <svg
                         style={{ float: 'left' }}
@@ -219,20 +205,9 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                             }
                             strokeDasharray={state.strokeDashArray}
                         >
-                            <Image
-                                section={section}
-                                inlineElement={false}
-                            ></Image>
                             {textField === undefined ||
                             textField === null ? null : (
-                                <svg
-                                    width={state.relCoord.width}
-                                    height={state.relCoord.height}
-                                    x={state.edge}
-                                    y={state.edge}
-                                >
-                                    {textField}
-                                </svg>
+                                <svg>{textField}</svg>
                             )}
                         </svg>
                     </svg>

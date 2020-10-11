@@ -36,7 +36,7 @@ export const Image: React.FunctionComponent<Props> = ({
         maxHeight: '',
         maxWidth: '',
         // Name of the file
-        fileName: '',
+        filename: '',
         margin: 'auto',
     };
     /*
@@ -49,6 +49,7 @@ export const Image: React.FunctionComponent<Props> = ({
         }
     }
     */
+
     switch (initial.frameType) {
         case 'static': {
             break;
@@ -75,49 +76,49 @@ export const Image: React.FunctionComponent<Props> = ({
             section.getElementsByTagName('file-name')[0].innerHTML
                 .length
         ) {
-            /* */ console.log(
+            console.log(
                 'file-name len',
                 section.getElementsByTagName('file-name').length,
             );
-            /* */ console.log(
+            console.log(
                 'file-name data',
                 section.getElementsByTagName('file-name'),
             );
-            /* */ console.log(
+            console.log(
                 'file-name inner',
                 section.getElementsByTagName('file-name')[0]
                     .innerHTML,
             );
-            const rawFileName = section
+            const rawFilename = section
                 .getElementsByTagName('file-name')[0]
                 .innerHTML.replace(/.*\\/, '')
                 .replace(/].*/, '');
-            /* */ console.log('rawFilename', rawFileName);
+            console.log('rawFilename', rawFilename);
             // Try to get the image from cache
-            get(rawFileName).then((cacheReturn) => {
+            get(rawFilename).then((cacheReturn) => {
                 if (cacheReturn === undefined) {
                     const path =
                         ComSocket.singleton()
                             .getServerURL()
-                            .replace('webvisu.htm', '') + rawFileName;
-                    /* */ console.log('get image', path);
+                            .replace('webvisu.htm', '') + rawFilename;
+                    console.log('get image', path);
                     getImage(path).then((datauri) => {
-                        /* */ console.log(
+                        console.log(
                             'got image',
-                            rawFileName,
+                            rawFilename,
                             datauri,
                         );
-                        state.fileName = datauri;
-                        set(rawFileName, datauri);
+                        state.filename = datauri;
+                        set(rawFilename, datauri);
                     });
                 } else {
-                    state.fileName = cacheReturn as any;
+                    state.filename = cacheReturn as any;
                 }
             });
         }
     }
 
-    // Set the fileName, it could be a variable or static
+    // Set the filename, it could be a variable or static
     if (section.getElementsByTagName('expr-fill-color').length) {
         /* */ console.log(
             'expr-fill-color len',
@@ -134,15 +135,6 @@ export const Image: React.FunctionComponent<Props> = ({
             .getElementsByTagName('var')[0]
             .innerHTML.toLocaleLowerCase();
 
-        Object.defineProperty(initial, 'fileName', {
-            get: function () {
-                return (
-                    '/' +
-                    ComSocket.singleton().oVisuVariables.get(varName)!
-                        .value
-                );
-            },
-        });
         /*
         const rawFilename = ComSocket.singleton()
             .oVisuVariables.get(varName)!
@@ -170,7 +162,6 @@ export const Image: React.FunctionComponent<Props> = ({
             }
         });
         */
-       /*
         Object.defineProperty(state, 'filename', {
             get: function () {
                 const rawFilename = ComSocket.singleton()
@@ -196,7 +187,6 @@ export const Image: React.FunctionComponent<Props> = ({
                 });
             },
         });
-        */
         /*
         Object.defineProperty(state, 'filename', {
             get: function () {
@@ -226,10 +216,11 @@ export const Image: React.FunctionComponent<Props> = ({
         */
     }
 
-    /* */ console.log('state.filename', state.fileName);
+    /* */ console.log('state.filename', state.filename);
     return useObserver(() => (
         <React.Fragment>
-            <image
+            <img
+                src={state.filename}
                 style={{
                     maxHeight: state.maxHeight,
                     maxWidth: state.maxWidth,
@@ -244,8 +235,7 @@ export const Image: React.FunctionComponent<Props> = ({
                     bottom: 0,
                     right: 0,
                 }}
-                href={state.fileName}
-            ></image>
+            ></img>
         </React.Fragment>
     ));
 };

@@ -91,6 +91,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                   )
                 : ['rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw'],
         };
+
         // Parsing the textfields and returning a jsx object if it exists
         let textField: JSX.Element;
         if (section.getElementsByTagName('text-format').length) {
