@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { useObserver, useLocalStore } from 'mobx-react-lite';
 import ComSocket from '../../../../communication/comsocket';
 import { stringToArray } from '../../../Utils/utilfunctions';
 import { getImage } from '../../../Utils/fetchfunctions';
-import { useObserver, useLocalStore } from 'mobx-react-lite';
 import { get, set } from 'idb-keyval';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
     inlineElement: boolean;
 };
 
-export const Image: React.FunctionComponent<Props> = ({
+export const ImageField: React.FunctionComponent<Props> = ({
     section,
     inlineElement,
 }) => {
@@ -33,12 +33,15 @@ export const Image: React.FunctionComponent<Props> = ({
         // Percent dimensions
         percHeight: '',
         percWidth: '',
-        maxHeight: '',
-        maxWidth: '',
+        // maxHeight: '',
+        // maxWidth: '',
         // Name of the file
-        fileName: '',
+        fixedFileName: '',
+        dynamicFileName: '',
         margin: 'auto',
+        // viewBox: '',
     };
+
     /*
     // With surrounding frame?
     if (inlineElement){
@@ -49,13 +52,16 @@ export const Image: React.FunctionComponent<Props> = ({
         }
     }
     */
+
     switch (initial.frameType) {
         case 'static': {
             break;
         }
         case 'isotropic': {
-            initial.maxWidth = initial.inlineDimensions;
-            initial.maxHeight = initial.inlineDimensions;
+            // initial.maxWidth = initial.inlineDimensions;
+            // initial.maxHeight = initial.inlineDimensions;
+            initial.percWidth = initial.inlineDimensions;
+            initial.percHeight = initial.inlineDimensions;
             if (!inlineElement) {
                 initial.margin = 'top';
             }
@@ -64,69 +70,30 @@ export const Image: React.FunctionComponent<Props> = ({
         case 'anisotropic': {
             initial.percWidth = initial.inlineDimensions;
             initial.percHeight = initial.inlineDimensions;
+            // initial.viewBox = '0 0 ' + initial.rectWidth + ' ' + initial.rectHeight;
             break;
         }
     }
-
-    const state = useLocalStore(() => initial);
 
     if (section.getElementsByTagName('file-name').length) {
         if (
             section.getElementsByTagName('file-name')[0].innerHTML
                 .length
         ) {
-            /* */ console.log(
-                'file-name len',
-                section.getElementsByTagName('file-name').length,
-            );
-            /* */ console.log(
-                'file-name data',
-                section.getElementsByTagName('file-name'),
-            );
-            /* */ console.log(
-                'file-name inner',
-                section.getElementsByTagName('file-name')[0]
-                    .innerHTML,
-            );
-            const rawFileName = section
-                .getElementsByTagName('file-name')[0]
-                .innerHTML.replace(/.*\\/, '')
-                .replace(/].*/, '');
-            /* */ console.log('rawFilename', rawFileName);
-            // Try to get the image from cache
-            get(rawFileName).then((cacheReturn) => {
-                if (cacheReturn === undefined) {
-                    const path =
-                        ComSocket.singleton()
-                            .getServerURL()
-                            .replace('webvisu.htm', '') + rawFileName;
-                    /* */ console.log('get image', path);
-                    getImage(path).then((datauri) => {
-                        /* */ console.log(
-                            'got image',
-                            rawFileName,
-                            datauri,
-                        );
-                        state.fileName = datauri;
-                        set(rawFileName, datauri);
-                    });
-                } else {
-                    state.fileName = cacheReturn as any;
-                }
+            Object.defineProperty(initial, 'fixedFileName', {
+                get: function () {
+                    const rawFileName = section
+                        .getElementsByTagName('file-name')[0]
+                        .innerHTML.replace(/.*\\/, '')
+                        .replace(/].*/, '');
+                    return rawFileName;
+                },
             });
         }
     }
 
     // Set the fileName, it could be a variable or static
     if (section.getElementsByTagName('expr-fill-color').length) {
-        /* */ console.log(
-            'expr-fill-color len',
-            section.getElementsByTagName('expr-fill-color').length,
-        );
-        /* */ console.log(
-            'expr-fill-color data',
-            section.getElementsByTagName('expr-fill-color'),
-        );
         const expression = section
             .getElementsByTagName('expr-fill-color')[0]
             .getElementsByTagName('expr');
@@ -134,118 +101,113 @@ export const Image: React.FunctionComponent<Props> = ({
             .getElementsByTagName('var')[0]
             .innerHTML.toLocaleLowerCase();
 
-        Object.defineProperty(initial, 'fileName', {
+        Object.defineProperty(initial, 'dynamicFileName', {
             get: function () {
-                return (
-                    '/' +
-                    ComSocket.singleton().oVisuVariables.get(varName)!
-                        .value
-                );
+                const rawFilename = ComSocket.singleton()
+                    .oVisuVariables.get(varName)!
+                    .value.toLocaleLowerCase();
+                return rawFilename;
             },
         });
-        /*
-        const rawFilename = ComSocket.singleton()
-            .oVisuVariables.get(varName)!
-            .value.toLocaleLowerCase();
+    }
 
-        // Try to get the image from cache
-        get(rawFilename).then((cacheReturn) => {
-            if (cacheReturn === undefined) {
+    const [fileName, setFileName] = React.useState<string>(null);
+
+    React.useEffect(() => {
+        const fetchImage = async function () {
+            let rawFileName: string = null;
+            if (
+                initial.dynamicFileName !== null &&
+                initial.dynamicFileName !== undefined &&
+                initial.dynamicFileName !== ''
+            ) {
+                rawFileName = initial.dynamicFileName;
+            } else if (
+                initial.fixedFileName !== null &&
+                initial.fixedFileName !== undefined &&
+                initial.fixedFileName !== ''
+            ) {
+                rawFileName = initial.fixedFileName;
+            }
+            // Try to get the image from cache
+            let plainImg: string = null;
+            if ((await get(rawFileName)) === undefined) {
                 const path =
                     ComSocket.singleton()
                         .getServerURL()
-                        .replace('webvisu.htm', '') + rawFilename;
-                console.log('get variable image', path);
-                getImage(path).then((datauri) => {
-                    console.log(
-                        'got variable image',
-                        rawFilename,
-                        datauri,
+                        .replace('webvisu.htm', '') + rawFileName;
+                plainImg = await getImage(path);
+                if (plainImg === undefined || plainImg === null) {
+                    console.warn(
+                        'The requested image ' +
+                            rawFileName +
+                            ' is not available!',
                     );
-                    state.filename = datauri;
-                    set(rawFilename, datauri);
-                });
+                } else {
+                    await set(rawFileName, plainImg);
+                }
             } else {
-                state.filename = cacheReturn as any;
+                plainImg = await get(rawFileName);
             }
-        });
-        */
-       /*
-        Object.defineProperty(state, 'filename', {
-            get: function () {
-                const rawFilename = ComSocket.singleton()
-                    .oVisuVariables.get(varName)!
-                    .value.toLocaleLowerCase();
-                // Try to get the image from cache
-                get(rawFilename).then((cacheReturn) => {
-                    if (cacheReturn === undefined) {
-                        const path =
-                            ComSocket.singleton()
-                                .getServerURL()
-                                .replace('webvisu.htm', '') +
-                            rawFilename;
-                        console.log('rawFilename', rawFilename);
-                        getImage(path).then((datauri) => {
-                            console.log('datauri', datauri);
-                            set(rawFilename, datauri);
-                            return datauri;
-                        });
-                    } else {
-                        return cacheReturn as any;
-                    }
-                });
-            },
-        });
-        */
-        /*
-        Object.defineProperty(state, 'filename', {
-            get: function () {
-                const rawFilename = ComSocket.singleton()
-                    .oVisuVariables.get(varName)!
-                    .value.toLocaleLowerCase();
-                // Try to get the image from cache
-                get(rawFilename).then((cacheReturn) => {
-                    if (cacheReturn === undefined) {
-                        const path =
-                            ComSocket.singleton()
-                                .getServerURL()
-                                .replace('webvisu.htm', '') +
-                            rawFilename;
-                        getImage(path).then((datauri) => {
-                            set(rawFilename, datauri);
-                            state.filename = datauri;
-                            return datauri;
-                        });
-                    } else {
-                        state.filename = cacheReturn as any;
-                        return cacheReturn as any;
-                    }
-                });
-            },
-        });
-        */
-    }
 
-    /* */ console.log('state.filename', state.fileName);
+            if (plainImg !== null) {
+                setFileName(plainImg);
+            }
+        };
+        fetchImage();
+    }, [initial.fixedFileName, initial.dynamicFileName]);
+
+    const state = useLocalStore(() => initial);
+
     return useObserver(() => (
         <React.Fragment>
-            <image
-                style={{
-                    maxHeight: state.maxHeight,
-                    maxWidth: state.maxWidth,
-                    width: state.percWidth,
-                    height: state.percHeight,
-                    position: 'absolute',
-                    pointerEvents: 'none',
-                    textAlign: 'center',
-                    margin: state.margin,
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0,
-                }}
-                href={state.fileName}
-            ></image>
+            <svg
+                width={inlineElement ? initial.rectWidth - 4 : '100%'}
+                height={
+                    inlineElement ? initial.rectHeight - 4 : '100%'
+                }
+                /*
+                viewBox={
+                    state.frameType === 'anisotropic'
+                        ? state.viewBox
+                        : null
+                }
+                */
+            >
+                <image
+                    style={{
+                        // maxHeight: state.maxHeight,
+                        // maxWidth: state.maxWidth,
+                        width: state.percWidth,
+                        height: state.percHeight,
+                        position: 'absolute',
+                        pointerEvents: 'none',
+                        textAlign: 'center',
+                        margin: state.margin,
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0,
+                    }}
+                    preserveAspectRatio={
+                        state.frameType === 'anisotropic'
+                            ? 'none'
+                            : state.frameType === 'isotropic'
+                            ? 'xMinYMin meet'
+                            : null
+                    }
+                    href={
+                        (state.dynamicFileName !== null &&
+                            state.dynamicFileName !== undefined &&
+                            state.dynamicFileName !== '') ||
+                        (state.fixedFileName !== null &&
+                            state.fixedFileName !== undefined &&
+                            state.fixedFileName !== '')
+                            ? fileName
+                            : null
+                    }
+                ></image>
+            </svg>
         </React.Fragment>
     ));
 };

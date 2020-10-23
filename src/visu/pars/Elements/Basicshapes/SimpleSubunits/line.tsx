@@ -7,7 +7,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 type Props = {
     simpleShape: IBasicShape;
     textField: JSX.Element | undefined;
-    input: JSX.Element;
+    inputField: JSX.Element;
     dynamicParameters: Map<string, string[][]>;
     onmousedown: Function;
     onmouseup: Function;
@@ -18,7 +18,7 @@ export const Line: React.FunctionComponent<Props> = React.memo(
     ({
         simpleShape,
         textField,
-        input,
+        inputField,
         dynamicParameters,
         onclick,
         onmousedown,
@@ -55,7 +55,7 @@ export const Line: React.FunctionComponent<Props> = React.memo(
             >
                 {state.readAccess ? (
                     <ErrorBoundary fallback={<div>Oh no</div>}>
-                        {input}
+                        {inputField}
                         <svg
                             style={{ float: 'left' }}
                             width={

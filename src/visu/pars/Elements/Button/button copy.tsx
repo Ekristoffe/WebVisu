@@ -10,7 +10,7 @@ import {
 } from '../Features/Events/eventManager';
 import { createVisuObject } from '../../Objectmanagement/objectManager';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
-import { Image } from '../Features/Image/image';
+import { ImageField } from '../Features/Image/image';
 import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
@@ -171,10 +171,10 @@ export const Button: React.FunctionComponent<Props> = ({
                         }}
                     ></button>
                     {pictureInside ? (
-                        <Image
+                        <ImageField
                             section={section}
                             inlineElement={true}
-                        ></Image>
+                        ></ImageField>
                     ) : null}
                     <div
                         style={{

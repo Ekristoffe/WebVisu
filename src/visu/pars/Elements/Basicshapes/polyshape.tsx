@@ -153,7 +153,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                     <Polygon
                         polyShape={polyShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
@@ -167,7 +167,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                     <Bezier
                         polyShape={polyShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
@@ -181,7 +181,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                     <Polyline
                         polyShape={polyShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}

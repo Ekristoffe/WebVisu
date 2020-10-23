@@ -42,6 +42,8 @@ export function createBasicObject(
     // Tooltip
     const tooltip = basicShape.tooltip;
 
+    const shape = basicShape.shape;
+
     // Create an object with the initial parameters
     const initial: IBasicObject = {
         // Variables will be initialised with the parameter values
@@ -87,7 +89,6 @@ export function createBasicObject(
     // A <expr-..-> tag initiate a variable, const or a placeholder
     // We have to implement the const value, the variable or the placeholdervalue if available for the static value
     // Polyshapes and Simpleshapes have the same <expr-...> possibilities
-
     if (dynamicElements.has('expr-toggle-color')) {
         const element = dynamicElements.get('expr-toggle-color');
         const returnFunc = ComSocket.singleton().evalFunction(
@@ -105,6 +106,26 @@ export function createBasicObject(
             get: () => wrapperFunc(),
         });
     }
+    if (shape === 'button') {
+        // const element = dynamicElements.get('expr-toggle-color');
+        //  const returnFunc = ComSocket.singleton().evalFunction(
+        //     element,
+        // );
+        const wrapperFunc = () => {
+            // const value = Number(returnFunc());
+            const value = 0;
+            if (value !== null && value !== undefined) {
+                return value !== 0;
+            } else {
+                return false;
+            }
+        };
+        Object.defineProperty(initial, 'alarm', {
+            get: () => wrapperFunc(),
+        });
+
+    }
+
     // 2) Set fill color
     if (dynamicElements.has('expr-fill-color')) {
         const element = dynamicElements!.get('expr-fill-color');
@@ -247,6 +268,7 @@ export function createBasicObject(
             },
         });
     }
+
     // 9) line-width
     if (dynamicElements.has('expr-line-width')) {
         const element = dynamicElements!.get('expr-line-width');
@@ -354,9 +376,9 @@ export function createBasicObject(
             get: function () {
                 let output = '';
                 let parsedTooltip =
-                    tooltip !== null || tooltip !== undefined
-                        ? tooltip
-                        : '';
+                    tooltip === null || tooltip === undefined
+                        ? ''
+                        : tooltip;
                 const value = ComSocket.singleton().getFunction(
                     element,
                 )();
@@ -456,6 +478,7 @@ export function createBasicObject(
             }
         },
     });
+
     Object.defineProperty(initial, 'strokeWidth', {
         get: function () {
             return initial.lineWidth;

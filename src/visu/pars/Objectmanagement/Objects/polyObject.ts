@@ -206,16 +206,21 @@ export function createPolyObject(
             get: () => wrapperFunc(),
         });
     }
-    // 7) Set fill flag state
+
+    // 7) The fill flags state: 0 = show color, >0 = ignore setting
     if (dynamicElements.has('expr-fill-flags')) {
         const element = dynamicElements!.get('expr-fill-flags');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
         const wrapperFunc = () => {
-            const value = returnFunc();
-            if (value === '1') {
-                return false;
+            const value = Number(returnFunc());
+            if (value !== null && value !== undefined) {
+                if (value === 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return true;
             }
@@ -224,7 +229,8 @@ export function createPolyObject(
             get: () => wrapperFunc(),
         });
     }
-    // 8) Set frame flag state
+
+    // 8) Display of frame: 0 full, 1 dashed ( _ _ _ ), 2 dotted ( .... ), 3 dash-point ( _._._ ), 4 dash-point-point (_.._.. ), 8 blind out line
     if (dynamicElements.has('expr-frame-flags')) {
         const element = dynamicElements!.get('expr-frame-flags');
         const returnFunc = ComSocket.singleton().evalFunction(
@@ -232,31 +238,32 @@ export function createPolyObject(
         );
         Object.defineProperty(initial, 'hasFrameColor', {
             get: function () {
-                const value = returnFunc() !== '8';
-                return value;
+                const value = Number(returnFunc());
+                return (value & 8) === 0;
             },
         });
         Object.defineProperty(initial, 'strokeDashArray', {
             get: function () {
-                const value = returnFunc();
-                if (initial.lineWidth <= 1) {
-                    if (value === '4') {
-                        return '20,10,5,5,5,10';
-                    } else if (value === '3') {
-                        return '20,5,5,5';
-                    } else if (value === '2') {
-                        return '5,5';
-                    } else if (value === '1') {
-                        return '10,10';
-                    } else {
-                        return '0';
-                    }
+                const value = Number(returnFunc());
+                // if (initial.lineWidth <= 1) {
+                if (value === 4) {
+                    return '8,2,2,2,2,2';
+                } else if (value === 3) {
+                    return '8,4,2,4';
+                } else if (value === 2) {
+                    return '2, 2';
+                } else if (value === 1) {
+                    return '13, 5';
                 } else {
                     return '0';
                 }
+                // } else {
+                //     return '0';
+                // }
             },
         });
     }
+
     // 9) line-width
     if (dynamicElements.has('expr-line-width')) {
         const element = dynamicElements!.get('expr-line-width');
@@ -364,9 +371,9 @@ export function createPolyObject(
             get: function () {
                 let output = '';
                 let parsedTooltip =
-                    tooltip !== null || tooltip !== undefined
-                        ? tooltip
-                        : '';
+                    tooltip === null || tooltip === undefined
+                        ? ''
+                        : tooltip;
                 const value = ComSocket.singleton().getFunction(
                     element,
                 )();
@@ -427,14 +434,14 @@ export function createPolyObject(
     // The fill color
     Object.defineProperty(initial, 'fill', {
         get: function () {
-            if ((initial.alarm ? 1 : 0) === 0) {
+            if (initial.alarm) {
+                return initial.alarmFillColor;
+            } else {
                 if (initial.hasFillColor) {
                     return initial.normalFillColor;
                 } else {
                     return 'none';
                 }
-            } else {
-                return initial.alarmFillColor;
             }
         },
     });
@@ -446,32 +453,26 @@ export function createPolyObject(
 
     Object.defineProperty(initial, 'stroke', {
         get: function () {
-            if ((initial.alarm ? 1 : 0) === 0) {
+            if (initial.alarm) {
+                return initial.alarmFrameColor;
+            } else {
                 if (initial.hasFrameColor) {
                     return initial.normalFrameColor;
                 } else {
                     return 'none';
                 }
-            } else {
-                return initial.alarmFrameColor;
             }
         },
     });
 
     Object.defineProperty(initial, 'edge', {
         get: function () {
-            if (initial.hasFrameColor || initial.alarm) {
-                if (initial.lineWidth === 0) {
-                    return 1;
-                } else {
-                    return initial.lineWidth;
-                }
-            } else {
-                return 0;
-            }
+            return initial.lineWidth;
         },
     });
 
+    // The transformed corner coordinates depends on the shapetype. The rotating operation is different for simpleshapes and polyshapes
+    // Polyshapes:
     Object.defineProperty(initial, 'transformedCornerCoord', {
         get: function () {
             const corners = computeMinMaxCoord(initial.absPoints);

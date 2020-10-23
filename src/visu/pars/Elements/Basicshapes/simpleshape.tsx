@@ -144,7 +144,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                     <Roundrect
                         simpleShape={simpleShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
@@ -158,7 +158,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                     <Circle
                         simpleShape={simpleShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
@@ -172,7 +172,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                     <Line
                         simpleShape={simpleShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
@@ -186,7 +186,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                     <Rectangle
                         simpleShape={simpleShapeBasis}
                         textField={textField}
-                        input={inputField}
+                        inputField={inputField}
                         dynamicParameters={dynamicShapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}

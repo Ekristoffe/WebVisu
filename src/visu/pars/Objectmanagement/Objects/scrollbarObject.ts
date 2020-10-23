@@ -130,9 +130,9 @@ export function createScrollbarObject(
             get: function () {
                 let output = '';
                 let parsedTooltip =
-                    tooltip !== null || tooltip !== undefined
-                        ? tooltip
-                        : '';
+                    tooltip === null || tooltip === undefined
+                        ? ''
+                        : tooltip;
                 const value = ComSocket.singleton().getFunction(
                     element,
                 )();

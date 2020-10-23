@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as util from '../../Utils/utilfunctions';
-import { Image } from '../Features/Image/image';
+import { ImageField } from '../Features/Image/image';
 import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
 import { IBasicShape } from '../../../Interfaces/javainterfaces';
@@ -22,7 +22,6 @@ export const Bitmap: React.FunctionComponent<Props> = ({
     section,
 }) => {
     // Parsing of the fixed parameters
-
     const bitmap: IBasicShape = {
         shape: 'bitmap',
         hasInsideColor: util.stringToBoolean(
@@ -97,7 +96,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         textField = null;
     }
 
-    // Parsing the inputfield
+    // Parsing the inputfield and returning a jsx object if it exists
     let inputField: JSX.Element;
     if (section.getElementsByTagName('enable-text-input').length) {
         if (
@@ -111,6 +110,23 @@ export const Bitmap: React.FunctionComponent<Props> = ({
     } else {
         inputField = null;
     }
+
+    // Parsing the imageField and returning a jsx object if it exists
+    let imageField: JSX.Element;
+    if (
+        section.getElementsByTagName('file-name').length ||
+        section.getElementsByTagName('expr-fill-color').length
+    ) {
+        imageField = (
+            <ImageField
+                section={section}
+                inlineElement={false}
+            ></ImageField>
+        );
+    } else {
+        imageField = null;
+    }
+
     // Parsing of observable events (like toggle color)
     const dynamicShapeParameters = parseDynamicShapeParameters(
         section,
@@ -139,102 +155,65 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                 width: state.relCoord.width + 2 * state.edge,
                 height: state.relCoord.height + 2 * state.edge,
             }}
-            onClick={
-                onclick === undefined || onclick === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onclick()
-                    : null
-            }
-            onMouseDown={
-                onmousedown === undefined || onmousedown === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onmousedown()
-                    : null
-            }
-            onMouseUp={
-                onmouseup === undefined || onmouseup === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onmouseup()
-                    : null
-            }
-            onMouseLeave={
-                onmouseup === undefined || onmouseup === null
-                    ? null
-                    : state.writeAccess
-                    ? () => onmouseup()
-                    : null
-            } // We have to reset if somebody leaves the object with pressed key
         >
             {state.readAccess ? (
                 <ErrorBoundary fallback={<div>Oh no</div>}>
                     {inputField}
                     <svg
-                        style={{ float: 'left' }}
+                        onClick={
+                            onclick === undefined || onclick === null
+                                ? null
+                                : state.writeAccess
+                                ? () => onclick()
+                                : null
+                        }
+                        onMouseDown={
+                            onmousedown === undefined ||
+                            onmousedown === null
+                                ? null
+                                : state.writeAccess
+                                ? () => onmousedown()
+                                : null
+                        }
+                        onMouseUp={
+                            onmouseup === undefined ||
+                            onmouseup === null
+                                ? null
+                                : state.writeAccess
+                                ? () => onmouseup()
+                                : null
+                        }
+                        onMouseLeave={
+                            onmouseup === undefined ||
+                            onmouseup === null
+                                ? null
+                                : state.writeAccess
+                                ? () => onmouseup()
+                                : null
+                        } // We have to reset if somebody leaves the object with pressed key
                         width={state.relCoord.width + 2 * state.edge}
                         height={
                             state.relCoord.height + 2 * state.edge
                         }
+                        strokeDasharray={state.strokeDashArray}
                     >
-                        <svg
-                            onClick={
-                                onclick === undefined ||
-                                onclick === null
-                                    ? null
-                                    : state.writeAccess
-                                    ? () => onclick()
-                                    : null
-                            }
-                            onMouseDown={
-                                onmousedown === undefined ||
-                                onmousedown === null
-                                    ? null
-                                    : state.writeAccess
-                                    ? () => onmousedown()
-                                    : null
-                            }
-                            onMouseUp={
-                                onmouseup === undefined ||
-                                onmouseup === null
-                                    ? null
-                                    : state.writeAccess
-                                    ? () => onmouseup()
-                                    : null
-                            }
-                            onMouseLeave={
-                                onmouseup === undefined ||
-                                onmouseup === null
-                                    ? null
-                                    : state.writeAccess
-                                    ? () => onmouseup()
-                                    : null
-                            } // We have to reset if somebody leaves the object with pressed key
-                            width={
-                                state.relCoord.width + 2 * state.edge
-                            }
-                            height={
-                                state.relCoord.height + 2 * state.edge
-                            }
-                            strokeDasharray={state.strokeDashArray}
-                        >
-                            <Image
-                                section={section}
-                                inlineElement={false}
-                            ></Image>
-                            {textField === undefined ||
-                            textField === null ? null : (
-                                <svg
-                                    width={state.relCoord.width}
-                                    height={state.relCoord.height}
-                                    x={state.edge}
-                                    y={state.edge}
-                                >
-                                    {textField}
-                                </svg>
-                            )}
-                        </svg>
+                        {state.tooltip === undefined ||
+                        state.tooltip === null ||
+                        state.tooltip === '' ? null : (
+                            <title>{state.tooltip}</title>
+                        )}
+                        {imageField}
+                        {textField === undefined ||
+                        textField === null ? null : (
+                            <svg
+                                width={state.relCoord.width}
+                                height={state.relCoord.height}
+                                x={state.edge}
+                                y={state.edge}
+                            >
+                                {textField}
+                            </svg>
+                        )}
                     </svg>
                 </ErrorBoundary>
             ) : null}

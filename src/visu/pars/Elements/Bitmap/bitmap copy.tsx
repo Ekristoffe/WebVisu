@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as util from '../../Utils/utilfunctions';
 import { IBasicShape } from '../../../Interfaces/javainterfaces';
 import { createVisuObject } from '../../Objectmanagement/objectManager';
-import { Image } from '../Features/Image/image';
+import { ImageField } from '../Features/Image/image';
 import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
 import {
@@ -87,7 +87,11 @@ export const Bitmap: React.FunctionComponent<Props> = ({
     // Parsing the imagefield and returning a jsx object if it exists
     console.log('imageField');
     const imageField: JSX.Element = (
-        <Image section={section} inlineElement={false}></Image>
+        <ImageField
+            section={section}
+            inlineElement={false}
+        ></ImageField>
+        // <ImageField section={section}></ImageField>
     );
 
     // TODO: implement the use of textField
