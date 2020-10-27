@@ -40,10 +40,12 @@ function createInitial(section: Element) {
         display: 'hidden' as any,
     };
 
-    const dynamicElements = parseDynamicShapeParameters(section);
+    const dynamicShapeParameters = parseDynamicShapeParameters(
+        section,
+    );
     // Invisble?
-    if (dynamicElements.has('expr-invisible')) {
-        const element = dynamicElements!.get('expr-invisible');
+    if (dynamicShapeParameters.has('expr-invisible')) {
+        const element = dynamicShapeParameters!.get('expr-invisible');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );

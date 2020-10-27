@@ -85,7 +85,6 @@ export const Bitmap: React.FunctionComponent<Props> = ({
     };
 
     // Parsing the imagefield and returning a jsx object if it exists
-    console.log('imageField');
     const imageField: JSX.Element = (
         <ImageField
             section={section}
@@ -102,7 +101,6 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             section,
             // bitmap.shape,
         );
-        console.log('textField');
         textField = (
             <Textfield
                 section={section}

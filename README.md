@@ -49,13 +49,13 @@ The WebVisu-SPA is still in progress but already contains numerous functionaliti
 | Bezier               | :heavy_check_mark: |
 | Polyline             | :heavy_check_mark: |
 | Sector               | :heavy_check_mark: |
-| Bitmap               | :heavy_check_mark: |
+| Bitmap<sup>1</sup>   | :heavy_check_mark: |
 | Subvisualisation     | :heavy_check_mark: |
 | Button               | :heavy_check_mark: |
 | WMF-File             | :heavy_check_mark: |
 | Table                |      :wrench:      |
 | Alarm table          | :heavy_minus_sign: |
-| Slider<sup>1</sup>   | :heavy_check_mark: |
+| Slider<sup>2</sup>   | :heavy_check_mark: |
 | Button               | :heavy_check_mark: |
 | Gauge                | :heavy_check_mark: |
 | Bar display          | :heavy_check_mark: |
@@ -73,4 +73,59 @@ The WebVisu-SPA is still in progress but already contains numerous functionaliti
 
 ## Comments
 
-<sup>1</sup> : Works fine with Firefox. Sliderchange has to be throttled on Chrome in the future.
+<sup>1</sup> : The "Background transparent" (select a specific color to become transparent) doesn't work.
+<sup>2</sup> : Works fine with Firefox. Sliderchange has to be throttled on Chrome in the future.
+
+## Dependencies
+
+## - Dependencies
+
+|         Main         |         Dev         |         npm         |
+| -------------------- | ------------------- | ------------------- |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/@material-ui/core) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/@material-ui/core/Dev) | ![npm](https://img.shields.io/npm/v/@material-ui/core) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/idb-keyval) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/idb-keyval/Dev) | ![npm](https://img.shields.io/npm/v/idb-keyval) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/jszip) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/jszip/Dev) | ![npm](https://img.shields.io/npm/v/jszip) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/mobx) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/mobx/Dev) | ![npm](https://img.shields.io/npm/v/mobx) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/mobx-react) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/mobx-react/Dev) | ![npm](https://img.shields.io/npm/v/mobx-react) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/mobx-react-lite) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/mobx-react-lite/Dev) | ![npm](https://img.shields.io/npm/v/mobx-react-lite) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react/Dev) | ![npm](https://img.shields.io/npm/v/react) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-dom) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-dom/Dev) | ![npm](https://img.shields.io/npm/v/react-dom) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-error-boundary) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-error-boundary/Dev) | ![npm](https://img.shields.io/npm/v/react-error-boundary) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-hooks) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-hooks/Dev) | ![npm](https://img.shields.io/npm/v/react-hooks) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-uid) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/react-uid/Dev) | ![npm](https://img.shields.io/npm/v/react-uid) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/reactjs-popup) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/reactjs-popup/Dev) | ![npm](https://img.shields.io/npm/v/reactjs-popup) |
+| ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/sprintf-js) | ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/sprintf-js/Dev) | ![npm](https://img.shields.io/npm/v/sprintf-js) |
+
+
+    "devDependencies": {
+        "@types/react": "^16.9.53",
+        "@types/react-dom": "^16.9.8",
+        "@types/sprintf-js": "^1.1.2",
+        "@typescript-eslint/eslint-plugin": "^4.6.0",
+        "@typescript-eslint/parser": "^4.6.0",
+        "css-loader": "^4.3.0",
+        "eslint": "^7.12.1",
+        "eslint-config-prettier": "^6.14.0",
+        "eslint-loader": "^4.0.2",
+        "eslint-plugin-prettier": "^3.1.4",
+        "eslint-plugin-react-hooks": "^4.2.0",
+        "html-webpack-plugin": "^4.5.0",
+        "prettier": "^2.1.2",
+        "source-map-loader": "^1.1.1",
+        "style-loader": "^1.3.0",
+        "ts-loader": "^8.0.7",
+        "typescript": "^4.0.5",
+        "webpack": "^4.44.2",
+        "webpack-cli": "^3.3.12"
+    },
+![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/tree/Dev/@material-ui/core)  
+![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/tree/Dev/moment)
+
+![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/dev/eslint)
+
+![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/dev/eslint/Dev)
+
+
+
+![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/Ekristoffe/WebVisu/@material-ui/core/Dev)
+![npm](https://img.shields.io/npm/v/@material-ui/core)

@@ -33,7 +33,7 @@ export const Rectangle: React.FunctionComponent<Props> = React.memo(
             <div
                 style={{
                     cursor: 'auto',
-                    overflow: 'hidden',
+                    overflow: 'visible',
                     pointerEvents: state.eventType,
                     visibility: state.display,
                     position: 'absolute',
@@ -55,6 +55,7 @@ export const Rectangle: React.FunctionComponent<Props> = React.memo(
                             height={
                                 state.relCoord.height + 2 * state.edge
                             }
+                            overflow="visible"
                         >
                             <svg
                                 onClick={
@@ -100,6 +101,7 @@ export const Rectangle: React.FunctionComponent<Props> = React.memo(
                                 strokeDasharray={
                                     state.strokeDashArray
                                 }
+                                overflow="visible"
                             >
                                 <rect
                                     width={state.relCoord.width}
@@ -109,6 +111,7 @@ export const Rectangle: React.FunctionComponent<Props> = React.memo(
                                     fill={state.fill}
                                     stroke={state.stroke}
                                     strokeWidth={state.strokeWidth}
+                                    transform={state.transform}
                                 >
                                     <title>{state.tooltip}</title>
                                 </rect>

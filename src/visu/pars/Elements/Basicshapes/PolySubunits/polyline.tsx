@@ -50,6 +50,7 @@ export const Polyline: React.FunctionComponent<Props> = ({
                     style={{ float: 'left' }}
                     width={state.relCoord.width + 2 * state.edge}
                     height={state.relCoord.height + 2 * state.edge}
+                    overflow="visible"
                 >
                     <svg
                         onClick={
@@ -76,6 +77,7 @@ export const Polyline: React.FunctionComponent<Props> = ({
                                 : () => onmouseup()
                         } // We have to reset if somebody leaves the object with pressed key
                         strokeDasharray={state.strokeDashArray}
+                        overflow="visible"
                     >
                         <polyline
                             points={coordArrayToString(
@@ -84,6 +86,7 @@ export const Polyline: React.FunctionComponent<Props> = ({
                             fill={state.fill}
                             strokeWidth={state.strokeWidth}
                             stroke={state.stroke}
+                            transform={state.transform}
                         />
                         <title>{state.tooltip}</title>
                     </svg>
@@ -96,6 +99,7 @@ export const Polyline: React.FunctionComponent<Props> = ({
                             height={
                                 state.relCoord.height + 2 * state.edge
                             }
+                            overflow="visible"
                         >
                             {textField}
                         </svg>

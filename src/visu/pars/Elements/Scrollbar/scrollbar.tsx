@@ -45,7 +45,7 @@ export const Scrollbar: React.FunctionComponent<Props> = ({
         return (
             <HorizontalScrollbar
                 shape={scrollbar}
-                dynamicParameters={dynamicShapeParameters}
+                dynamicShapeParameters={dynamicShapeParameters}
                 updateFunction={update}
             ></HorizontalScrollbar>
         );
@@ -53,7 +53,7 @@ export const Scrollbar: React.FunctionComponent<Props> = ({
         return (
             <VerticalScrollbar
                 shape={scrollbar}
-                dynamicParameters={dynamicShapeParameters}
+                dynamicShapeParameters={dynamicShapeParameters}
                 updateFunction={update}
             ></VerticalScrollbar>
         );

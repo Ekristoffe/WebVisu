@@ -5,14 +5,14 @@ import ComSocket from '../../../../communication/comsocket';
 type Props = {
     textLine: string;
     section: Element;
-    dynamicParameters: Map<string, string[][]>;
+    dynamicTextParameters: Map<string, string[][]>;
     numberOfLines: number;
     firstItem: boolean;
 };
 
 export const Textline: React.FunctionComponent<Props> = ({
     section,
-    dynamicParameters,
+    dynamicTextParameters,
     textLine,
     numberOfLines,
     firstItem,
@@ -35,8 +35,8 @@ export const Textline: React.FunctionComponent<Props> = ({
         textOutput: '',
     };
 
-    if (dynamicParameters.has('expr-text-flags')) {
-        const element = dynamicParameters!.get('expr-text-flags');
+    if (dynamicTextParameters.has('expr-text-flags')) {
+        const element = dynamicTextParameters!.get('expr-text-flags');
         Object.defineProperty(initial, 'textAlignHorz', {
             get: function () {
                 const value = Number(

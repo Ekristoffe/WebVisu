@@ -95,22 +95,14 @@ export const Piechart: React.FunctionComponent<Props> = ({
     // so we have to calculate the rect coordinates separatly
     piechart.rect = util.computePiechartRectCoord(piechart.points);
 
-    // Parsing the textfields and returning a jsx object if it exists
-    let textField: JSX.Element;
-    if (section.getElementsByTagName('text-format').length) {
-        const dynamicTextParameters = parseDynamicTextParameters(
-            section,
-            // piechart.shape,
-        );
-        textField = (
-            <Textfield
-                section={section}
-                dynamicParameters={dynamicTextParameters}
-            ></Textfield>
-        );
-    } else {
-        textField = null;
-    }
+    // Parsing of observable events (like toggle color)
+    const dynamicShapeParameters = parseDynamicShapeParameters(
+        section,
+    );
+    // Parsing of user events that causes a reaction like toggle or pop up input
+    const onclick = parseClickEvent(section);
+    const onmousedown = parseTapEvent(section, 'down');
+    const onmouseup = parseTapEvent(section, 'up');
 
     // Parsing the inputfield
     let inputField: JSX.Element;
@@ -127,14 +119,23 @@ export const Piechart: React.FunctionComponent<Props> = ({
         inputField = null;
     }
 
-    // Parsing of observable events (like toggle color)
-    const dynamicShapeParameters = parseDynamicShapeParameters(
-        section,
-    );
-    // Parsing of user events that causes a reaction like toggle or pop up input
-    const onclick = parseClickEvent(section);
-    const onmousedown = parseTapEvent(section, 'down');
-    const onmouseup = parseTapEvent(section, 'up');
+    // Parsing the textfields and returning a jsx object if it exists
+    let textField: JSX.Element;
+    if (section.getElementsByTagName('text-format').length) {
+        const dynamicTextParameters = parseDynamicTextParameters(
+            section,
+            // piechart.shape,
+        );
+        textField = (
+            <Textfield
+                section={section}
+                dynamicTextParameters={dynamicTextParameters}
+                dynamicShapeParameters={dynamicShapeParameters}
+            ></Textfield>
+        );
+    } else {
+        textField = null;
+    }
 
     const initial = createVisuObject(
         piechart,
@@ -160,6 +161,7 @@ export const Piechart: React.FunctionComponent<Props> = ({
                 style={{ float: 'left' }}
                 width={state.relCoord.width + 2 * state.edge}
                 height={state.relCoord.height + 2 * state.edge}
+                overflow="visible"
             >
                 <svg
                     onClick={
@@ -192,18 +194,21 @@ export const Piechart: React.FunctionComponent<Props> = ({
                             : null
                     } // We have to reset if somebody leaves the object with pressed key
                     strokeDasharray={state.strokeDashArray}
+                    overflow="visible"
                 >
                     <path
                         d={state.piechartPath}
                         stroke={state.stroke}
                         strokeWidth={state.strokeWidth}
                         fill={state.fill}
+                        transform={state.transform}
                     ></path>
                     <title>{state.tooltip}</title>
                 </svg>
                 <svg
                     width={state.relCoord.width + 2 * state.edge}
                     height={state.relCoord.height + 2 * state.edge}
+                    overflow="visible"
                 >
                     {textField}
                 </svg>

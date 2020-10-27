@@ -6,18 +6,18 @@ import { createVisuObject } from '../../Objectmanagement/objectManager';
 
 type Props = {
     shape: IScrollbarShape;
-    dynamicParameters: Map<string, string[][]>;
+    dynamicShapeParameters: Map<string, string[][]>;
     updateFunction: Function;
 };
 
 export const HorizontalScrollbar: React.FunctionComponent<Props> = ({
     shape,
-    dynamicParameters,
+    dynamicShapeParameters,
     updateFunction,
 }) => {
     // Convert object to an observable one
     const state = useLocalStore(() =>
-        createVisuObject(shape, dynamicParameters),
+        createVisuObject(shape, dynamicShapeParameters),
     );
     // We have to calculate the values that are specific of orientation
     const centerx = state.b1 / 2;

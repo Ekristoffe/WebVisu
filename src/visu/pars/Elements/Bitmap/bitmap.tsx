@@ -79,22 +79,14 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             : ['rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw'],
     };
 
-    // Parsing the textfields and returning a jsx object if it exists
-    let textField: JSX.Element;
-    if (section.getElementsByTagName('text-format').length) {
-        const dynamicTextParameters = parseDynamicTextParameters(
-            section,
-            // bitmap.shape,
-        );
-        textField = (
-            <Textfield
-                section={section}
-                dynamicParameters={dynamicTextParameters}
-            ></Textfield>
-        );
-    } else {
-        textField = null;
-    }
+    // Parsing of observable events (like toggle color)
+    const dynamicShapeParameters = parseDynamicShapeParameters(
+        section,
+    );
+    // Parsing of user events that causes a reaction like toggle or pop up input
+    const onclick = parseClickEvent(section);
+    const onmousedown = parseTapEvent(section, 'down');
+    const onmouseup = parseTapEvent(section, 'up');
 
     // Parsing the inputfield and returning a jsx object if it exists
     let inputField: JSX.Element;
@@ -127,14 +119,23 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         imageField = null;
     }
 
-    // Parsing of observable events (like toggle color)
-    const dynamicShapeParameters = parseDynamicShapeParameters(
-        section,
-    );
-    // Parsing of user events that causes a reaction like toggle or pop up input
-    const onclick = parseClickEvent(section);
-    const onmousedown = parseTapEvent(section, 'down');
-    const onmouseup = parseTapEvent(section, 'up');
+    // Parsing the textfields and returning a jsx object if it exists
+    let textField: JSX.Element;
+    if (section.getElementsByTagName('text-format').length) {
+        const dynamicTextParameters = parseDynamicTextParameters(
+            section,
+            // bitmap.shape,
+        );
+        textField = (
+            <Textfield
+                section={section}
+                dynamicTextParameters={dynamicTextParameters}
+                dynamicShapeParameters={dynamicShapeParameters}
+            ></Textfield>
+        );
+    } else {
+        textField = null;
+    }
 
     // Convert object to an observable one
     const state = useLocalStore(() =>
@@ -146,7 +147,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
         <div
             style={{
                 cursor: 'auto',
-                overflow: 'hidden',
+                overflow: 'visible',
                 pointerEvents: state.eventType,
                 visibility: state.display,
                 position: 'absolute',
@@ -196,6 +197,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                             state.relCoord.height + 2 * state.edge
                         }
                         strokeDasharray={state.strokeDashArray}
+                        overflow="visible"
                     >
                         {state.tooltip === undefined ||
                         state.tooltip === null ||
@@ -203,6 +205,18 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                             <title>{state.tooltip}</title>
                         )}
                         {imageField}
+                        {state.hasFrameColor ? (
+                            <rect
+                                width={state.relCoord.width}
+                                height={state.relCoord.height}
+                                x={state.edge}
+                                y={state.edge}
+                                fill="none"
+                                stroke={state.stroke}
+                                strokeWidth={state.strokeWidth}
+                                transform={state.transform}
+                            ></rect>
+                        ) : null}
                         {textField === undefined ||
                         textField === null ? null : (
                             <svg
@@ -210,6 +224,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                                 height={state.relCoord.height}
                                 x={state.edge}
                                 y={state.edge}
+                                overflow="visible"
                             >
                                 {textField}
                             </svg>

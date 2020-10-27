@@ -8,12 +8,14 @@ import { uid } from 'react-uid';
 
 type Props = {
     section: Element;
-    dynamicParameters: Map<string, string[][]>;
+    dynamicTextParameters: Map<string, string[][]>;
+    dynamicShapeParameters: Map<string, string[][]>;
 };
 
 export const Textfield: React.FunctionComponent<Props> = ({
     section,
-    dynamicParameters,
+    dynamicTextParameters,
+    dynamicShapeParameters,
 }) => {
     // The static tags for the font
     const fontName = section.getElementsByTagName('font-name').length
@@ -58,6 +60,16 @@ export const Textfield: React.FunctionComponent<Props> = ({
         section.getElementsByTagName('text-id')[0].textContent,
     );
     */
+    // relCoord are the width and the height in relation the div
+    const relCoord = {
+        width: 0,
+        height: 0,
+    };
+    // the relCenterCoord are the coordinates of the midpoint of the div
+    const relMidpointCoord = {
+        x: relCoord.width / 2,
+        y: relCoord.height / 2,
+    };
 
     const initial = {
         // Font variables
@@ -82,12 +94,106 @@ export const Textfield: React.FunctionComponent<Props> = ({
         fontStyle: 'normal',
         textDecoration: 'initial',
         // local variables
+        relCoord: relCoord,
+        relMidpointCoord: relMidpointCoord,
+        scale: 10, // a scale of 10 means a representation of 1:1
+        angle: 0,
+        transform: 'scale(1) rotate(0)',
     };
+
+    // relCoord are the width and the height in relation the div
+    Object.defineProperty(initial, 'relCoord', {
+        get: function () {
+            const coord = { x1: 0, y1: 0, x2: 0, y2: 0 };
+            if (section.getElementsByTagName('rect').length) {
+                const rect = util.stringToArray(
+                    section.getElementsByTagName('rect')[0].innerHTML,
+                );
+                coord.x1 = rect[0];
+                coord.y1 = rect[1];
+                coord.x2 = rect[2];
+                coord.y2 = rect[3];
+            }
+            if (section.getElementsByTagName('point').length) {
+                // Parsing the point coordinates
+                const xmlPoints = section.getElementsByTagName(
+                    'point',
+                );
+                let points: number[][];
+                for (let i = 0; i < xmlPoints.length; i++) {
+                    const point = util.stringToArray(
+                        xmlPoints[i].innerHTML,
+                    );
+                    points.push(point);
+                }
+                // Auxiliary values
+                const rect = util.computeMinMaxCoord(points);
+                coord.x1 = rect[0];
+                coord.y1 = rect[1];
+                coord.x2 = rect[2];
+                coord.y2 = rect[3];
+            }
+            const width = Math.abs(coord.x2 - coord.x1);
+            const height = Math.abs(coord.y2 - coord.y1);
+            return { width: width, height: height };
+        },
+    });
+
+    Object.defineProperty(initial, 'relMidpointCoord', {
+        get: function () {
+            const x = initial.relCoord.width / 2;
+            const y = initial.relCoord.height / 2;
+            return { x: x, y: y };
+        },
+    });
+
+    // x) Scaling
+    if (dynamicShapeParameters.has('expr-scale')) {
+        const element = dynamicShapeParameters!.get('expr-scale');
+        const returnFunc = ComSocket.singleton().evalFunction(
+            element,
+        );
+        Object.defineProperty(initial, 'scale', {
+            get: () => returnFunc(),
+        });
+    }
+    // y) Rotating
+    if (dynamicShapeParameters.has('expr-angle')) {
+        const element = dynamicShapeParameters!.get('expr-angle');
+        const returnFunc = ComSocket.singleton().evalFunction(
+            element,
+        );
+        Object.defineProperty(initial, 'angle', {
+            get: () => returnFunc(),
+        });
+    }
+    // z) Transforming
+    Object.defineProperty(initial, 'transform', {
+        get: function () {
+            // scale(<x> [<y>])
+            // rotate(<a> [<x> <y>])
+            let transform =
+                'scale(' + initial.scale / 10 + ') rotate(';
+            if (initial.angle !== 0) {
+                transform =
+                    transform +
+                    initial.angle +
+                    ',' +
+                    initial.relMidpointCoord.x +
+                    ',' +
+                    initial.relMidpointCoord.y +
+                    ')';
+            } else {
+                transform = transform + '0)';
+            }
+            return transform;
+        },
+    });
 
     // Create the variable parameters
     // 1) The text flags bit(dec): 0(1): left justified, 1(2): right justified, 2(4): horizontally centered, 3(8): top, 4(16): bottom, 5(32): centered
-    if (dynamicParameters.has('expr-text-flags')) {
-        const element = dynamicParameters!.get('expr-text-flags');
+    if (dynamicTextParameters.has('expr-text-flags')) {
+        const element = dynamicTextParameters!.get('expr-text-flags');
         Object.defineProperty(initial, 'textAlignHorz', {
             get: function () {
                 const value = Number(
@@ -114,7 +220,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             },
         });
         /**
-    const element = dynamicElements!.get('expr-angle2');
+    const element = dynamicShapeParameters!.get('expr-angle2');
     const returnFunc = ComSocket.singleton().evalFunction(
         element,
     );
@@ -153,8 +259,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 2) The font flags bit(dec): 0(1): Italic, 1(2): Bold, 2(4): Underline, 3(8): StrikeOut
-    if (dynamicParameters.has('expr-font-flags')) {
-        const element = dynamicParameters!.get('expr-font-flags');
+    if (dynamicTextParameters.has('expr-font-flags')) {
+        const element = dynamicTextParameters!.get('expr-font-flags');
         Object.defineProperty(initial, 'isItalic', {
             get: function () {
                 const value = Number(
@@ -189,8 +295,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 3) The font name:
-    if (dynamicParameters.has('expr-font-name')) {
-        const element = dynamicParameters!.get('expr-font-name');
+    if (dynamicTextParameters.has('expr-font-name')) {
+        const element = dynamicTextParameters!.get('expr-font-name');
         Object.defineProperty(initial, 'fontName', {
             get: function () {
                 const value = ComSocket.singleton().getFunction(
@@ -202,8 +308,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
     }
 
     // 5) The font color:
-    if (dynamicParameters.has('expr-text-color')) {
-        const element = dynamicParameters!.get('expr-text-color');
+    if (dynamicTextParameters.has('expr-text-color')) {
+        const element = dynamicTextParameters!.get('expr-text-color');
         Object.defineProperty(initial, 'fontColor', {
             get: function () {
                 const value = ComSocket.singleton().evalFunction(
@@ -215,8 +321,10 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 6) The font height:
-    if (dynamicParameters.has('expr-font-height')) {
-        const element = dynamicParameters!.get('expr-font-height');
+    if (dynamicTextParameters.has('expr-font-height')) {
+        const element = dynamicTextParameters!.get(
+            'expr-font-height',
+        );
         Object.defineProperty(initial, 'fontHeight', {
             get: function () {
                 const value = Number(
@@ -347,8 +455,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
     }
 
     // The text variable:
-    if (dynamicParameters.has('text-display')) {
-        const element = dynamicParameters!.get('text-display');
+    if (dynamicTextParameters.has('text-display')) {
+        const element = dynamicTextParameters!.get('text-display');
         Object.defineProperty(initial, 'textVariable', {
             get: function () {
                 const value = ComSocket.singleton().getFunction(
@@ -562,7 +670,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
                 textLine={initial.textLines[i]}
                 numberOfLines={initial.textLines.length}
                 section={section}
-                dynamicParameters={dynamicParameters}
+                dynamicTextParameters={dynamicTextParameters}
             ></Textline>,
         );
     }
@@ -587,6 +695,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             }
             pointerEvents={'none'}
             y={state.yPos}
+            transform={state.transform}
         >
             <React.Fragment>
                 {

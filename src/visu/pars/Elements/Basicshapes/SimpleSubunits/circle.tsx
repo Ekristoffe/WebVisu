@@ -33,7 +33,7 @@ export const Circle: React.FunctionComponent<Props> = React.memo(
             <div
                 style={{
                     cursor: 'auto',
-                    overflow: 'hidden',
+                    overflow: 'visible',
                     pointerEvents: state.eventType,
                     visibility: state.display,
                     position: 'absolute',
@@ -55,6 +55,7 @@ export const Circle: React.FunctionComponent<Props> = React.memo(
                             height={
                                 state.relCoord.height + 2 * state.edge
                             }
+                            overflow="visible"
                         >
                             <svg
                                 onClick={
@@ -100,6 +101,7 @@ export const Circle: React.FunctionComponent<Props> = React.memo(
                                 strokeDasharray={
                                     state.strokeDashArray
                                 }
+                                overflow="visible"
                             >
                                 <ellipse
                                     stroke={state.stroke}
@@ -115,6 +117,7 @@ export const Circle: React.FunctionComponent<Props> = React.memo(
                                     ry={state.relMidpointCoord.y}
                                     fill={state.fill}
                                     strokeWidth={state.strokeWidth}
+                                    transform={state.transform}
                                 >
                                     <title>{state.tooltip}</title>
                                 </ellipse>
@@ -125,6 +128,7 @@ export const Circle: React.FunctionComponent<Props> = React.memo(
                                         height={state.relCoord.height}
                                         x={state.edge}
                                         y={state.edge}
+                                        overflow="visible"
                                     >
                                         {textField}
                                     </svg>

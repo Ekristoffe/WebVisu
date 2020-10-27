@@ -248,14 +248,19 @@ export default class ComSocket implements IComSocket {
         this.updateVarList();
 
         // And then in an interval
+        console.log('startCyclicUpdate, before :', this.intervalID);
         this.intervalID = window.setInterval(
             () => this.updateVarList(),
             Number(StateManager.singleton().oState.get('UPDATETIME')),
         );
+        console.log('startCyclicUpdate, after:', this.intervalID);
     }
 
     stopCyclicUpdate() {
+        console.log('stopCyclicUpdate, before :', this.intervalID);
         window.clearInterval(this.intervalID);
+        this.intervalID = undefined;
+        console.log('stopCyclicUpdate, after:', this.intervalID);
     }
 
     setValue(varName: string, varValue: number | string | boolean) {

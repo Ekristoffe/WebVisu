@@ -50,6 +50,7 @@ export interface IBasicObject {
     edge: number;
     scale: number;
     angle: number;
+    transform: string;
     normalFillColor: string;
     alarmFillColor: string;
     normalFrameColor: string;

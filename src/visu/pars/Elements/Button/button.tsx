@@ -79,22 +79,15 @@ export const Button: React.FunctionComponent<Props> = ({
             : ['rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw', 'rw'],
     };
 
-    // Parsing the textfields and returning a jsx object if it exists
-    let textField: JSX.Element;
-    if (section.getElementsByTagName('text-format').length) {
-        const dynamicTextParameters = parseDynamicTextParameters(
-            section,
-            // button.shape,
-        );
-        textField = (
-            <Textfield
-                section={section}
-                dynamicParameters={dynamicTextParameters}
-            ></Textfield>
-        );
-    } else {
-        textField = null;
-    }
+    // Parsing of observable events (like toggle color)
+    const dynamicShapeParameters = parseDynamicShapeParameters(
+        section,
+    );
+
+    // Parsing of user events that causes a reaction like toggle or pop up input
+    const onclick = parseClickEvent(section);
+    const onmousedown = parseTapEvent(section, 'down');
+    const onmouseup = parseTapEvent(section, 'up');
 
     // Parsing the inputfield and returning a jsx object if it exists
     let inputField: JSX.Element;
@@ -126,36 +119,36 @@ export const Button: React.FunctionComponent<Props> = ({
     } else {
         imageField = null;
     }
-    
-    console.log("hasInsideColor",button.hasInsideColor);
-    console.log("fillColor",button.fillColor);
-    console.log("fillColorAlarm",button.fillColorAlarm);
-    console.log("hasFrameColor",button.hasFrameColor);
-    console.log("frameColor",button.frameColor);
-    console.log("frameColorAlarm",button.frameColorAlarm);
 
-    // Parsing of observable events (like toggle color)
-    const dynamicShapeParameters = parseDynamicShapeParameters(
-        section,
-    );
-
-
-    // Parsing of user events that causes a reaction like toggle or pop up input
-    const onclick = parseClickEvent(section);
-    const onmousedown = parseTapEvent(section, 'down');
-    const onmouseup = parseTapEvent(section, 'up');
+    // Parsing the textfields and returning a jsx object if it exists
+    let textField: JSX.Element;
+    if (section.getElementsByTagName('text-format').length) {
+        const dynamicTextParameters = parseDynamicTextParameters(
+            section,
+            // button.shape,
+        );
+        textField = (
+            <Textfield
+                section={section}
+                dynamicTextParameters={dynamicTextParameters}
+                dynamicShapeParameters={dynamicShapeParameters}
+            ></Textfield>
+        );
+    } else {
+        textField = null;
+    }
 
     // Convert object to an observable one
     const state = useLocalStore(() =>
         createVisuObject(button, dynamicShapeParameters),
     );
-    console.log(state.fill);
+
     // Return of the react node
     return useObserver(() => (
         <div
             style={{
                 cursor: 'auto',
-                overflow: 'hidden',
+                overflow: 'visible',
                 pointerEvents: state.eventType,
                 visibility: state.display,
                 position: 'absolute',
@@ -225,6 +218,7 @@ export const Button: React.FunctionComponent<Props> = ({
                                 right: 0,
                                 pointerEvents: 'none',
                             }}
+                            overflow="visible"
                         >
                             {imageField}
                             {textField === undefined ||

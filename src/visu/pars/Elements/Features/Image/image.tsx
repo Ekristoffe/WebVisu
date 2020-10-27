@@ -62,9 +62,11 @@ export const ImageField: React.FunctionComponent<Props> = ({
             // initial.maxHeight = initial.inlineDimensions;
             initial.percWidth = initial.inlineDimensions;
             initial.percHeight = initial.inlineDimensions;
+            /*
             if (!inlineElement) {
                 initial.margin = 'top';
             }
+            */
             break;
         }
         case 'anisotropic': {
@@ -158,7 +160,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
     }, [initial.fixedFileName, initial.dynamicFileName]);
 
     const state = useLocalStore(() => initial);
-
+    console.log('state.margin', state.margin);
     return useObserver(() => (
         <React.Fragment>
             <svg

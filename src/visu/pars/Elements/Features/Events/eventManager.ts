@@ -27,7 +27,7 @@ export function parseDynamicShapeParameters(
         'expr-xpos', // Absolute x-position
         'expr-ypos', // Absolute y-position
         'expr-scale', // Scale with middle reference point
-        'expr-angle', // Turn around center with angle
+        'expr-angle', // Turn around the reference point with angle
 
         // Tooltip
         'expr-tooltip-display', // tooltip variable
@@ -42,6 +42,7 @@ export function parseDynamicShapeParameters(
         'expr-lower-bound',
         'expr-upper-bound',
         'expr-tap-var',
+        'expr-toggle-var',
     ];
 
     const children = section.children;
@@ -160,6 +161,7 @@ export function parseClickEvent(section: Element): Function {
     let clickEventDetected = false;
 
     const children = section.children;
+
     for (let i = 0; i < children.length; i++) {
         const exprName = children[i].nodeName;
         // Parse the <expr-toggle-var><expr><var> ... elements => toggle color
