@@ -38,7 +38,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
         // Name of the file
         fixedFileName: '',
         dynamicFileName: '',
-        margin: 'auto',
+        // margin: 'auto',
         // viewBox: '',
     };
 
@@ -160,7 +160,6 @@ export const ImageField: React.FunctionComponent<Props> = ({
     }, [initial.fixedFileName, initial.dynamicFileName]);
 
     const state = useLocalStore(() => initial);
-    console.log('state.margin', state.margin);
     return useObserver(() => (
         <React.Fragment>
             <svg
@@ -185,7 +184,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
                         position: 'absolute',
                         pointerEvents: 'none',
                         textAlign: 'center',
-                        margin: state.margin,
+                        // margin: state.margin,
                         top: 0,
                         left: 0,
                         bottom: 0,

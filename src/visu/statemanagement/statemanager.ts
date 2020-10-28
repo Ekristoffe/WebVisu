@@ -31,15 +31,22 @@ export default class StateManager implements IStateManager {
         this.xmlDict = new Map();
     }
 
+    // The ID of cyclic request
+    private intervalID: number;
+
     public static singleton() {
         return this.instance;
     }
 
     init() {
         this.oState.set('ISONLINE', 'TRUE');
-        /* hier besteht noch ein Problem, aus welchem Grund auch immer wird Comsocket nur einmal observiert.
-        Wenn Wert einmal verändert wurde wird autorun nicht mehr ausgeführt. Ursache musss noch geklärt werden.
-        Bis dahin wird per intervallabfrage manuell observiert */
+        /**
+         * TODO: There is still a problem here.
+         * For whatever reason Comsocket is only observed once.
+         * Once the value has been changed, autorun is no longer executed.
+         * The cause has yet to be clarified.
+         * Until then, manual monitoring is carried out using an interval query
+         */
         if (this.oState.get('USECURRENTVISU') === 'TRUE') {
             ComSocket.singleton().setValue(
                 '.currentvisu',
@@ -49,7 +56,8 @@ export default class StateManager implements IStateManager {
                 'CURRENTVISU',
                 StateManager.singleton().oState.get('STARTVISU'),
             );
-            setInterval(() => {
+            console.log('init, before :', this.intervalID);
+            this.intervalID = window.setInterval(() => {
                 const value = ComSocket.singleton().oVisuVariables.get(
                     '.currentvisu',
                 ).value;
@@ -68,6 +76,7 @@ export default class StateManager implements IStateManager {
                     }
                 }
             }, 300);
+            console.log('init, after:', this.intervalID);
         } else {
             if (this.oState.get('USECURRENTVISU') === 'FALSE') {
                 Object.defineProperty(this.oState, 'CURRENTVISU', {

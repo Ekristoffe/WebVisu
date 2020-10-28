@@ -211,7 +211,7 @@ export const Button: React.FunctionComponent<Props> = ({
                                 height: '100%',
                                 position: 'absolute',
                                 textAlign: 'center',
-                                margin: 'auto',
+                                // margin: 'auto',
                                 top: 0,
                                 left: 0,
                                 bottom: 0,
