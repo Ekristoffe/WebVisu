@@ -111,14 +111,6 @@ export function createBasicObject(
         });
     }
     if (shape === 'button') {
-        // const element = dynamicShapeParameters.get('expr-toggle-color');
-        //  const returnFunc = ComSocket.singleton().evalFunction(
-        //     element,
-        // );
-        const wrapperFunc = () => {
-            // const value = Number(returnFunc());
-            const value = 0;
-        };
         Object.defineProperty(initial, 'alarm', {
             get: function () {
                 let value = 0;

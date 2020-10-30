@@ -177,6 +177,10 @@ export function getImage(url: string): Promise<string> {
             mimeType = 'image/jpeg';
             break;
         }
+        case 'png': {
+            mimeType = 'image/png';
+            break;
+        }
     }
 
     return new Promise((resolve) => {
@@ -254,7 +258,8 @@ export function getImage(url: string): Promise<string> {
 }
 
 export function getVisuxml(url: string): Promise<XMLDocument> {
-    return new Promise(async (resolve) => {
+    // prettier-ignore
+    return new Promise(async (resolve) => { // eslint-disable-line no-async-promise-executor
         // Get the root path
         const rootPathArray = url.split('/');
         rootPathArray.pop();

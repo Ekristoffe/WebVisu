@@ -78,7 +78,8 @@ export const HorizontalScrollbar: React.FunctionComponent<Props> = ({
         }
     };
     // On click of the slider the selected bit is set to true and the size of scroll area is queried
-    const start = (e: React.MouseEvent) => {
+    // const start = (e: React.MouseEvent) => {
+    const start = () => {
         setSelected(true);
         setInitial([
             ref.current.getBoundingClientRect().left,

@@ -265,7 +265,7 @@ export function parseClickEvent(section: Element): Function {
                     'expr-assign',
                 );
                 for (let i = 0; i < assigns.length; i++) {
-                    const action = assigns[0];
+                    const action = assigns[i];
                     // Left side value. Must be a variable.
                     const lvalue = action
                         .getElementsByTagName('lvalue')[0]
@@ -358,12 +358,13 @@ export function parseClickEvent(section: Element): Function {
                         };
                     } else {
                         clickFunction = function (): void {
-                            // TODO check if this is right ???
+                            // TODO: check if this is right ???
                             const value = ComSocket.singleton().evalFunction(
                                 [[type, content.toLowerCase()]],
                             )();
-                            // TODO shouldn't we open the value instead ???
-                            window.open(content);
+                            // TODO: shouldn't we open the value instead ???
+                            // window.open(content);
+                            window.open(value);
                         };
                     }
                     stack.push(clickFunction);

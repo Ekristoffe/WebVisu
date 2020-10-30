@@ -470,7 +470,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
     Object.defineProperty(initial, 'textLines', {
         get: function () {
             // CoDeSys has implemented a %t symbol to show date and time. The text is not computed with sprintf then
-            // Todo mode the transform system to it's own function ?
+            // TODO: mode the transform system to it's own function ?
             let output = '';
             let parsedText = text;
             if (parsedText.includes('%t')) {

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as util from '../../../Utils/utilfunctions';
+import * as bmpHelper from 'bmp-js';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
 import ComSocket from '../../../../communication/comsocket';
 import { stringToArray } from '../../../Utils/utilfunctions';
@@ -40,6 +42,9 @@ export const ImageField: React.FunctionComponent<Props> = ({
         dynamicFileName: '',
         // margin: 'auto',
         // viewBox: '',
+        transparent: false,
+        transparencyColor: '',
+
     };
 
     /*
@@ -89,6 +94,38 @@ export const ImageField: React.FunctionComponent<Props> = ({
                         .innerHTML.replace(/.*\\/, '')
                         .replace(/].*/, '');
                     return rawFileName;
+                },
+            });
+        }
+    }
+
+    if (section.getElementsByTagName('transparent').length) {
+        if (
+            section.getElementsByTagName('transparent')[0].innerHTML
+                .length
+        ) {
+            Object.defineProperty(initial, 'transparent', {
+                get: function () {
+                    const value = util.stringToBoolean(
+                        section.getElementsByTagName('transparent')[0]
+                            .innerHTML,);
+                    return value;
+                },
+            });
+        }
+    }
+
+    if (section.getElementsByTagName('transparency-color').length) {
+        if (
+            section.getElementsByTagName('transparency-color')[0].innerHTML
+                .length
+        ) {
+            Object.defineProperty(initial, 'transparencyColor', {
+                get: function () {
+                    const value = 
+                        section.getElementsByTagName('transparency-color')[0]
+                            .innerHTML;
+                    return value;
                 },
             });
         }
@@ -153,11 +190,108 @@ export const ImageField: React.FunctionComponent<Props> = ({
             }
 
             if (plainImg !== null) {
+                if (initial.transparent && 
+                    initial.transparencyColor !== null &&
+                    initial.transparencyColor !== undefined &&
+                    initial.transparencyColor !== '') {
+                    // Transparency conversion
+
+                    console.log('plainImg', plainImg);
+                    let regEx = plainImg.match(/.*(?<=base64,)/);
+                    console.log('regEx', regEx);
+                    if (regEx !== undefined || regEx !== null) {
+                        const base64Flag = regEx[0];
+                        console.log('base64Flag', base64Flag);
+                        regEx = plainImg.match(/(?<=base64,).*/);
+                        console.log('regEx', regEx);
+                        if (regEx !== undefined || regEx !== null) {
+                            let base64Img = regEx[0];
+                            console.log('base64Img', base64Img);
+                            let binaryImg = window.atob(base64Img);
+                            console.log('binaryImg', binaryImg);
+                            const binaryLen = binaryImg.length;
+                            let binaryData = new Uint8Array(binaryLen);
+                            for (let i = 0; i < binaryLen; i++) {
+                                binaryData[i] = binaryImg.charCodeAt(i);
+                            }
+                            console.log('binaryData', binaryData);
+
+                            if (base64Flag === 'data:image/bmp;base64,') {
+                                const pixelsData = bmpHelper.decode(Buffer.from(binaryData));
+                                // bmp stores the pixels as ABGR
+                                for (let i = 0; i < binaryLen; i += 4) {
+                                    if(pixelsData.data[i + 1] === 0x00 && pixelsData.data[i + 2] === 0x00 && pixelsData.data[i + 3] === 0x00){
+                                        pixelsData.data[i + 0] = 0x00; // A
+                                    } else {
+                                        pixelsData.data[i + 0] = 0xFF; // A
+                                    }
+                                }
+                                binaryData = bmpHelper.encode(pixelsData).data;
+                            }
+                            
+                            console.log('binaryData', binaryData);
+                            binaryImg = '';
+                            for (let i = 0; i < binaryLen; i++) {
+                                binaryImg += String.fromCharCode(binaryData[i]);
+                            }
+                            console.log('binaryImg', binaryImg);
+                            base64Img = window.btoa(binaryImg);
+                            console.log('base64Img', base64Img);
+                            plainImg = base64Flag + base64Img;
+                            console.log('plainImg', plainImg);
+                        }
+                    }
+                    /**
+                    const regEx = new RegExp(/(?<=base64,).* /);
+                    const match = regEx.exec(visuName);
+                    if (match === undefined || match === null) {
+                    const base64Flag = 'data:' + mimeType + ';base64,';
+                    const base64 = window.btoa(binary);
+                    resolve(base64Flag + base64);
+
+
+                    const image = new Image();
+                    image.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+
+                        const context = canvas.getContext('2d');
+                        context.drawImage(image, 0, 0);
+
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+                        for (let i = 0; i < imageData.data.length; i+= 4) {
+                            if(imageData.data[i] === 0 && imageData.data[i+1] === 0 && imageData.data[i+2] === 0){
+                                console.log('modified' + i, imageData.data[i], imageData.data[i+1], imageData.data[i+2], imageData.data[i+3]);
+                                imageData.data[i+3] = 0;
+                            }
+                        }
+                        // Draw the ImageData at the given (x,y) coordinates.
+                        context.putImageData(imageData, 0, 0);
+
+                        // Now you can access pixel data from imageData.data.
+                        // It's a one-dimensional array of RGBA values.
+                        // Here's an example of how to get a pixel's color at (x,y)
+                        /*
+                        var index = (y*imageData.width + x) * 4;
+                        var red = imageData.data[index];
+                        var green = imageData.data[index + 1];
+                        var blue = imageData.data[index + 2];
+                        var alpha = imageData.data[index + 3];
+                        * /
+
+                    };
+                    console.log('plainImg', plainImg);
+                    image.src = plainImg;
+                    console.log('image.src', image.src);
+                    */
+                }
                 setFileName(plainImg);
             }
         };
         fetchImage();
-    }, [initial.fixedFileName, initial.dynamicFileName]);
+    }, [initial.fixedFileName, initial.dynamicFileName, initial.transparent, initial.transparencyColor]);
 
     const state = useLocalStore(() => initial);
     return useObserver(() => (

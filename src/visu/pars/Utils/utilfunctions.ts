@@ -194,10 +194,27 @@ export function coordArrayToBezierString(
 
 export function evalRPN(
     postfixStack: Array<string>,
-): boolean | number | null {
+): boolean | number | string | null {
     // Return null if string is empty
     if (postfixStack.length === 0) {
         return null;
+    }
+    if (postfixStack.length === 1) {
+        let token = postfixStack[0];
+        if (token.toLowerCase() === 'true') {
+            token = '1';
+        }
+        if (token.toLowerCase() === 'false') {
+            token = '0';
+        }
+        // If the token is a number:
+        if (!isNaN(Number(token))) {
+            return parseFloat(token);
+        }
+        // Else the token is a string
+        else {
+            return token;
+        }
     }
     // We initilize the operating stack, this is necessary for mutliple operands
     const operatingStack: Array<number> = [];
@@ -362,6 +379,7 @@ export function evalRPN(
                             token +
                             ' is not a valid one!',
                     );
+                    // return operator;
                 }
             }
             operatingStack.push(result);

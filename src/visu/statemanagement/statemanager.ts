@@ -56,7 +56,7 @@ export default class StateManager implements IStateManager {
                 'CURRENTVISU',
                 StateManager.singleton().oState.get('STARTVISU'),
             );
-            console.log('init, before :', this.intervalID);
+            window.clearInterval(this.intervalID);
             this.intervalID = window.setInterval(() => {
                 const value = ComSocket.singleton().oVisuVariables.get(
                     '.currentvisu',
@@ -76,7 +76,6 @@ export default class StateManager implements IStateManager {
                     }
                 }
             }, 300);
-            console.log('init, after:', this.intervalID);
         } else {
             if (this.oState.get('USECURRENTVISU') === 'FALSE') {
                 Object.defineProperty(this.oState, 'CURRENTVISU', {
