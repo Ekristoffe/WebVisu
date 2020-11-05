@@ -19,7 +19,7 @@ function replacePlaceholders(
         let replaced = false;
         // Replacement
         while (match !== null) {
-            if (match !== undefined) {
+            if (typeof match !== 'undefined') {
                 const replace = match[1].toLowerCase();
                 if (replacements.has(replace)) {
                     replaced = true;
@@ -63,14 +63,10 @@ function getPlaceholders(section: Element) {
     return placeholders;
 }
 
-
 function checkCompression() {
     // Check if the compressed flag on statemanager is set
     let compressedFiles = false;
-    if (
-        StateManager.singleton().oState.get('COMPRESSION') !==
-        null
-    ) {
+    if (StateManager.singleton().oState.get('COMPRESSION') !== null) {
         if (
             StateManager.singleton().oState.get('COMPRESSION') ===
             'TRUE'
@@ -86,7 +82,7 @@ export function getVisuxml2(url: string): Promise<XMLDocument> {
         let encoding = StateManager.singleton().oState.get(
             'ENCODINGSTRING',
         );
-        if (encoding === undefined) {
+        if (typeof encoding === 'undefined') {
             encoding = 'iso-8859-1';
         }
         let zipped = checkCompression();

@@ -165,14 +165,15 @@ export const Piechart: React.FunctionComponent<Props> = ({
             >
                 <svg
                     onClick={
-                        onclick === undefined || onclick === null
+                        typeof onclick === 'undefined' ||
+                        onclick === null
                             ? null
                             : state.writeAccess
                             ? () => onclick()
                             : null
                     }
                     onMouseDown={
-                        onmousedown === undefined ||
+                        typeof onmousedown === 'undefined' ||
                         onmousedown === null
                             ? null
                             : state.writeAccess
@@ -180,14 +181,16 @@ export const Piechart: React.FunctionComponent<Props> = ({
                             : null
                     }
                     onMouseUp={
-                        onmouseup === undefined || onmouseup === null
+                        typeof onmouseup === 'undefined' ||
+                        onmouseup === null
                             ? null
                             : state.writeAccess
                             ? () => onmouseup()
                             : null
                     }
                     onMouseLeave={
-                        onmouseup === undefined || onmouseup === null
+                        typeof onmouseup === 'undefined' ||
+                        onmouseup === null
                             ? null
                             : state.writeAccess
                             ? () => onmouseup()

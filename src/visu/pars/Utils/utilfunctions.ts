@@ -299,7 +299,9 @@ export function evalRPN(
                         const y = interim;
                         const x = operatingStack.pop();
                         result =
-                            x !== undefined && x !== null && x === y
+                            typeof x !== 'undefined' &&
+                            x !== null &&
+                            x === y
                                 ? 1
                                 : 0;
                     }
@@ -436,6 +438,6 @@ export function getTextLines(text: string) {
         }
     } while (match);
     return stringStack.filter(
-        (el) => el !== undefined && el !== null,
+        (el) => typeof el !== 'undefined' && el !== null,
     );
 }

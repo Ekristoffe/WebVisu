@@ -162,14 +162,15 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                     {inputField}
                     <svg
                         onClick={
-                            onclick === undefined || onclick === null
+                            typeof onclick === 'undefined' ||
+                            onclick === null
                                 ? null
                                 : state.writeAccess
                                 ? () => onclick()
                                 : null
                         }
                         onMouseDown={
-                            onmousedown === undefined ||
+                            typeof onmousedown === 'undefined' ||
                             onmousedown === null
                                 ? null
                                 : state.writeAccess
@@ -177,7 +178,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                                 : null
                         }
                         onMouseUp={
-                            onmouseup === undefined ||
+                            typeof onmouseup === 'undefined' ||
                             onmouseup === null
                                 ? null
                                 : state.writeAccess
@@ -185,7 +186,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                                 : null
                         }
                         onMouseLeave={
-                            onmouseup === undefined ||
+                            typeof onmouseup === 'undefined' ||
                             onmouseup === null
                                 ? null
                                 : state.writeAccess
@@ -199,7 +200,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                         strokeDasharray={state.strokeDashArray}
                         overflow="visible"
                     >
-                        {state.tooltip === undefined ||
+                        {typeof state.tooltip === 'undefined' ||
                         state.tooltip === null ||
                         state.tooltip === '' ? null : (
                             <title>{state.tooltip}</title>
@@ -217,7 +218,7 @@ export const Bitmap: React.FunctionComponent<Props> = ({
                                 transform={state.transform}
                             ></rect>
                         ) : null}
-                        {textField === undefined ||
+                        {typeof textField === 'undefined' ||
                         textField === null ? null : (
                             <svg
                                 width={state.relCoord.width}

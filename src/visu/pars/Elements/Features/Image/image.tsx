@@ -161,26 +161,29 @@ export const ImageField: React.FunctionComponent<Props> = ({
             let rawFileName: string = null;
             if (
                 initial.dynamicFileName !== null &&
-                initial.dynamicFileName !== undefined &&
+                typeof initial.dynamicFileName !== 'undefined' &&
                 initial.dynamicFileName !== ''
             ) {
                 rawFileName = initial.dynamicFileName;
             } else if (
                 initial.fixedFileName !== null &&
-                initial.fixedFileName !== undefined &&
+                typeof initial.fixedFileName !== 'undefined' &&
                 initial.fixedFileName !== ''
             ) {
                 rawFileName = initial.fixedFileName;
             }
             // Try to get the image from cache
             let plainImg: string = null;
-            if ((await get(rawFileName)) === undefined) {
+            if (typeof (await get(rawFileName)) === 'undefined') {
                 const path =
                     ComSocket.singleton()
                         .getServerURL()
                         .replace('webvisu.htm', '') + rawFileName;
                 plainImg = await getImage(path);
-                if (plainImg === undefined || plainImg === null) {
+                if (
+                    typeof plainImg === 'undefined' ||
+                    plainImg === null
+                ) {
                     console.warn(
                         'The requested image ' +
                             rawFileName +
@@ -370,10 +373,12 @@ export const ImageField: React.FunctionComponent<Props> = ({
                     }
                     href={
                         (state.dynamicFileName !== null &&
-                            state.dynamicFileName !== undefined &&
+                            typeof state.dynamicFileName !==
+                                'undefined' &&
                             state.dynamicFileName !== '') ||
                         (state.fixedFileName !== null &&
-                            state.fixedFileName !== undefined &&
+                            typeof state.fixedFileName !==
+                                'undefined' &&
                             state.fixedFileName !== '')
                             ? fileName
                             : null

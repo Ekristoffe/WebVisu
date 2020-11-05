@@ -97,9 +97,9 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                     '.xml';
                 // Files that are needed several times will be saved internally for loading speed up
                 let plainxml: string;
-                if ((await get(visuName)) === undefined) {
+                if (typeof (await get(visuName)) === 'undefined') {
                     const xml = await getVisuxml(url);
-                    if (xml === undefined || xml === null) {
+                    if (typeof xml === 'undefined' || xml === null) {
                         console.warn(
                             'The requested visualisation ' +
                                 visuName +

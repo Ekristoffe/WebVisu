@@ -51,7 +51,7 @@ function createInitial(section: Element) {
         );
         const wrapperFunc = () => {
             const value = returnFunc();
-            if (value !== undefined) {
+            if (typeof value !== 'undefined') {
                 if (parseInt(value) === 0) {
                     return 'visible';
                 } else {

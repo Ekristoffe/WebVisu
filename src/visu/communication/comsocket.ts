@@ -97,7 +97,7 @@ export default class ComSocket implements IComSocket {
                             )!.value;
                             if (
                                 varContent === null ||
-                                varContent === undefined ||
+                                typeof varContent === 'undefined' ||
                                 varContent === ''
                             ) {
                                 varContent = '0';
@@ -144,7 +144,7 @@ export default class ComSocket implements IComSocket {
                             )!.value;
                             if (
                                 varContent === null ||
-                                varContent !== undefined
+                                typeof varContent !== 'undefined'
                             ) {
                                 interim = interim + varContent;
                             }
@@ -251,7 +251,7 @@ export default class ComSocket implements IComSocket {
         let updateTime = Number(
             StateManager.singleton().oState.get('UPDATETIME'),
         );
-        if (updateTime === undefined) {
+        if (typeof updateTime === 'undefined') {
             updateTime = 1000;
         }
         // TODO: for testing purpose only

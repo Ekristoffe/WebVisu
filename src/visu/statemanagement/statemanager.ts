@@ -64,7 +64,7 @@ export default class StateManager implements IStateManager {
                 const visuName = this.oState
                     .get('CURRENTVISU')
                     .toLowerCase();
-                if (value !== undefined) {
+                if (typeof value !== 'undefined') {
                     if (
                         visuName !== value.toLowerCase() &&
                         value !== ''
@@ -81,7 +81,8 @@ export default class StateManager implements IStateManager {
                 Object.defineProperty(this.oState, 'CURRENTVISU', {
                     get: autorun(() => {
                         if (
-                            this.oState.get('ZOOMVISU') !== undefined
+                            typeof this.oState.get('ZOOMVISU') !==
+                            'undefined'
                         ) {
                             this.oState.set(
                                 'CURRENTVISU',

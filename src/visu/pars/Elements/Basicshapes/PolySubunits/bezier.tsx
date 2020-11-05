@@ -54,24 +54,25 @@ export const Bezier: React.FunctionComponent<Props> = ({
                 >
                     <svg
                         onClick={
-                            onclick === undefined || onclick === null
+                            typeof onclick === 'undefined' ||
+                            onclick === null
                                 ? null
                                 : () => onclick()
                         }
                         onMouseDown={
-                            onmousedown === undefined ||
+                            typeof onmousedown === 'undefined' ||
                             onmousedown === null
                                 ? null
                                 : () => onmousedown()
                         }
                         onMouseUp={
-                            onmouseup === undefined ||
+                            typeof onmouseup === 'undefined' ||
                             onmouseup === null
                                 ? null
                                 : () => onmouseup()
                         }
                         onMouseLeave={
-                            onmouseup === undefined ||
+                            typeof onmouseup === 'undefined' ||
                             onmouseup === null
                                 ? null
                                 : () => onmouseup()
@@ -90,7 +91,7 @@ export const Bezier: React.FunctionComponent<Props> = ({
                         />
                         <title>{state.tooltip}</title>
                     </svg>
-                    {textField === undefined ||
+                    {typeof textField === 'undefined' ||
                     textField === null ? null : (
                         <svg
                             width={

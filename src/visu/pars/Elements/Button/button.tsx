@@ -164,14 +164,15 @@ export const Button: React.FunctionComponent<Props> = ({
                     <button
                         title={state.tooltip}
                         onClick={
-                            onclick === undefined || onclick === null
+                            typeof onclick === 'undefined' ||
+                            onclick === null
                                 ? null
                                 : state.writeAccess
                                 ? () => onclick()
                                 : null
                         }
                         onMouseDown={
-                            onmousedown === undefined ||
+                            typeof onmousedown === 'undefined' ||
                             onmousedown === null
                                 ? null
                                 : state.writeAccess
@@ -179,7 +180,7 @@ export const Button: React.FunctionComponent<Props> = ({
                                 : null
                         }
                         onMouseUp={
-                            onmouseup === undefined ||
+                            typeof onmouseup === 'undefined' ||
                             onmouseup === null
                                 ? null
                                 : state.writeAccess
@@ -187,7 +188,7 @@ export const Button: React.FunctionComponent<Props> = ({
                                 : null
                         }
                         onMouseLeave={
-                            onmouseup === undefined ||
+                            typeof onmouseup === 'undefined' ||
                             onmouseup === null
                                 ? null
                                 : state.writeAccess
@@ -221,7 +222,7 @@ export const Button: React.FunctionComponent<Props> = ({
                             overflow="visible"
                         >
                             {imageField}
-                            {textField === undefined ||
+                            {typeof textField === 'undefined' ||
                             textField === null
                                 ? null
                                 : textField}

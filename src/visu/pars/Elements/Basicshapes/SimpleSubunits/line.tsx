@@ -68,7 +68,7 @@ export const Line: React.FunctionComponent<Props> = React.memo(
                         >
                             <svg
                                 onClick={
-                                    onclick === undefined ||
+                                    typeof onclick === 'undefined' ||
                                     onclick === null
                                         ? null
                                         : state.writeAccess
@@ -76,7 +76,8 @@ export const Line: React.FunctionComponent<Props> = React.memo(
                                         : null
                                 }
                                 onMouseDown={
-                                    onmousedown === undefined ||
+                                    typeof onmousedown ===
+                                        'undefined' ||
                                     onmousedown === null
                                         ? null
                                         : state.writeAccess
@@ -84,7 +85,8 @@ export const Line: React.FunctionComponent<Props> = React.memo(
                                         : null
                                 }
                                 onMouseUp={
-                                    onmouseup === undefined ||
+                                    typeof onmouseup ===
+                                        'undefined' ||
                                     onmouseup === null
                                         ? null
                                         : state.writeAccess
@@ -92,7 +94,8 @@ export const Line: React.FunctionComponent<Props> = React.memo(
                                         : null
                                 }
                                 onMouseLeave={
-                                    onmouseup === undefined ||
+                                    typeof onmouseup ===
+                                        'undefined' ||
                                     onmouseup === null
                                         ? null
                                         : state.writeAccess
@@ -187,7 +190,7 @@ export const Line: React.FunctionComponent<Props> = React.memo(
                                 >
                                     <title>{state.tooltip}</title>
                                 </line>
-                                {textField === undefined ||
+                                {typeof textField === 'undefined' ||
                                 textField === null ? null : (
                                     <svg
                                         width={state.relCoord.width}

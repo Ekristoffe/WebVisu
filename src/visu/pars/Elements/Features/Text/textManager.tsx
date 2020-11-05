@@ -688,7 +688,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             dominantBaseline={
                 state.textLines === null ||
                 state.dominantBaseline === null ||
-                state.dominantBaseline === undefined ||
+                typeof state.dominantBaseline === 'undefined' ||
                 state.dominantBaseline === ''
                     ? null
                     : state.dominantBaseline

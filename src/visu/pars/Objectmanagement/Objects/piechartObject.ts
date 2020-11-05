@@ -119,7 +119,7 @@ export function createPiechartObject(
         );
         const wrapperFunc = () => {
             const value = Number(returnFunc());
-            if (value !== null && value !== undefined) {
+            if (value !== null && typeof value !== 'undefined') {
                 return value !== 0;
             } else {
                 return false;
@@ -206,7 +206,7 @@ export function createPiechartObject(
         );
         const wrapperFunc = () => {
             const value = Number(returnFunc());
-            if (value !== null && value !== undefined) {
+            if (value !== null && typeof value !== 'undefined') {
                 if (value === 0) {
                     return 'visible';
                 } else {
@@ -231,7 +231,7 @@ export function createPiechartObject(
         );
         const wrapperFunc = () => {
             const value = Number(returnFunc());
-            if (value !== null && value !== undefined) {
+            if (value !== null && typeof value !== 'undefined') {
                 if (value === 0) {
                     return true;
                 } else {
@@ -393,7 +393,7 @@ export function createPiechartObject(
             get: function () {
                 let output = '';
                 let parsedTooltip =
-                    tooltip === null || tooltip === undefined
+                    tooltip === null || typeof tooltip === 'undefined'
                         ? ''
                         : tooltip;
                 const value = ComSocket.singleton().getFunction(

@@ -290,7 +290,7 @@ export default class HTML5Visu {
                                 }
                                 // Optionnal Parameters
                                 /*
-                                case "USEFIXSOCKETCONNECTION": {
+                                case 'USEFIXSOCKETCONNECTION': {
                                     // If this parameter is TRUE, a fix socket connection will be used for monitoring; 
                                     // if it is FALSE or if the entry is missing at all, 
                                     // for each monitoring request a new socket will be used. 
@@ -299,7 +299,7 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "FORCEDLOAD": {
+                                case 'FORCEDLOAD': {
                                     // The visualizations specified here will be loaded already when the Web-Visualization is loaded,
                                     // not just when they are opened for the first time. Thus time is saved at later changes of
                                     // visualizations, because then the data not have to be transferred first by the WebServer.
@@ -323,7 +323,7 @@ export default class HTML5Visu {
                                     break;
                                 }
                                 /*
-                                case "USEURLCONNECTION": {
+                                case 'USEURLCONNECTION': {
                                     // If this parameter is configured, the communication will be done via the specified URLconnection.
                                     // Per default a simple socket connection is used.
                                     // Attention: If parameter USEFIXSOCKETCONNECTION (see above) is set TRUE,
@@ -332,21 +332,21 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "SELECTION": {
+                                case 'SELECTION': {
                                     // Here the line width and color for the display of the current selection can be defined. 
                                     // Syntax:LINEWIDTH|RED|GREEN|BLUE; 
                                     // Example: 4|0|0|255
                                     break;
                                 }
                                     
-                                case "ERROR_SENSITIVITY": {
+                                case 'ERROR_SENSITIVITY': {
                                     // This parameter defines how many trials will be done to get a visualization file transferred from
                                     // the Web-Server, before an applet error will appear.
                                     // Example: 3
                                     break;
                                 }
                                     
-                                case "KEYPADINDIALOGS": {
+                                case 'KEYPADINDIALOGS': {
                                     // If a touch panel is used for working with the Web-Visualization, this parameter should be set
                                     // TRUE in order to get an input possibility in any case for each dialog; 
                                     // if applicable via numpad/keypad.
@@ -355,7 +355,7 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "KEYBOARDUSAGEFROMDIALOGS": {
+                                case 'KEYBOARDUSAGEFROMDIALOGS': {
                                     // If this parameter is set TRUE, the keyboard usage is always active, 
                                     // even if a modal dialog - like e.g. the numpad - is currently opened.
                                     // Example: FALSE
@@ -363,7 +363,7 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "WRITEACCESSLOCK": {
+                                case 'WRITEACCESSLOCK': {
                                     // This parameter only should be set TRUE, if the Web-Server supports multi-client processing
                                     // and if an access lock for various clients is desired. Concerning access control in multi-client
                                     // operation please see HERE.
@@ -372,7 +372,7 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "DEFAULTENCODING": {
+                                case 'DEFAULTENCODING': {
                                     // If this parameter is set TRUE and the language switching is done via ASCII language files, the
                                     // default encoding - currently set in the system - will be used for the interpretation of the language
                                     // file.
@@ -397,14 +397,14 @@ export default class HTML5Visu {
                                     break;
                                 }
                                 /*
-                                case "PLCSTATEINTERVAL": {
+                                case 'PLCSTATEINTERVAL': {
                                     // Cycle time in milliseconds according to which the Web-Client will check the PLC status. 
                                     // It will be checked whether the PLC is in Start or Stop status and whether a download has been done.
                                     // Example: 5000
                                     break;
                                 }
                                     
-                                case "ALARMUPDATEBLOCKSIZE": {
+                                case 'ALARMUPDATEBLOCKSIZE': {
                                     // This parameter can be set in order to change the update of the alarm states. 
                                     // Due to the fact that not all alarm states can be updated within one cycle, 
                                     // it might be useful to exactly defined the number of alarms which should be updated per cycle. 
@@ -413,7 +413,7 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "SUPPORTTOOLTIPSINALARMTABLE": {
+                                case 'SUPPORTTOOLTIPSINALARMTABLE': {
                                     // If this parameter is set TRUE, the tooltip functionality in the alarm table will be activated. 
                                     // This means: If any text entry in the alarm table cannot be displayed completely, a tooltip will be
                                     // available showing the full text string as soon as the mouse pointer is moved on the respective
@@ -423,28 +423,28 @@ export default class HTML5Visu {
                                     break;
                                 }
                                     
-                                case "TOOLTIPFONT": {
+                                case 'TOOLTIPFONT': {
                                     // This parameter serves to define the font for all tooltips. 
                                     // Example: Dialog
                                     // Example: Arial|11
                                     break;
                                 }
                                     
-                                case "FILEOPENSAVEDIALOGFONT": {
+                                case 'FILEOPENSAVEDIALOGFONT': {
                                     // This parameter serves to define the font for the File-Open-dialog.
                                     // Example: Dialog
                                     // Example: Arial|11
                                     break;
                                 }
                                     
-                                case "ALARMTABLEFONT": {
+                                case 'ALARMTABLEFONT': {
                                     // This parameter serves to define the font for the alarm table.
                                     // Example: Dialog
                                     // Example: Arial|11|0|0|false|left|center
                                     break;
                                 }
                                     
-                                case "USECURRENTLANGUAGE": {
+                                case 'USECURRENTLANGUAGE': {
                                     // If this parameter is set TRUE, the current language setting always will be synchronized
                                     // between Web- and Target-Visualization (via implicit variable CurrentLanguage);
                                     // i.e. at a language switch caused by an input in one of the both visualization
@@ -555,7 +555,7 @@ export default class HTML5Visu {
             // Check if its a placeholder variable
             const regEx = new RegExp(/\$(.*)\$/gm);
             const match = regEx.exec(visuName);
-            if (match === undefined || match === null) {
+            if (typeof match === 'undefined' || match === null) {
                 const thisVisuXML = await getVisuxml(
                     this.rootDir + '/' + visuName + '.xml',
                 );
