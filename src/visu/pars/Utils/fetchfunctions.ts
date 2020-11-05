@@ -63,6 +63,24 @@ function getPlaceholders(section: Element) {
     return placeholders;
 }
 
+
+function checkCompression() {
+    // Check if the compressed flag on statemanager is set
+    let compressedFiles = false;
+    if (
+        StateManager.singleton().oState.get('COMPRESSION') !==
+        null
+    ) {
+        if (
+            StateManager.singleton().oState.get('COMPRESSION') ===
+            'TRUE'
+        ) {
+            compressedFiles = true;
+        }
+    }
+    return compressedFiles;
+}
+
 export function getVisuxml2(url: string): Promise<XMLDocument> {
     return new Promise((resolve) => {
         let encoding = StateManager.singleton().oState.get(
@@ -71,23 +89,9 @@ export function getVisuxml2(url: string): Promise<XMLDocument> {
         if (encoding === undefined) {
             encoding = 'iso-8859-1';
         }
-        // Check if the compressed flag on statemanager is set
-        let compressed = false;
-        if (
-            StateManager.singleton().oState.get('COMPRESSION') !==
-            null
-        ) {
-            if (
-                StateManager.singleton().oState.get('COMPRESSION') ===
-                'TRUE'
-            ) {
-                compressed = true;
-            } else {
-                compressed = false;
-            }
-        }
+        let zipped = checkCompression();
         // Fetch the xml as unzipped file
-        if (!compressed) {
+        if (!zipped) {
             fetch(url, {
                 headers: {
                     'Content-Type': 'text/plain; charset=UTF8',
@@ -109,7 +113,7 @@ export function getVisuxml2(url: string): Promise<XMLDocument> {
             });
         }
         // Fetch the visu as zipped file
-        else if (compressed) {
+        else if (zipped) {
             const zip = new JsZip();
             const urlStack = url.split('/');
             const filename = urlStack.pop();
@@ -185,23 +189,9 @@ export function getImage(url: string): Promise<string> {
 
     return new Promise((resolve) => {
         const base64Flag = 'data:' + mimeType + ';base64,';
-        // Check if the compressed flag on statemanager is set
-        let compressed = false;
-        if (
-            StateManager.singleton().oState.get('COMPRESSION') !==
-            null
-        ) {
-            if (
-                StateManager.singleton().oState.get('COMPRESSION') ===
-                'TRUE'
-            ) {
-                compressed = true;
-            } else {
-                compressed = false;
-            }
-        }
+        let zipped = checkCompression();
         // Fetch the image as unzipped file
-        if (!compressed) {
+        if (!zipped) {
             fetch(url).then((response) => {
                 if (response.ok) {
                     response.arrayBuffer().then((buffer) => {
@@ -219,7 +209,7 @@ export function getImage(url: string): Promise<string> {
             });
         }
         // Fetch the image as zipped file
-        else if (compressed) {
+        else if (zipped) {
             const zip = new JsZip();
             const urlStack = url.split('/');
             const filename = urlStack.pop();
