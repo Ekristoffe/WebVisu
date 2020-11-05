@@ -13,12 +13,12 @@ Just copy the webvisu.html and webvisu.js from the release tab to the folder whi
 
 For displaying on client use a modern browser like Chrome, Firefox or Edge that supports ES6 constructs.
 
-#### For the non Linux PLCs (like 750-88x, 750-89x series):
+### For the non Linux PLCs (like 750-88x, 750-89x series)
 
 Transfer them to the _/PLC_ folder. The visualisation is available afterwards on  
 _http://\<ip-address-of-your-plc>/PLC/webvisu.html_
 
-#### For the Linux PLCs (like IPC or PFC200):
+### For the Linux PLCs (like IPC or PFC200)
 
 Transfer it to _/home/codesys_. The visualisation is available afterwards on  
 _http://\<ip-address-of-your-plc>:8080/webvisu.html_ (IPC)

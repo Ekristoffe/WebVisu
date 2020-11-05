@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -21,6 +22,9 @@ module.exports = {
         // the filename template for entry chunks
     },
     plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
         // list of additional plugins
         new HtmlWebpackPlugin({
             filename: 'webvisu.html',
@@ -33,6 +37,9 @@ module.exports = {
         // (does not apply to resolving to loaders)
         extensions: ['.ts', '.tsx', '.js'],
         // extensions that are used
+        alias: {
+            buffer: 'buffer',
+        },
     },
     module: {
         // configuration regarding modules

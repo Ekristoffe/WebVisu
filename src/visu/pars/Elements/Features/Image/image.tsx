@@ -6,6 +6,10 @@ import ComSocket from '../../../../communication/comsocket';
 import { stringToArray } from '../../../Utils/utilfunctions';
 import { getImage } from '../../../Utils/fetchfunctions';
 import { get, set } from 'idb-keyval';
+// import * as Buffer from "Buffer";
+// import { Buffer } from 'buffer';
+//  import Buffer from 'buffer';
+import * as Buffer from "buffer";
 
 type Props = {
     section: Element;
@@ -190,10 +194,12 @@ export const ImageField: React.FunctionComponent<Props> = ({
             }
 
             if (plainImg !== null) {
-                if (initial.transparent && 
+                if (
+                    initial.transparent && 
                     initial.transparencyColor !== null &&
                     initial.transparencyColor !== undefined &&
-                    initial.transparencyColor !== '') {
+                    initial.transparencyColor !== ''
+                ) {
                     // Transparency conversion
 
                     console.log('plainImg', plainImg);
@@ -215,18 +221,46 @@ export const ImageField: React.FunctionComponent<Props> = ({
                                 binaryData[i] = binaryImg.charCodeAt(i);
                             }
                             console.log('binaryData', binaryData);
-
+//                            Buffer
                             if (base64Flag === 'data:image/bmp;base64,') {
-                                const pixelsData = bmpHelper.decode(Buffer.from(binaryData));
+//                                const Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
+                                const pixelsIn = bmpHelper.decode(Buffer.Buffer.from(binaryData.buffer));
+                                console.log('pixelsIn', pixelsIn);
+                                const pixelsOut = pixelsIn;
                                 // bmp stores the pixels as ABGR
-                                for (let i = 0; i < binaryLen; i += 4) {
-                                    if(pixelsData.data[i + 1] === 0x00 && pixelsData.data[i + 2] === 0x00 && pixelsData.data[i + 3] === 0x00){
+                                for (let i = 0; i < pixelsIn.data.byteLength; i += 4) {
+/*                                    if(pixelsData.data[i + 1] === 0x00 && pixelsData.data[i + 2] === 0x00 && pixelsData.data[i + 3] === 0x00){
                                         pixelsData.data[i + 0] = 0x00; // A
                                     } else {
                                         pixelsData.data[i + 0] = 0xFF; // A
                                     }
+*/
+/*                                    if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
+                                        pixelsOut.data[i + 0] = 0x00; // R
+                                        pixelsOut.data[i + 1] = 0xFF; // G
+                                        pixelsOut.data[i + 2] = 0x00; // B
+                                        pixelsOut.data[i + 3] = 0x00; // A
+                                    } else {
+                                        pixelsOut.data[i + 0] = 0x00; // R
+                                        pixelsOut.data[i + 1] = 0x00; // G
+                                        pixelsOut.data[i + 2] = 0xFF; // B
+                                        pixelsOut.data[i + 3] = 0xFF; // A
+                                    }
+                                    */
+                                    if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
+                                        pixelsOut.data[i + 0] = 0x00; // A
+                                        pixelsOut.data[i + 1] = 0x00; // B
+                                        pixelsOut.data[i + 2] = 0xFF; // G
+                                        pixelsOut.data[i + 3] = 0x00; // R
+                                    } else {
+                                        pixelsOut.data[i + 0] = 0xFF; // A
+                                        pixelsOut.data[i + 1] = 0xFF; // B
+                                        pixelsOut.data[i + 2] = 0x00; // G
+                                        pixelsOut.data[i + 3] = 0x00; // R
+                                    }
                                 }
-                                binaryData = bmpHelper.encode(pixelsData).data;
+                                console.log('pixelsOut', pixelsOut);
+                                binaryData = bmpHelper.encode(pixelsOut).data;
                             }
                             
                             console.log('binaryData', binaryData);
