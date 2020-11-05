@@ -20,7 +20,7 @@
     animation: sup-spinner 1.2s linear infinite;
 }
 
-.sup-spinner div:after {
+.sup-spinner div::after {
     content: ' ';
     display: block;
     position: absolute;
@@ -96,6 +96,7 @@
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
