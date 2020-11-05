@@ -85,7 +85,7 @@ export function getVisuxml2(url: string): Promise<XMLDocument> {
         if (typeof encoding === 'undefined') {
             encoding = 'iso-8859-1';
         }
-        let zipped = checkCompression();
+        const zipped = checkCompression();
         // Fetch the xml as unzipped file
         if (!zipped) {
             fetch(url, {
@@ -185,7 +185,7 @@ export function getImage(url: string): Promise<string> {
 
     return new Promise((resolve) => {
         const base64Flag = 'data:' + mimeType + ';base64,';
-        let zipped = checkCompression();
+        const zipped = checkCompression();
         // Fetch the image as unzipped file
         if (!zipped) {
             fetch(url).then((response) => {
