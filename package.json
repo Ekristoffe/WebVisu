@@ -21,9 +21,6 @@
     },
     "homepage": "https://github.com/tnentwig/WebVisu#readme",
     "devDependencies": {
-        "@types/bmp-js": "^0.1.0",
-        "@types/jpeg-js": "^0.3.7",
-        "@types/node": "^14.14.6",
         "@types/react": "^16.9.55",
         "@types/react-dom": "^16.9.9",
         "@types/sprintf-js": "^1.1.2",
@@ -47,7 +44,6 @@
     "dependencies": {
         "@material-ui/core": "^4.11.0",
         "bmp-js": "^0.1.0",
-        "buffer": "^6.0.1",
         "idb-keyval": "^3.2.0",
         "jpeg-js": "^0.4.2",
         "jszip": "^3.5.0",

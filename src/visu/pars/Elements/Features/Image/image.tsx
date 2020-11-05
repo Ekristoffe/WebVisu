@@ -1,15 +1,12 @@
 import * as React from 'react';
-import * as util from '../../../Utils/utilfunctions';
-import * as bmpHelper from 'bmp-js';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
 import ComSocket from '../../../../communication/comsocket';
 import { stringToArray } from '../../../Utils/utilfunctions';
 import { getImage } from '../../../Utils/fetchfunctions';
 import { get, set } from 'idb-keyval';
-// import * as Buffer from "Buffer";
-// import { Buffer } from 'buffer';
-//  import Buffer from 'buffer';
-import * as Buffer from "buffer";
+// import * as util from '../../../Utils/utilfunctions'; // used for image transparency modification (failed)
+// import * as bmpHelper from 'bmp-js'; // used for image transparency modification (failed)
+// import * as Buffer from "buffer"; // used for image transparency modification (failed)
 
 type Props = {
     section: Element;
@@ -46,9 +43,8 @@ export const ImageField: React.FunctionComponent<Props> = ({
         dynamicFileName: '',
         // margin: 'auto',
         // viewBox: '',
-        transparent: false,
-        transparencyColor: '',
-
+        // transparent: false, // used for image transparency modification (failed)
+        // transparencyColor: '', // used for image transparency modification (failed)
     };
 
     /*
@@ -103,6 +99,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
         }
     }
 
+    /* // used for image transparency modification (failed)
     if (section.getElementsByTagName('transparent').length) {
         if (
             section.getElementsByTagName('transparent')[0].innerHTML
@@ -118,7 +115,9 @@ export const ImageField: React.FunctionComponent<Props> = ({
             });
         }
     }
+    */
 
+    /* // used for image transparency modification (failed)
     if (section.getElementsByTagName('transparency-color').length) {
         if (
             section.getElementsByTagName('transparency-color')[0].innerHTML
@@ -134,6 +133,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
             });
         }
     }
+    */
 
     // Set the fileName, it could be a variable or static
     if (section.getElementsByTagName('expr-fill-color').length) {
@@ -194,6 +194,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
             }
 
             if (plainImg !== null) {
+                /* // used for image transparency modification (failed)
                 if (
                     initial.transparent && 
                     initial.transparencyColor !== null &&
@@ -208,7 +209,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
                     if (regEx !== undefined || regEx !== null) {
                         const base64Flag = regEx[0];
                         console.log('base64Flag', base64Flag);
-                        regEx = plainImg.match(/(?<=base64,).*/);
+                        regEx = plainImg.match(/(?<=base64,).* /);
                         console.log('regEx', regEx);
                         if (regEx !== undefined || regEx !== null) {
                             let base64Img = regEx[0];
@@ -235,7 +236,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
                                         pixelsData.data[i + 0] = 0xFF; // A
                                     }
 */
-/*                                    if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
+                /*                                    if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
                                         pixelsOut.data[i + 0] = 0x00; // R
                                         pixelsOut.data[i + 1] = 0xFF; // G
                                         pixelsOut.data[i + 2] = 0x00; // B
@@ -246,7 +247,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
                                         pixelsOut.data[i + 2] = 0xFF; // B
                                         pixelsOut.data[i + 3] = 0xFF; // A
                                     }
-                                    */
+                                    * /
                                     if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
                                         pixelsOut.data[i + 0] = 0x00; // A
                                         pixelsOut.data[i + 1] = 0x00; // B
@@ -319,13 +320,15 @@ export const ImageField: React.FunctionComponent<Props> = ({
                     console.log('plainImg', plainImg);
                     image.src = plainImg;
                     console.log('image.src', image.src);
-                    */
+                    * /
                 }
+                */
                 setFileName(plainImg);
             }
         };
         fetchImage();
-    }, [initial.fixedFileName, initial.dynamicFileName, initial.transparent, initial.transparencyColor]);
+        // }, [initial.fixedFileName, initial.dynamicFileName, initial.transparent, initial.transparencyColor]); // used for image transparency modification (failed)
+    }, [initial.fixedFileName, initial.dynamicFileName]); // used for image transparency modification (failed)
 
     const state = useLocalStore(() => initial);
     return useObserver(() => (
