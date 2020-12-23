@@ -5,8 +5,8 @@ import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
 import { IBasicShape } from '../../../Interfaces/javainterfaces';
 import {
-    parseDynamicShapeParameters,
-    parseDynamicTextParameters,
+    parseShapeParameters,
+    parseTextParameters,
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
@@ -16,10 +16,12 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
     section: Element;
+    dynamicTextParameters: Map<string, string[][]>;
 };
 
 export const Button: React.FunctionComponent<Props> = ({
     section,
+    dynamicTextParameters,
 }) => {
     // Parsing of the fixed parameters
     const button: IBasicShape = {
@@ -80,9 +82,7 @@ export const Button: React.FunctionComponent<Props> = ({
     };
 
     // Parsing of observable events (like toggle color)
-    const dynamicShapeParameters = parseDynamicShapeParameters(
-        section,
-    );
+    const shapeParameters = parseShapeParameters(section);
 
     // Parsing of user events that causes a reaction like toggle or pop up input
     const onclick = parseClickEvent(section);
@@ -123,15 +123,16 @@ export const Button: React.FunctionComponent<Props> = ({
     // Parsing the textfields and returning a jsx object if it exists
     let textField: JSX.Element;
     if (section.getElementsByTagName('text-format').length) {
-        const dynamicTextParameters = parseDynamicTextParameters(
+        const textParameters = parseTextParameters(
             section,
             // button.shape,
         );
         textField = (
             <Textfield
                 section={section}
+                textParameters={textParameters}
+                shapeParameters={shapeParameters}
                 dynamicTextParameters={dynamicTextParameters}
-                dynamicShapeParameters={dynamicShapeParameters}
             ></Textfield>
         );
     } else {
@@ -140,7 +141,7 @@ export const Button: React.FunctionComponent<Props> = ({
 
     // Convert object to an observable one
     const state = useLocalStore(() =>
-        createVisuObject(button, dynamicShapeParameters),
+        createVisuObject(button, shapeParameters),
     );
 
     // Return of the react node

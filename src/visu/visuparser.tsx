@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { get, set } from 'idb-keyval';
 import { VisuElements } from '../visu/pars/elementparser';
-import { stringToArray } from './pars/Utils/utilfunctions';
 import {
-    getVisuxml,
+    stringToArray,
+    stringToBoolean,
+} from './pars/Utils/utilfunctions';
+import {
+    getDynamicXML,
+    getVisuXML,
     stringifyVisuXML,
     parseVisuXML,
 } from './pars/Utils/fetchfunctions';
@@ -85,6 +89,11 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
         >([0, 0]);
         const [scale, setScale] = React.useState('scale(1)');
 
+        // let useLanguageFile = false;
+        let useDynamicText = false;
+        let language = '';
+        const dynamicTextFile = [''];
+
         // Get new xml on change of visuName
         React.useEffect(() => {
             const fetchXML = async function () {
@@ -98,7 +107,8 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                 // Files that are needed several times will be saved internally for loading speed up
                 let plainxml: string;
                 if (typeof (await get(visuName)) === 'undefined') {
-                    const xml = await getVisuxml(url);
+                    const xml = await getVisuXML(url);
+                    console.log('xml', xml);
                     if (typeof xml === 'undefined' || xml === null) {
                         console.warn(
                             'The requested visualisation ' +
@@ -107,6 +117,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         );
                     } else {
                         plainxml = stringifyVisuXML(xml);
+                        console.log('plainxml', plainxml);
                         await set(visuName, plainxml);
                     }
                 } else {
@@ -115,6 +126,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
 
                 if (plainxml !== null) {
                     const xmlDoc = parseVisuXML(plainxml);
+                    console.log('xmlDoc', xmlDoc);
                     await initVariables(xmlDoc);
                     setAdaptedXML(xmlDoc.children[0]);
                     setOriginSize(
@@ -127,6 +139,76 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                                 .innerHTML,
                         ),
                     );
+                    if (
+                        xmlDoc.getElementsByTagName(
+                            'use-dynamic-text',
+                        ).length > 0
+                    ) {
+                        useDynamicText = stringToBoolean(
+                            xmlDoc.getElementsByTagName(
+                                'use-dynamic-text',
+                            )[0].textContent,
+                        );
+                    }
+                    if (
+                        xmlDoc.getElementsByTagName('language')
+                            .length > 0
+                    ) {
+                        language = xmlDoc.getElementsByTagName(
+                            'language',
+                        )[0].textContent;
+                    }
+                    if (
+                        xmlDoc.getElementsByTagName(
+                            'dynamic-text-file',
+                        ).length > 0
+                    ) {
+                        // Iterate over the childs to find the dynamic text file
+                        for (
+                            let i = 0;
+                            i <
+                            xmlDoc.getElementsByTagName(
+                                'dynamic-text-file',
+                            ).length;
+                            i++
+                        ) {
+                            const dynamicTextName = xmlDoc
+                                .getElementsByTagName(
+                                    'dynamic-text-file',
+                                )
+                                [i].textContent.toLowerCase();
+                            dynamicTextFile[i] = dynamicTextName;
+                            const url =
+                                StateManager.singleton().oState.get(
+                                    'ROOTDIR',
+                                ) +
+                                '/' +
+                                dynamicTextName;
+                            if (
+                                typeof (await get(
+                                    dynamicTextName,
+                                )) === 'undefined'
+                            ) {
+                                const xml = await getDynamicXML(url);
+                                if (
+                                    typeof xml === 'undefined' ||
+                                    xml === null
+                                ) {
+                                    console.warn(
+                                        'The requested dynamic text file ' +
+                                            dynamicTextName +
+                                            ' is not available!',
+                                    );
+                                } else {
+                                    plainxml = stringifyVisuXML(xml);
+                                    await set(
+                                        dynamicTextName,
+                                        plainxml,
+                                    );
+                                }
+                            }
+                        }
+                    }
                     setLoading(false);
                 }
             };
@@ -184,6 +266,10 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                 {loading ? null : (
                     <VisuElements
                         visualisation={adaptedXML}
+                        // useLanguageFile={useLanguageFile}
+                        useDynamicText={useDynamicText}
+                        language={language}
+                        dynamicTextFile={dynamicTextFile}
                     ></VisuElements>
                 )}
             </div>

@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 
 export function createScrollbarObject(
     scrollbarShape: IScrollbarShape,
-    dynamicShapeParameters: Map<string, string[][]>,
+    shapeParameters: Map<string, string[][]>,
 ): IScrollbarObject {
     // absCornerCoord are the absolute coordinates of the <div> element in relation to the origin in the top left
     const absCornerCoord = {
@@ -74,8 +74,8 @@ export function createScrollbarObject(
         tooltip: tooltip,
     };
 
-    if (dynamicShapeParameters.has('expr-invisible')) {
-        const element = dynamicShapeParameters!.get('expr-invisible');
+    if (shapeParameters.has('expr-invisible')) {
+        const element = shapeParameters!.get('expr-invisible');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -96,10 +96,8 @@ export function createScrollbarObject(
         });
     }
 
-    if (dynamicShapeParameters.has('expr-lower-bound')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-lower-bound',
-        );
+    if (shapeParameters.has('expr-lower-bound')) {
+        const element = shapeParameters!.get('expr-lower-bound');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -112,10 +110,8 @@ export function createScrollbarObject(
         });
     }
 
-    if (dynamicShapeParameters.has('expr-upper-bound')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-upper-bound',
-        );
+    if (shapeParameters.has('expr-upper-bound')) {
+        const element = shapeParameters!.get('expr-upper-bound');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -128,10 +124,8 @@ export function createScrollbarObject(
         });
     }
     // 18) Tooltip
-    if (dynamicShapeParameters.has('expr-tooltip-display')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-tooltip-display',
-        );
+    if (shapeParameters.has('expr-tooltip-display')) {
+        const element = shapeParameters!.get('expr-tooltip-display');
         Object.defineProperty(initial, 'tooltip', {
             get: function () {
                 let output = '';
@@ -174,8 +168,8 @@ export function createScrollbarObject(
         });
     }
 
-    if (dynamicShapeParameters.has('expr-tap-var')) {
-        const element = dynamicShapeParameters!.get('expr-tap-var');
+    if (shapeParameters.has('expr-tap-var')) {
+        const element = shapeParameters!.get('expr-tap-var');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );

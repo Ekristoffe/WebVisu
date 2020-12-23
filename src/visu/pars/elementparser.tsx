@@ -1,20 +1,30 @@
 import * as React from 'react';
 import { uid } from 'react-uid';
-import { SimpleShape } from '../pars/Elements/Basicshapes/simpleshape';
-import { PolyShape } from '../pars/Elements/Basicshapes/polyshape';
-import { Button } from '../pars/Elements/Button/button';
-import { Piechart } from '../pars/Elements/Piechart/piechart';
-import { Scrollbar } from '../pars/Elements/Scrollbar/scrollbar';
+import { SimpleShape } from './Elements/Basicshapes/simpleshape';
+import { PolyShape } from './Elements/Basicshapes/polyshape';
+import { Button } from './Elements/Button/button';
+import { Piechart } from './Elements/Piechart/piechart';
+import { Scrollbar } from './Elements/Scrollbar/scrollbar';
 // import { ArrayTable } from './Elements/Arraytable/arraytable';
 import { Bitmap } from './Elements/Bitmap/bitmap';
 import { Group } from './Elements/Group/group';
-import { Subvisu } from '../pars/Elements/Subvisu/subvisu';
+import { Subvisu } from './Elements/Subvisu/subvisu';
+import { parseDynamicTextParameters } from './Elements/Features/Events/eventManager';
 
 type Props = {
     visualisation: Element;
+    // useLanguageFile: boolean;
+    useDynamicText: boolean;
+    language: string;
+    dynamicTextFile: string[];
 };
 export const VisuElements: React.FunctionComponent<Props> = React.memo(
-    ({ visualisation }) => {
+    ({
+        visualisation,
+        useDynamicText,
+        language,
+        dynamicTextFile,
+    }) => {
         const visuObjects: Array<{
             obj: JSX.Element;
             id: string;
@@ -23,6 +33,16 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
             const obj = { obj: visuObject, id: uid(visuObject) };
             visuObjects.push(obj);
         };
+        //if (useDynamicText) {
+        //    ; // ;
+        //}
+        const dynamicTextParametesrs = parseDynamicTextParameters(
+            dynamicTextFile,
+        );
+        const dynamicTextParameters: Map<
+            string,
+            string[][]
+        > = new Map();
         // The effect is called if the visualisation prop change
         // Rip all <element> sections
         for (let i = 0; i < visualisation.children.length; i++) {
@@ -36,6 +56,9 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <SimpleShape
                                 section={section}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
                             ></SimpleShape>,
                         );
                         break;
@@ -43,35 +66,60 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                     // Is a bitmap
                     case 'bitmap': {
                         addVisuObject(
-                            <Bitmap section={section}></Bitmap>,
+                            <Bitmap
+                                section={section}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></Bitmap>,
                         );
                         break;
                     }
                     // Is a button
                     case 'button': {
                         addVisuObject(
-                            <Button section={section}></Button>,
+                            <Button
+                                section={section}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></Button>,
                         );
                         break;
                     }
                     // Is a polygon - As polygon, polyline or bezier
                     case 'polygon': {
                         addVisuObject(
-                            <PolyShape section={section}></PolyShape>,
+                            <PolyShape
+                                section={section}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></PolyShape>,
                         );
                         break;
                     }
                     // Is a piechart
                     case 'piechart': {
                         addVisuObject(
-                            <Piechart section={section}></Piechart>,
+                            <Piechart
+                                section={section}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></Piechart>,
                         );
                         break;
                     }
                     // Is a group (Dynamic elements like a graph)
                     case 'group': {
                         addVisuObject(
-                            <Group section={section}></Group>,
+                            <Group
+                                section={section}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></Group>,
                         );
                         break;
                     }
@@ -84,7 +132,13 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                     }
                     case 'reference': {
                         addVisuObject(
-                            <Subvisu section={section}></Subvisu>,
+                            <Subvisu
+                                section={section}
+                                // useLanguageFile={useLanguageFile}
+                                useDynamicText={useDynamicText}
+                                language={language}
+                                dynamicTextFile={dynamicTextFile}
+                            ></Subvisu>,
                         );
                         break;
                     }

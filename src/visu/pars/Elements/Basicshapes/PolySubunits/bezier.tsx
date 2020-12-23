@@ -84,7 +84,7 @@ export const Bezier: React.FunctionComponent<Props> = ({
                             d={coordArrayToBezierString(
                                 state.relPoints,
                             )}
-                            fill={state.fill}
+                            fill="none"
                             strokeWidth={state.strokeWidth}
                             stroke={state.stroke}
                             transform={state.transform}

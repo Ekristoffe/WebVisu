@@ -201,7 +201,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
                 if (
                     initial.transparent && 
                     initial.transparencyColor !== null &&
-                    initial.transparencyColor !== undefined &&
+                    typeof initial.transparencyColor !== 'undefined' &&
                     initial.transparencyColor !== ''
                 ) {
                     // Transparency conversion
@@ -209,12 +209,12 @@ export const ImageField: React.FunctionComponent<Props> = ({
                     console.log('plainImg', plainImg);
                     let regEx = plainImg.match(/.*(?<=base64,)/);
                     console.log('regEx', regEx);
-                    if (regEx !== undefined || regEx !== null) {
+                    if (typeof regEx !== 'undefined' || regEx !== null) {
                         const base64Flag = regEx[0];
                         console.log('base64Flag', base64Flag);
                         regEx = plainImg.match(/(?<=base64,).* /);
                         console.log('regEx', regEx);
-                        if (regEx !== undefined || regEx !== null) {
+                        if (typeof regEx !== 'undefined' || regEx !== null) {
                             let base64Img = regEx[0];
                             console.log('base64Img', base64Img);
                             let binaryImg = window.atob(base64Img);
@@ -282,7 +282,7 @@ export const ImageField: React.FunctionComponent<Props> = ({
                     /**
                     const regEx = new RegExp(/(?<=base64,).* /);
                     const match = regEx.exec(visuName);
-                    if (match === undefined || match === null) {
+                    if (typeof match === 'undefined' || match === null) {
                     const base64Flag = 'data:' + mimeType + ';base64,';
                     const base64 = window.btoa(binary);
                     resolve(base64Flag + base64);

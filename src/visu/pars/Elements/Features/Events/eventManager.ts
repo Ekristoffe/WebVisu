@@ -1,8 +1,14 @@
 import ComSocket from '../../../../communication/comsocket';
 import StateManager from '../../../../statemanagement/statemanager';
+import { get } from 'idb-keyval';
+import {
+    getDynamicXML,
+    getVisuXML,
+    stringifyVisuXML,
+    parseVisuXML,
+} from '../../../Utils/fetchfunctions';
 // This function is parsing all <expr-...> tags like toggle color and returns a map with the expression as key and the variable as value
-
-export function parseDynamicShapeParameters(
+export function parseShapeParameters(
     section: Element,
 ): Map<string, string[][]> {
     const exprMap: Map<string, string[][]> = new Map();
@@ -92,7 +98,7 @@ export function parseDynamicShapeParameters(
     return exprMap;
 }
 
-export function parseDynamicTextParameters(
+export function parseTextParameters(
     section: Element,
     // shape: string,
 ): Map<string, string[][]> {
@@ -152,6 +158,158 @@ export function parseDynamicTextParameters(
             exprMap.set(exprName, stack);
         }
     }
+    return exprMap;
+}
+
+export function parseDynamicTextParameters(
+    dynamicTextFile: string[],
+    // shape: string,
+): Map<string, Map<string, string[][]>> {
+    const exprMap: Map<string, Map<string, string[][]>> = new Map();
+
+    // Files that are needed several times will be saved internally for loading speed up
+    let plainxml: string;
+    console.log('dynamicTextFile', dynamicTextFile);
+    // Iterate over the childs to find the dynamic text file
+    const p = 0;
+    const doNextPromise = (i: number) => {
+        console.log('dynamicTextFile', i, dynamicTextFile[i]);
+        get(dynamicTextFile[i]).then((plainxml) => {
+            console.log('plainxml', plainxml);
+            if (typeof plainxml !== 'undefined' && plainxml !== null) {
+                const xmlDoc = parseVisuXML(plainxml.toString());
+                console.log('xmlDoc', xmlDoc);
+                const children = xmlDoc.children;
+                console.log('children', children);
+                for (let i = 0; i < children.length; i++) {
+                    const exprName = children[i].nodeName;
+                    console.log('exprName', exprName);
+                    if (exprName === 'dynamic-text') {
+                        // Now parse the text-list stack
+                        // The stack is included in a <text-list></text-list>
+                        const textList = children[
+                            i
+                        ].getElementsByTagName('text-list')[0]
+                            .children;
+                        console.log('textList', textList);
+                        // Iterate over all expressions
+                        for (let j = 0; j < textList.length; j++) {
+                            // Init a helper stack
+                            const stack: string[][] = [];
+                            // Init a helper map
+                            const sideMap: Map<
+                                string,
+                                string[][]
+                            > = new Map();
+
+                            const prefix = textList[j].prefix;
+                            console.log('prefix', prefix);
+                            const id = textList[j].id;
+                            console.log('id', id);
+                            const value = textList[j].textContent;
+                            console.log('value', value);
+                            stack.push(['value', value]);
+                            /*
+                                switch (ident) {
+                                    case 'var': {
+                                        stack.push(['var', value.toLowerCase()]);
+                                        break;
+                                    }
+                                    case 'const': {
+                                        stack.push(['const', value]);
+                                        break;
+                                    }
+                                    case 'op': {
+                                        stack.push(['op', value]);
+                                        break;
+                                    }
+                                    default: {
+                                        console.warn(
+                                            'The expression ' +
+                                                exprName +
+                                                ' with ident ' +
+                                                ident +
+                                                ' which has for value ' +
+                                                value +
+                                                ' is not attached!',
+                                        );
+                                    }
+                                }
+                                */
+                            sideMap.set(id, stack);
+                            exprMap.set(prefix, sideMap);
+                        }
+                    }
+                }
+            }
+            i++;
+            if (i < dynamicTextFile.length) doNextPromise(i);
+        });
+    };
+    doNextPromise(p);
+    /*
+    for (let i = 0; i < dynamicTextFile.length; i++) {
+        if (typeof dynamicTextFile[i] !== 'undefined' && dynamicTextFile[i] !== null && dynamicTextFile[i] !== '') {
+            if (typeof (await get(dynamicTextFile[i])) === 'undefined') {
+                plainxml = await get(dynamicTextFile[i]);
+                if (plainxml !== null) {
+                    const xmlDoc = parseVisuXML(plainxml);
+                    const children = xmlDoc.children;
+                    for (let i = 0; i < children.length; i++) {
+                        const exprName = children[i].nodeName;
+                        if (exprName === 'dynamic-text') {
+                            // Now parse the text-list stack
+                            // The stack is included in a <text-list></text-list>
+                            const textList = children[i].getElementsByTagName(
+                                'text-list',
+                            )[0].children;
+                            // Iterate over all expressions
+                            for (let j = 0; j < textList.length; j++) {
+                                // Init a helper stack
+                                const stack: string[][] = [];
+                                // Init a helper map
+                                const sideMap: Map<string, string[][]> = new Map();
+
+                                const prefix = textList[j].prefix;
+                                const id = textList[j].id;
+                                const value = textList[j].textContent;
+                                /*
+                                switch (ident) {
+                                    case 'var': {
+                                        stack.push(['var', value.toLowerCase()]);
+                                        break;
+                                    }
+                                    case 'const': {
+                                        stack.push(['const', value]);
+                                        break;
+                                    }
+                                    case 'op': {
+                                        stack.push(['op', value]);
+                                        break;
+                                    }
+                                    default: {
+                                        console.warn(
+                                            'The expression ' +
+                                                exprName +
+                                                ' with ident ' +
+                                                ident +
+                                                ' which has for value ' +
+                                                value +
+                                                ' is not attached!',
+                                        );
+                                    }
+                                }
+                                * /
+                                sideMap.set(id, stack);
+                                exprMap.set(prefix, sideMap);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    */
     return exprMap;
 }
 

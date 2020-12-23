@@ -7,18 +7,20 @@ import { Polyline } from './PolySubunits/polyline';
 import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
 import {
-    parseDynamicShapeParameters,
-    parseDynamicTextParameters,
+    parseShapeParameters,
+    parseTextParameters,
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
 
 type Props = {
     section: Element;
+    dynamicTextParameters: Map<string, string[][]>;
 };
 
 export const PolyShape: React.FunctionComponent<Props> = ({
     section,
+    dynamicTextParameters,
 }) => {
     // Check if its on of the allowed shapes like polygon, bezier or polyline
     const shape = section.getElementsByTagName('poly-shape')[0]
@@ -101,9 +103,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
         );
 
         // Parsing of observable events (like toggle color)
-        const dynamicShapeParameters = parseDynamicShapeParameters(
-            section,
-        );
+        const shapeParameters = parseShapeParameters(section);
 
         // Parsing of user events that causes a reaction like toggle or pop up input
         const onclick = parseClickEvent(section);
@@ -132,15 +132,16 @@ export const PolyShape: React.FunctionComponent<Props> = ({
         // Parsing the textfields and returning a jsx object if it exists
         let textField: JSX.Element;
         if (section.getElementsByTagName('text-format').length) {
-            const dynamicTextParameters = parseDynamicTextParameters(
+            const textParameters = parseTextParameters(
                 section,
                 // shape,
             );
             textField = (
                 <Textfield
                     section={section}
+                    textParameters={textParameters}
+                    shapeParameters={shapeParameters}
                     dynamicTextParameters={dynamicTextParameters}
-                    dynamicShapeParameters={dynamicShapeParameters}
                 ></Textfield>
             );
         } else {
@@ -155,7 +156,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                         polyShape={polyShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}
@@ -169,7 +170,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                         polyShape={polyShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}
@@ -183,7 +184,7 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                         polyShape={polyShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}

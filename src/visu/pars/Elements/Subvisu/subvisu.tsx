@@ -2,16 +2,24 @@ import * as React from 'react';
 import { VisuElements } from '../../elementparser';
 import * as util from '../../Utils/utilfunctions';
 import { ISubvisuShape } from '../../../Interfaces/javainterfaces';
-import { parseDynamicShapeParameters } from '../Features/Events/eventManager';
+import { parseShapeParameters } from '../Features/Events/eventManager';
 import { createVisuObject } from '../../Objectmanagement/objectManager';
 import { useObserver, useLocalStore } from 'mobx-react-lite';
 
 type Props = {
     section: Element;
+    // useLanguageFile: boolean;
+    useDynamicText: boolean;
+    language: string;
+    dynamicTextFile: string[];
 };
 
 export const Subvisu: React.FunctionComponent<Props> = ({
     section,
+    // useLanguageFile,
+    useDynamicText,
+    language,
+    dynamicTextFile,
 }) => {
     const children = section.children;
     const referenceObject: { [id: string]: Element } = {};
@@ -88,11 +96,9 @@ export const Subvisu: React.FunctionComponent<Props> = ({
     };
 
     // Parsing of observable events (like toggle color)
-    const dynamicShapeParameters = parseDynamicShapeParameters(
-        section,
-    );
+    const shapeParameters = parseShapeParameters(section);
 
-    const initial = createVisuObject(subvisu, dynamicShapeParameters);
+    const initial = createVisuObject(subvisu, shapeParameters);
 
     // Convert object to an observable one
     const state = useLocalStore(() => initial);
@@ -113,7 +119,13 @@ export const Subvisu: React.FunctionComponent<Props> = ({
                 transformOrigin: '0 0',
             }}
         >
-            <VisuElements visualisation={section}></VisuElements>
+            <VisuElements
+                visualisation={section}
+                // useLanguageFile={useLanguageFile}
+                useDynamicText={useDynamicText}
+                language={language}
+                dynamicTextFile={dynamicTextFile}
+            ></VisuElements>
         </div>
     ));
 };

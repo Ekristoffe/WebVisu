@@ -6,11 +6,12 @@ import { Button } from '../Button/button';
 import { SimpleShape } from '../Basicshapes/simpleshape';
 import { PolyShape } from '../Basicshapes/polyshape';
 import { stringToArray } from '../../Utils/utilfunctions';
-import { parseDynamicShapeParameters } from '../Features/Events/eventManager';
+import { parseShapeParameters } from '../Features/Events/eventManager';
 import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
     section: Element;
+    dynamicTextParameters: Map<string, string[][]>;
 };
 
 function getDimension(
@@ -40,12 +41,10 @@ function createInitial(section: Element) {
         display: 'hidden' as any,
     };
 
-    const dynamicShapeParameters = parseDynamicShapeParameters(
-        section,
-    );
+    const shapeParameters = parseShapeParameters(section);
     // Invisble?
-    if (dynamicShapeParameters.has('expr-invisible')) {
-        const element = dynamicShapeParameters!.get('expr-invisible');
+    if (shapeParameters.has('expr-invisible')) {
+        const element = shapeParameters!.get('expr-invisible');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -69,7 +68,7 @@ function createInitial(section: Element) {
 }
 
 export const Group: React.FunctionComponent<Props> = React.memo(
-    ({ section }) => {
+    ({ section, dynamicTextParameters }) => {
         let scale = 'scale(1)';
         const rectParent = stringToArray(
             section.getElementsByTagName('rect')[0].innerHTML,
@@ -96,6 +95,9 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <SimpleShape
                                 section={element}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
                             ></SimpleShape>,
                         );
                         getDimension(
@@ -110,7 +112,12 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                     }
                     case 'polygon': {
                         addVisuObject(
-                            <PolyShape section={element}></PolyShape>,
+                            <PolyShape
+                                section={element}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></PolyShape>,
                         );
                         const points = element.getElementsByTagName(
                             'point',
@@ -125,13 +132,23 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                     }
                     case 'button': {
                         addVisuObject(
-                            <Button section={element}></Button>,
+                            <Button
+                                section={element}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></Button>,
                         );
                         break;
                     }
                     case 'group': {
                         addVisuObject(
-                            <Group section={element}></Group>,
+                            <Group
+                                section={element}
+                                dynamicTextParameters={
+                                    dynamicTextParameters
+                                }
+                            ></Group>,
                         );
                         getDimension(
                             rightDownCorner,

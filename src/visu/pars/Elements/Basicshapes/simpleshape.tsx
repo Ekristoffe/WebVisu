@@ -8,18 +8,20 @@ import { Textfield } from '../Features/Text/textManager';
 import { Inputfield } from '../Features/Input/inputManager';
 import { IBasicShape } from '../../../Interfaces/javainterfaces';
 import {
-    parseDynamicShapeParameters,
-    parseDynamicTextParameters,
+    parseShapeParameters,
+    parseTextParameters,
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
 
 type Props = {
     section: Element;
+    dynamicTextParameters: Map<string, string[][]>;
 };
 
 export const SimpleShape: React.FunctionComponent<Props> = ({
     section,
+    dynamicTextParameters,
 }) => {
     // Check if its on of the allowed shapes like rectangle, round-rectangle, circle or line
     const shape = section.getElementsByTagName('simple-shape')[0]
@@ -93,9 +95,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
         };
 
         // Parsing of observable events (like toggle color)
-        const dynamicShapeParameters = parseDynamicShapeParameters(
-            section,
-        );
+        const shapeParameters = parseShapeParameters(section);
         // Parsing of user events that causes a reaction like toggle or pop up input
         const onclick = parseClickEvent(section);
         const onmousedown = parseTapEvent(section, 'down');
@@ -123,15 +123,16 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
         // Parsing the textfields and returning a jsx object if it exists
         let textField: JSX.Element;
         if (section.getElementsByTagName('text-format').length) {
-            const dynamicTextParameters = parseDynamicTextParameters(
+            const textParameters = parseTextParameters(
                 section,
                 // shape,
             );
             textField = (
                 <Textfield
                     section={section}
+                    textParameters={textParameters}
+                    shapeParameters={shapeParameters}
                     dynamicTextParameters={dynamicTextParameters}
-                    dynamicShapeParameters={dynamicShapeParameters}
                 ></Textfield>
             );
         } else {
@@ -146,7 +147,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         simpleShape={simpleShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}
@@ -160,7 +161,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         simpleShape={simpleShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}
@@ -174,7 +175,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         simpleShape={simpleShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}
@@ -188,7 +189,7 @@ export const SimpleShape: React.FunctionComponent<Props> = ({
                         simpleShape={simpleShapeBasis}
                         textField={textField}
                         inputField={inputField}
-                        dynamicParameters={dynamicShapeParameters}
+                        dynamicParameters={shapeParameters}
                         onclick={onclick}
                         onmousedown={onmousedown}
                         onmouseup={onmouseup}

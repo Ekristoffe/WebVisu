@@ -8,14 +8,16 @@ import { uid } from 'react-uid';
 
 type Props = {
     section: Element;
+    textParameters: Map<string, string[][]>;
+    shapeParameters: Map<string, string[][]>;
     dynamicTextParameters: Map<string, string[][]>;
-    dynamicShapeParameters: Map<string, string[][]>;
 };
 
 export const Textfield: React.FunctionComponent<Props> = ({
     section,
+    textParameters,
+    shapeParameters,
     dynamicTextParameters,
-    dynamicShapeParameters,
 }) => {
     // The static tags for the font
     const fontName = section.getElementsByTagName('font-name').length
@@ -148,8 +150,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
     });
 
     // x) Scaling
-    if (dynamicShapeParameters.has('expr-scale')) {
-        const element = dynamicShapeParameters!.get('expr-scale');
+    if (shapeParameters.has('expr-scale')) {
+        const element = shapeParameters!.get('expr-scale');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -158,8 +160,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // y) Rotating
-    if (dynamicShapeParameters.has('expr-angle')) {
-        const element = dynamicShapeParameters!.get('expr-angle');
+    if (shapeParameters.has('expr-angle')) {
+        const element = shapeParameters!.get('expr-angle');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -192,8 +194,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
 
     // Create the variable parameters
     // 1) The text flags bit(dec): 0(1): left justified, 1(2): right justified, 2(4): horizontally centered, 3(8): top, 4(16): bottom, 5(32): centered
-    if (dynamicTextParameters.has('expr-text-flags')) {
-        const element = dynamicTextParameters!.get('expr-text-flags');
+    if (textParameters.has('expr-text-flags')) {
+        const element = textParameters!.get('expr-text-flags');
         Object.defineProperty(initial, 'textAlignHorz', {
             get: function () {
                 const value = Number(
@@ -220,7 +222,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             },
         });
         /**
-    const element = dynamicShapeParameters!.get('expr-angle2');
+    const element = shapeParameters!.get('expr-angle2');
     const returnFunc = ComSocket.singleton().evalFunction(
         element,
     );
@@ -259,8 +261,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 2) The font flags bit(dec): 0(1): Italic, 1(2): Bold, 2(4): Underline, 3(8): StrikeOut
-    if (dynamicTextParameters.has('expr-font-flags')) {
-        const element = dynamicTextParameters!.get('expr-font-flags');
+    if (textParameters.has('expr-font-flags')) {
+        const element = textParameters!.get('expr-font-flags');
         Object.defineProperty(initial, 'isItalic', {
             get: function () {
                 const value = Number(
@@ -295,8 +297,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 3) The font name:
-    if (dynamicTextParameters.has('expr-font-name')) {
-        const element = dynamicTextParameters!.get('expr-font-name');
+    if (textParameters.has('expr-font-name')) {
+        const element = textParameters!.get('expr-font-name');
         Object.defineProperty(initial, 'fontName', {
             get: function () {
                 const value = ComSocket.singleton().getFunction(
@@ -308,8 +310,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
     }
 
     // 5) The font color:
-    if (dynamicTextParameters.has('expr-text-color')) {
-        const element = dynamicTextParameters!.get('expr-text-color');
+    if (textParameters.has('expr-text-color')) {
+        const element = textParameters!.get('expr-text-color');
         Object.defineProperty(initial, 'fontColor', {
             get: function () {
                 const value = ComSocket.singleton().evalFunction(
@@ -321,10 +323,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 6) The font height:
-    if (dynamicTextParameters.has('expr-font-height')) {
-        const element = dynamicTextParameters!.get(
-            'expr-font-height',
-        );
+    if (textParameters.has('expr-font-height')) {
+        const element = textParameters!.get('expr-font-height');
         Object.defineProperty(initial, 'fontHeight', {
             get: function () {
                 const value = Number(
@@ -455,8 +455,8 @@ export const Textfield: React.FunctionComponent<Props> = ({
     }
 
     // The text variable:
-    if (dynamicTextParameters.has('text-display')) {
-        const element = dynamicTextParameters!.get('text-display');
+    if (textParameters.has('text-display')) {
+        const element = textParameters!.get('text-display');
         Object.defineProperty(initial, 'textVariable', {
             get: function () {
                 const value = ComSocket.singleton().getFunction(
@@ -644,6 +644,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
                             /\|>\|/g,
                             '>',
                         );
+
                         output = parsedText;
                     } else {
                         output = sprintf(
@@ -670,7 +671,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
                 textLine={initial.textLines[i]}
                 numberOfLines={initial.textLines.length}
                 section={section}
-                dynamicTextParameters={dynamicTextParameters}
+                textParameters={textParameters}
             ></Textline>,
         );
     }

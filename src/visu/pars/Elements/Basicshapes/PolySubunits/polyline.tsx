@@ -84,7 +84,7 @@ export const Polyline: React.FunctionComponent<Props> = ({
                             points={coordArrayToString(
                                 state.relPoints,
                             )}
-                            fill={state.fill}
+                            fill="none"
                             strokeWidth={state.strokeWidth}
                             stroke={state.stroke}
                             transform={state.transform}

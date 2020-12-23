@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 
 export function createSubvisuObject(
     subvisuShape: ISubvisuShape,
-    dynamicShapeParameters: Map<string, string[][]>,
+    shapeParameters: Map<string, string[][]>,
 ): ISubvisuObject {
     // absCornerCoord are the absolute coordinates of the <div> element in relation to the origin in the top left
     const absCornerCoord = {
@@ -92,10 +92,8 @@ export function createSubvisuObject(
     // We have to implement the const value, the variable or the placeholdervalue if available for the static value
     // Polyshapes and Simpleshapes have the same <expr-...> possibilities
 
-    if (dynamicShapeParameters.has('expr-toggle-color')) {
-        const element = dynamicShapeParameters.get(
-            'expr-toggle-color',
-        );
+    if (shapeParameters.has('expr-toggle-color')) {
+        const element = shapeParameters.get('expr-toggle-color');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -112,10 +110,8 @@ export function createSubvisuObject(
         });
     }
     // 2) Set fill color
-    if (dynamicShapeParameters.has('expr-fill-color')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-fill-color',
-        );
+    if (shapeParameters.has('expr-fill-color')) {
+        const element = shapeParameters!.get('expr-fill-color');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -129,10 +125,8 @@ export function createSubvisuObject(
         });
     }
     // 3) Set alarm color
-    if (dynamicShapeParameters.has('expr-fill-color-alarm')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-fill-color-alarm',
-        );
+    if (shapeParameters.has('expr-fill-color-alarm')) {
+        const element = shapeParameters!.get('expr-fill-color-alarm');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -146,10 +140,8 @@ export function createSubvisuObject(
         });
     }
     // 4) Set frame color
-    if (dynamicShapeParameters.has('expr-frame-color')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-frame-color',
-        );
+    if (shapeParameters.has('expr-frame-color')) {
+        const element = shapeParameters!.get('expr-frame-color');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -163,8 +155,8 @@ export function createSubvisuObject(
         });
     }
     // 5) Set alarm frame color
-    if (dynamicShapeParameters.has('expr-frame-color-alarm')) {
-        const element = dynamicShapeParameters!.get(
+    if (shapeParameters.has('expr-frame-color-alarm')) {
+        const element = shapeParameters!.get(
             'expr-frame-color-alarm',
         );
         const returnFunc = ComSocket.singleton().evalFunction(
@@ -181,8 +173,8 @@ export function createSubvisuObject(
     }
 
     // 6) Set invisible state
-    if (dynamicShapeParameters.has('expr-invisible')) {
-        const element = dynamicShapeParameters!.get('expr-invisible');
+    if (shapeParameters.has('expr-invisible')) {
+        const element = shapeParameters!.get('expr-invisible');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -204,10 +196,8 @@ export function createSubvisuObject(
     }
 
     // 7) The fill flags state: 0 = show color, >0 = ignore setting
-    if (dynamicShapeParameters.has('expr-fill-flags')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-fill-flags',
-        );
+    if (shapeParameters.has('expr-fill-flags')) {
+        const element = shapeParameters!.get('expr-fill-flags');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -229,10 +219,8 @@ export function createSubvisuObject(
     }
 
     // 8) Display of frame: 0 full, 1 dashed ( _ _ _ ), 2 dotted ( .... ), 3 dash-point ( _._._ ), 4 dash-point-point (_.._.. ), 8 blind out line
-    if (dynamicShapeParameters.has('expr-frame-flags')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-frame-flags',
-        );
+    if (shapeParameters.has('expr-frame-flags')) {
+        const element = shapeParameters!.get('expr-frame-flags');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -265,10 +253,8 @@ export function createSubvisuObject(
     }
 
     // 9) line-width
-    if (dynamicShapeParameters.has('expr-line-width')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-line-width',
-        );
+    if (shapeParameters.has('expr-line-width')) {
+        const element = shapeParameters!.get('expr-line-width');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -287,8 +273,8 @@ export function createSubvisuObject(
     }
 
     // 10) Left-Position
-    if (dynamicShapeParameters.has('expr-left')) {
-        const element = dynamicShapeParameters!.get('expr-left');
+    if (shapeParameters.has('expr-left')) {
+        const element = shapeParameters!.get('expr-left');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -297,8 +283,8 @@ export function createSubvisuObject(
         });
     }
     // 11) Right-Position
-    if (dynamicShapeParameters.has('expr-right')) {
-        const element = dynamicShapeParameters!.get('expr-right');
+    if (shapeParameters.has('expr-right')) {
+        const element = shapeParameters!.get('expr-right');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -307,8 +293,8 @@ export function createSubvisuObject(
         });
     }
     // 12) Top-Position
-    if (dynamicShapeParameters.has('expr-top')) {
-        const element = dynamicShapeParameters!.get('expr-top');
+    if (shapeParameters.has('expr-top')) {
+        const element = shapeParameters!.get('expr-top');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -317,8 +303,8 @@ export function createSubvisuObject(
         });
     }
     // 13) Bottom-Position
-    if (dynamicShapeParameters.has('expr-bottom')) {
-        const element = dynamicShapeParameters!.get('expr-bottom');
+    if (shapeParameters.has('expr-bottom')) {
+        const element = shapeParameters!.get('expr-bottom');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -327,8 +313,8 @@ export function createSubvisuObject(
         });
     }
     // 14) x-Position
-    if (dynamicShapeParameters.has('expr-xpos')) {
-        const element = dynamicShapeParameters!.get('expr-xpos');
+    if (shapeParameters.has('expr-xpos')) {
+        const element = shapeParameters!.get('expr-xpos');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -337,8 +323,8 @@ export function createSubvisuObject(
         });
     }
     // 15) y-Position
-    if (dynamicShapeParameters.has('expr-ypos')) {
-        const element = dynamicShapeParameters!.get('expr-ypos');
+    if (shapeParameters.has('expr-ypos')) {
+        const element = shapeParameters!.get('expr-ypos');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -347,8 +333,8 @@ export function createSubvisuObject(
         });
     }
     // 16) Scaling
-    if (dynamicShapeParameters.has('expr-scale')) {
-        const element = dynamicShapeParameters!.get('expr-scale');
+    if (shapeParameters.has('expr-scale')) {
+        const element = shapeParameters!.get('expr-scale');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -357,8 +343,8 @@ export function createSubvisuObject(
         });
     }
     // 17) Rotating
-    if (dynamicShapeParameters.has('expr-angle')) {
-        const element = dynamicShapeParameters!.get('expr-angle');
+    if (shapeParameters.has('expr-angle')) {
+        const element = shapeParameters!.get('expr-angle');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -367,10 +353,8 @@ export function createSubvisuObject(
         });
     }
     // 18) Tooltip
-    if (dynamicShapeParameters.has('expr-tooltip-display')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-tooltip-display',
-        );
+    if (shapeParameters.has('expr-tooltip-display')) {
+        const element = shapeParameters!.get('expr-tooltip-display');
         Object.defineProperty(initial, 'tooltip', {
             get: function () {
                 let output = '';
@@ -413,10 +397,8 @@ export function createSubvisuObject(
         });
     }
     // 19) Deactivate Input
-    if (dynamicShapeParameters.has('expr-input-disabled')) {
-        const element = dynamicShapeParameters!.get(
-            'expr-input-disabled',
-        );
+    if (shapeParameters.has('expr-input-disabled')) {
+        const element = shapeParameters!.get('expr-input-disabled');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -434,8 +416,8 @@ export function createSubvisuObject(
     }
 
     // Piechart specific stuff ( start- and endangle)
-    if (dynamicShapeParameters.has('expr-angle1')) {
-        const element = dynamicShapeParameters!.get('expr-angle1');
+    if (shapeParameters.has('expr-angle1')) {
+        const element = shapeParameters!.get('expr-angle1');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );
@@ -447,8 +429,8 @@ export function createSubvisuObject(
             get: () => wrapperFunc(),
         });
     }
-    if (dynamicShapeParameters.has('expr-angle2')) {
-        const element = dynamicShapeParameters!.get('expr-angle2');
+    if (shapeParameters.has('expr-angle2')) {
+        const element = shapeParameters!.get('expr-angle2');
         const returnFunc = ComSocket.singleton().evalFunction(
             element,
         );

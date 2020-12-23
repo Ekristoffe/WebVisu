@@ -10,7 +10,7 @@ import { Visualisation } from './visu/visuparser';
 import { ConnectionFault } from './supplements/InfoBox/infobox';
 import { ExecutionPopup } from './supplements/PopUps/popup';
 import {
-    getVisuxml,
+    getVisuXML,
     stringifyVisuXML,
 } from './visu/pars/Utils/fetchfunctions';
 import { Spinner } from './supplements/Spinner/spinner';
@@ -217,7 +217,7 @@ export default class HTML5Visu {
             // Get the webvisu.htm file. There are the startvisu and updatetime listed
             fetch(this.rootDir + '/webvisu.htm', {
                 headers: {
-                    'Content-Type': 'text/plain; charset=UTF8',
+                    'Content-Type': 'text/plain; charset=UTF-8',
                 },
                 method: 'get',
             }).then((response) => {
@@ -475,7 +475,7 @@ export default class HTML5Visu {
         return new Promise((resolve) => {
             fetch(url, {
                 headers: {
-                    'Content-Type': 'text/plain; charset=UTF8',
+                    'Content-Type': 'text/plain; charset=UTF-8',
                 },
             }).then((response) => {
                 if (response.ok) {
@@ -556,7 +556,7 @@ export default class HTML5Visu {
             const regEx = new RegExp(/\$(.*)\$/gm);
             const match = regEx.exec(visuName);
             if (typeof match === 'undefined' || match === null) {
-                const thisVisuXML = await getVisuxml(
+                const thisVisuXML = await getVisuXML(
                     this.rootDir + '/' + visuName + '.xml',
                 );
                 // The visu does not exist on server if thisVisuXML is null

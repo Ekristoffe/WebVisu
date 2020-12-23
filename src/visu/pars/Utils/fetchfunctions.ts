@@ -77,7 +77,7 @@ function checkCompression() {
     return compressedFiles;
 }
 
-export function getVisuxml2(url: string): Promise<XMLDocument> {
+export function getVisuXML_(url: string): Promise<XMLDocument> {
     return new Promise((resolve) => {
         let encoding = StateManager.singleton().oState.get(
             'ENCODINGSTRING',
@@ -90,7 +90,7 @@ export function getVisuxml2(url: string): Promise<XMLDocument> {
         if (!zipped) {
             fetch(url, {
                 headers: {
-                    'Content-Type': 'text/plain; charset=UTF8',
+                    'Content-Type': 'text/plain; charset=UTF-8',
                 },
             }).then((response) => {
                 if (response.ok) {
@@ -243,7 +243,7 @@ export function getImage(url: string): Promise<string> {
     });
 }
 
-export function getVisuxml(url: string): Promise<XMLDocument> {
+export function getVisuXML(url: string): Promise<XMLDocument> {
     // prettier-ignore
     return new Promise(async (resolve) => { // eslint-disable-line no-async-promise-executor
         // Get the root path
@@ -251,7 +251,8 @@ export function getVisuxml(url: string): Promise<XMLDocument> {
         rootPathArray.pop();
         const rootPath = rootPathArray.join('/') + '/';
         // Get the main visualisation
-        const protoXml = await getVisuxml2(url);
+        const protoXml = await getVisuXML_(url);
+        console.log("protoXml", protoXml);
 
         const elements = protoXml.getElementsByTagName('element');
         // Get all possible variables of main visu
@@ -282,11 +283,12 @@ export function getVisuxml(url: string): Promise<XMLDocument> {
                     for (let j = 0; j < length; j++) {
                         if (childs[j].nodeName === 'name') {
                             const visuName = childs[j].textContent;
-                            const subvisuXml = await getVisuxml2(
+                            const subvisuXml = await getVisuXML_(
                                 rootPath +
                                     visuName.toLowerCase() +
                                     '.xml',
                             );
+                            console.log("subvisuXml", subvisuXml);
                             // Replace the found placeholders
                             replacePlaceholders(
                                 subvisuXml,
@@ -338,5 +340,182 @@ export function getVisuxml(url: string): Promise<XMLDocument> {
             }
         }
         resolve(protoXml);
+    });
+}
+
+export function getVisuXMLbis(url: string): Promise<XMLDocument> {
+    // prettier-ignore
+    return new Promise((resolve) => {
+        // Get the root path
+        const rootPathArray = url.split('/');
+        rootPathArray.pop();
+        const rootPath = rootPathArray.join('/') + '/';
+        // Get the main visualisation
+        // const protoXml = await getVisuxml2(url);
+        getVisuXML_(url).then((protoXml) => {
+            if (typeof protoXml !== 'undefined' && protoXml !== null) {
+
+                const elements = protoXml.getElementsByTagName('element');
+                // Get all possible variables of main visu
+                const variableArray = [''];
+                const mainVariables = protoXml.getElementsByTagName(
+                    'variablelist',
+                )[0].children;
+                for (let g = 0; g < mainVariables.length; g++) {
+                    variableArray.push(
+                        mainVariables[g].getAttribute('name').toLowerCase(),
+                    );
+                }
+
+                for (let i = 0; i < elements.length; i++) {
+                    // Search for subvisualisations which have to be requested subsequently
+                    if (elements[i].hasAttribute('type')) {
+                        // A subvisu is found if type is a reference
+                        if (
+                            elements[i].getAttribute('type') === 'reference'
+                        ) {
+                            // Iterate over the child nodes to find the name of the subvisu
+                            const childs = elements[i].children;
+                            const length = childs.length;
+                            // Get the placeholders of the reference
+                            const placeholders = getPlaceholders(elements[i]);
+
+                            // Iterate over the childs to find the subvisu name
+                            for (let j = 0; j < length; j++) {
+                                if (childs[j].nodeName === 'name') {
+                                    const visuName = childs[j].textContent;
+                                    /*
+                                    const subvisuXml = await getVisuxml2(
+                                        rootPath +
+                                            visuName.toLowerCase() +
+                                            '.xml',
+                                    );
+                                    */
+                                   getVisuXML_(rootPath + visuName.toLowerCase() + '.xml',).then((subvisuXml) => {
+                                        if (typeof subvisuXml !== 'undefined' && subvisuXml !== null) {
+                                            // Replace the found placeholders
+                                            replacePlaceholders(
+                                                subvisuXml,
+                                                variableArray,
+                                                placeholders,
+                                            );
+                                            // Copy all child nodes of subvisu to reference node of main visu
+                                            for (
+                                                let k = 0;
+                                                k <
+                                                subvisuXml.children[0].children
+                                                    .length;
+                                                k++
+                                            ) {
+                                                if (
+                                                    subvisuXml.children[0].children[k]
+                                                        .nodeName !== 'variablelist'
+                                                ) {
+                                                    childs[j].parentNode.appendChild(
+                                                        subvisuXml.children[0]
+                                                            .children[k],
+                                                    );
+                                                    // Appending the child will remove this child from subvisuXml. So we have to dekrement the access variable
+                                                    k--;
+                                                } else {
+                                                    const subvisuVars =
+                                                        subvisuXml.children[0]
+                                                            .children[k].children;
+                                                    for (
+                                                        let v = 0;
+                                                        v < subvisuVars.length;
+                                                        v++
+                                                    ) {
+                                                        protoXml
+                                                            .getElementsByTagName(
+                                                                'variablelist',
+                                                            )[0]
+                                                            .appendChild(
+                                                                subvisuVars[v],
+                                                            );
+                                                        // Appending the child will remove this child from subvisuXml. So we have to dekrement the access variable
+                                                        v--;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                resolve(protoXml);
+            } else {
+                resolve(null);
+            }
+        });
+    });
+}
+
+export function getDynamicXML(url: string): Promise<XMLDocument> {
+    return new Promise((resolve) => {
+        // Get the root path
+        const rootPathArray = url.split('/');
+        rootPathArray.pop();
+        const rootPath = rootPathArray.join('/') + '/';
+        // Get the dynamic text file
+        const zipped = checkCompression();
+        // Fetch the xml as unzipped file
+        if (!zipped) {
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'text/plain; charset=UTF-16',
+                },
+            }).then((response) => {
+                if (response.ok) {
+                    response.arrayBuffer().then((buffer) => {
+                        const decoder = new TextDecoder('utf-16');
+                        const text = decoder.decode(buffer);
+                        const data = new window.DOMParser().parseFromString(
+                            text,
+                            'text/xml',
+                        );
+                        resolve(data);
+                    });
+                } else {
+                    resolve(null);
+                }
+            });
+        }
+        // Fetch the visu as zipped file
+        else if (zipped) {
+            const zip = new JsZip();
+            const urlStack = url.split('/');
+            const filename = urlStack.pop();
+            const zipName = filename.split('.')[0] + '_xml.zip';
+            // Push the zip filename to stack
+            urlStack.push(zipName);
+            fetch(urlStack.join('/'), {
+                headers: { 'Content-Type': 'binary;' },
+            }).then((response) => {
+                if (response.ok) {
+                    response
+                        .arrayBuffer()
+                        .then((buffer) => zip.loadAsync(buffer))
+                        .then((unzipped) =>
+                            unzipped
+                                .file(filename)
+                                .async('arraybuffer'),
+                        )
+                        .then((buffer) => {
+                            const decoder = new TextDecoder('utf-16');
+                            const text = decoder.decode(buffer);
+                            const data = new window.DOMParser().parseFromString(
+                                text,
+                                'text/xml',
+                            );
+                            resolve(data);
+                        });
+                } else {
+                    resolve(null);
+                }
+            });
+        }
     });
 }
