@@ -36,6 +36,9 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
         //if (useDynamicText) {
         //    ; // ;
         //}
+        console.log(useDynamicText);
+        console.log(language);
+        console.log(dynamicTextFile);
         const dynamicTextParametesrs = parseDynamicTextParameters(
             dynamicTextFile,
         );

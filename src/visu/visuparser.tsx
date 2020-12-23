@@ -89,10 +89,10 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
         >([0, 0]);
         const [scale, setScale] = React.useState('scale(1)');
 
-        // let useLanguageFile = false;
-        let useDynamicText = false;
-        let language = '';
-        const dynamicTextFile = [''];
+        // const [useLanguageFile, setUseLanguageFile] = React.useState<boolean>(false);
+        const [useDynamicText, setUseDynamicText] = React.useState<boolean>(false);
+        const [language, setLanguage] = React.useState<string>('');
+        const [dynamicTextFile, setDynamicTextFile] = React.useState<Array<string>>(['']);
 
         // Get new xml on change of visuName
         React.useEffect(() => {
@@ -108,6 +108,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                 let plainxml: string;
                 if (typeof (await get(visuName)) === 'undefined') {
                     const xml = await getVisuXML(url);
+                    // eslint-disable-next-line no-console
                     console.log('xml', xml);
                     if (typeof xml === 'undefined' || xml === null) {
                         console.warn(
@@ -117,6 +118,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         );
                     } else {
                         plainxml = stringifyVisuXML(xml);
+                        // eslint-disable-next-line no-console
                         console.log('plainxml', plainxml);
                         await set(visuName, plainxml);
                     }
@@ -126,6 +128,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
 
                 if (plainxml !== null) {
                     const xmlDoc = parseVisuXML(plainxml);
+                    // eslint-disable-next-line no-console
                     console.log('xmlDoc', xmlDoc);
                     await initVariables(xmlDoc);
                     setAdaptedXML(xmlDoc.children[0]);
@@ -144,19 +147,19 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                             'use-dynamic-text',
                         ).length > 0
                     ) {
-                        useDynamicText = stringToBoolean(
+                        setUseDynamicText(stringToBoolean(
                             xmlDoc.getElementsByTagName(
                                 'use-dynamic-text',
                             )[0].textContent,
-                        );
+                        ));
                     }
                     if (
                         xmlDoc.getElementsByTagName('language')
                             .length > 0
                     ) {
-                        language = xmlDoc.getElementsByTagName(
+                        setLanguage(xmlDoc.getElementsByTagName(
                             'language',
-                        )[0].textContent;
+                        )[0].textContent);
                     }
                     if (
                         xmlDoc.getElementsByTagName(
@@ -164,6 +167,9 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         ).length > 0
                     ) {
                         // Iterate over the childs to find the dynamic text file
+                        const dynamicTextFile = [''];
+                        // eslint-disable-next-line no-console
+                        console.log("Iterate over the childs to find the dynamic text file");
                         for (
                             let i = 0;
                             i <
@@ -177,19 +183,27 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                                     'dynamic-text-file',
                                 )
                                 [i].textContent.toLowerCase();
+                                // eslint-disable-next-line no-console
+                            console.log(dynamicTextName);
                             dynamicTextFile[i] = dynamicTextName;
+                            // eslint-disable-next-line no-console
+                            console.log(i, dynamicTextFile[i]);
                             const url =
                                 StateManager.singleton().oState.get(
                                     'ROOTDIR',
                                 ) +
                                 '/' +
                                 dynamicTextName;
+                            // eslint-disable-next-line no-console
+                            console.log(url);
                             if (
                                 typeof (await get(
                                     dynamicTextName,
                                 )) === 'undefined'
                             ) {
                                 const xml = await getDynamicXML(url);
+                                // eslint-disable-next-line no-console
+                                console.log(xml);
                                 if (
                                     typeof xml === 'undefined' ||
                                     xml === null
@@ -201,6 +215,8 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                                     );
                                 } else {
                                     plainxml = stringifyVisuXML(xml);
+                                    // eslint-disable-next-line no-console
+                                    console.log(plainxml);
                                     await set(
                                         dynamicTextName,
                                         plainxml,
@@ -208,6 +224,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                                 }
                             }
                         }
+                        setDynamicTextFile(dynamicTextFile);
                     }
                     setLoading(false);
                 }

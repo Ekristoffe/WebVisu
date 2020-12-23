@@ -252,6 +252,7 @@ export function getVisuXML(url: string): Promise<XMLDocument> {
         const rootPath = rootPathArray.join('/') + '/';
         // Get the main visualisation
         const protoXml = await getVisuXML_(url);
+        // eslint-disable-next-line no-console
         console.log("protoXml", protoXml);
 
         const elements = protoXml.getElementsByTagName('element');
@@ -288,6 +289,7 @@ export function getVisuXML(url: string): Promise<XMLDocument> {
                                     visuName.toLowerCase() +
                                     '.xml',
                             );
+                            // eslint-disable-next-line no-console
                             console.log("subvisuXml", subvisuXml);
                             // Replace the found placeholders
                             replacePlaceholders(

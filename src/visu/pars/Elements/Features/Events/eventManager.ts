@@ -169,20 +169,26 @@ export function parseDynamicTextParameters(
 
     // Files that are needed several times will be saved internally for loading speed up
     let plainxml: string;
+    // eslint-disable-next-line no-console
     console.log('dynamicTextFile', dynamicTextFile);
     // Iterate over the childs to find the dynamic text file
     const p = 0;
     const doNextPromise = (i: number) => {
+        // eslint-disable-next-line no-console
         console.log('dynamicTextFile', i, dynamicTextFile[i]);
         get(dynamicTextFile[i]).then((plainxml) => {
+            // eslint-disable-next-line no-console
             console.log('plainxml', plainxml);
             if (typeof plainxml !== 'undefined' && plainxml !== null) {
                 const xmlDoc = parseVisuXML(plainxml.toString());
+                // eslint-disable-next-line no-console
                 console.log('xmlDoc', xmlDoc);
                 const children = xmlDoc.children;
+                // eslint-disable-next-line no-console
                 console.log('children', children);
                 for (let i = 0; i < children.length; i++) {
                     const exprName = children[i].nodeName;
+                    // eslint-disable-next-line no-console
                     console.log('exprName', exprName);
                     if (exprName === 'dynamic-text') {
                         // Now parse the text-list stack
@@ -191,6 +197,7 @@ export function parseDynamicTextParameters(
                             i
                         ].getElementsByTagName('text-list')[0]
                             .children;
+                        // eslint-disable-next-line no-console
                         console.log('textList', textList);
                         // Iterate over all expressions
                         for (let j = 0; j < textList.length; j++) {
@@ -203,10 +210,13 @@ export function parseDynamicTextParameters(
                             > = new Map();
 
                             const prefix = textList[j].prefix;
+                            // eslint-disable-next-line no-console
                             console.log('prefix', prefix);
                             const id = textList[j].id;
+                            // eslint-disable-next-line no-console
                             console.log('id', id);
                             const value = textList[j].textContent;
+                            // eslint-disable-next-line no-console
                             console.log('value', value);
                             stack.push(['value', value]);
                             /*
