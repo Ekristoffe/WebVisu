@@ -169,7 +169,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         // Iterate over the childs to find the dynamic text file
                         const dynamicTextFile = [''];
                         // eslint-disable-next-line no-console
-                        console.log("Iterate over the childs to find the dynamic text file");
+                        console.log('Iterate over the childs to find the dynamic text file');
                         for (
                             let i = 0;
                             i <

@@ -36,12 +36,17 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
         //if (useDynamicText) {
         //    ; // ;
         //}
+        // eslint-disable-next-line no-console
         console.log(useDynamicText);
+        // eslint-disable-next-line no-console
         console.log(language);
+        // eslint-disable-next-line no-console
         console.log(dynamicTextFile);
         const dynamicTextParametesrs = parseDynamicTextParameters(
             dynamicTextFile,
         );
+        // eslint-disable-next-line no-console
+        console.log(dynamicTextParametesrs);
         const dynamicTextParameters: Map<
             string,
             string[][]
