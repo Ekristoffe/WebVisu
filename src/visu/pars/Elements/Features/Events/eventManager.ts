@@ -161,16 +161,108 @@ export function parseTextParameters(
     return exprMap;
 }
 
-export function parseDynamicTextParameters(
-    dynamicTextFile: string[],
+export function parseDynamicTextFont(
+    dynamicTextFiles: string[],
     // shape: string,
-): Map<string, Map<string, string[][]>> {
-    const exprMap: Map<string, Map<string, string[][]>> = new Map();
+): Map<string, string[][]> {
+    const exprMap: Map<string, string[][]> = new Map();
 
-    // Files that are needed several times will be saved internally for loading speed up
-    let plainxml: string;
+    dynamicTextFiles.forEach((dynamicTextFile) => {
+        get(dynamicTextFile).then((plainxml) => {
+            // eslint-disable-next-line no-console
+            console.log('plainxml', plainxml);
+            if (
+                typeof plainxml !== 'undefined' &&
+                plainxml !== null
+            ) {
+                const xmlDoc = parseVisuXML(plainxml.toString());
+                const children = xmlDoc.children;
+                for (let i = 0; i < children.length; i++) {
+                    const exprName = children[i].nodeName;
+                    if (exprName === 'dynamic-text') {
+                        // Now parse the header stack
+                        // The stack is included in a <header></header>
+                        const header = children[
+                            i
+                        ].getElementsByTagName('header')[0].children;
+                        // Init a helper stack
+                        const stack: string[][] = [];
+                        // Iterate over all expressions
+                        for (let j = 0; j < header.length; j++) {
+                            const language =
+                                header[j].children[0].innerHTML;
+                            const fontName =
+                                header[j].children[1].innerHTML;
+                            
+                            // eslint-disable-next-line no-console
+                            console.log(i, j, language, fontName);
+
+                            stack.push([language, fontName]);
+                        }
+                        exprMap.set('language-fonts', stack);
+                    }
+                }
+            }
+            console.log('1 dynamicTextFont', exprMap);
+        });
+        console.log('2 dynamicTextFont', exprMap);
+    });
     // eslint-disable-next-line no-console
-    console.log('dynamicTextFile', dynamicTextFile);
+    console.log('dynamicTextFont', exprMap);
+    return exprMap;
+}
+
+export function parseDynamicTextParameters(
+    dynamicTextFiles: string[],
+    // shape: string,
+): Map<string, string[][]> {
+    const exprMap: Map<string, string[][]> = new Map();
+
+    dynamicTextFiles.forEach((dynamicTextFile) => {
+        get(dynamicTextFile).then((plainxml) => {
+            // eslint-disable-next-line no-console
+            console.log('plainxml', plainxml);
+            if (
+                typeof plainxml !== 'undefined' &&
+                plainxml !== null
+            ) {
+                const xmlDoc = parseVisuXML(plainxml.toString());
+                const children = xmlDoc.children;
+                for (let i = 0; i < children.length; i++) {
+                    const exprName = children[i].nodeName;
+                    if (exprName === 'dynamic-text') {
+                        // Now parse the text-list stack
+                        // The stack is included in a <text-list></text-list>
+                        const textList = children[
+                            i
+                        ].getElementsByTagName('text-list')[0]
+                            .children;
+                        const stack: string[][] = [];
+                        // Iterate over all expressions
+                        for (let j = 0; j < textList.length; j++) {
+                            const id = textList[j].attributes.getNamedItem('id').value;
+                            const prefix = textList[j].attributes.getNamedItem('prefix').value;
+                            const children = textList[j].children;
+                            for (let k = 0; k < children.length; k++) {
+                                const language = children[k].tagName;
+                                const ident = prefix + '_' + id + '_' + language;
+                                const translation = children[k].innerHTML;
+
+                                // eslint-disable-next-line no-console
+                                console.log(i, j, k, id, prefix, ident, translation);
+
+                                stack.push([ident, translation]);
+                            }
+                        }
+                        exprMap.set('language-translation', stack);
+                    }
+                }
+            }
+            console.log('1 dynamicTextParameters', exprMap);
+        });
+        console.log('2 dynamicTextParameters', exprMap);
+    });
+    /*
     // Iterate over the childs to find the dynamic text file
     const p = 0;
     const doNextPromise = (i: number) => {
@@ -245,7 +337,7 @@ export function parseDynamicTextParameters(
                                         );
                                     }
                                 }
-                                */
+                                * /
                             sideMap.set(id, stack);
                             exprMap.set(prefix, sideMap);
                         }
@@ -257,6 +349,7 @@ export function parseDynamicTextParameters(
         });
     };
     doNextPromise(p);
+    */
     /*
     for (let i = 0; i < dynamicTextFile.length; i++) {
         if (typeof dynamicTextFile[i] !== 'undefined' && dynamicTextFile[i] !== null && dynamicTextFile[i] !== '') {
@@ -320,6 +413,8 @@ export function parseDynamicTextParameters(
         }
     }
     */
+    // eslint-disable-next-line no-console
+    console.log('dynamicTextParameters', exprMap);
     return exprMap;
 }
 

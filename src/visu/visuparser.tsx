@@ -90,9 +90,15 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
         const [scale, setScale] = React.useState('scale(1)');
 
         // const [useLanguageFile, setUseLanguageFile] = React.useState<boolean>(false);
-        const [useDynamicText, setUseDynamicText] = React.useState<boolean>(false);
+        const [
+            useDynamicText,
+            setUseDynamicText,
+        ] = React.useState<boolean>(false);
         const [language, setLanguage] = React.useState<string>('');
-        const [dynamicTextFile, setDynamicTextFile] = React.useState<Array<string>>(['']);
+        const [
+            dynamicTextFiles,
+            setDynamicTextFiles,
+        ] = React.useState<Array<string>>(['']);
 
         // Get new xml on change of visuName
         React.useEffect(() => {
@@ -147,19 +153,22 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                             'use-dynamic-text',
                         ).length > 0
                     ) {
-                        setUseDynamicText(stringToBoolean(
-                            xmlDoc.getElementsByTagName(
-                                'use-dynamic-text',
-                            )[0].textContent,
-                        ));
+                        setUseDynamicText(
+                            stringToBoolean(
+                                xmlDoc.getElementsByTagName(
+                                    'use-dynamic-text',
+                                )[0].textContent,
+                            ),
+                        );
                     }
                     if (
                         xmlDoc.getElementsByTagName('language')
                             .length > 0
                     ) {
-                        setLanguage(xmlDoc.getElementsByTagName(
-                            'language',
-                        )[0].textContent);
+                        setLanguage(
+                            xmlDoc.getElementsByTagName('language')[0]
+                                .textContent,
+                        );
                     }
                     if (
                         xmlDoc.getElementsByTagName(
@@ -167,9 +176,11 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         ).length > 0
                     ) {
                         // Iterate over the childs to find the dynamic text file
-                        const dynamicTextFile = [''];
+                        const dynamicTextFiles = [''];
                         // eslint-disable-next-line no-console
-                        console.log('Iterate over the childs to find the dynamic text file');
+                        console.log(
+                            'Iterate over the childs to find the dynamic text file',
+                        );
                         for (
                             let i = 0;
                             i <
@@ -183,11 +194,11 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                                     'dynamic-text-file',
                                 )
                                 [i].textContent.toLowerCase();
-                                // eslint-disable-next-line no-console
-                            console.log(dynamicTextName);
-                            dynamicTextFile[i] = dynamicTextName;
                             // eslint-disable-next-line no-console
-                            console.log(i, dynamicTextFile[i]);
+                            console.log(dynamicTextName);
+                            dynamicTextFiles[i] = dynamicTextName;
+                            // eslint-disable-next-line no-console
+                            console.log(i, dynamicTextFiles[i]);
                             const url =
                                 StateManager.singleton().oState.get(
                                     'ROOTDIR',
@@ -224,7 +235,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                                 }
                             }
                         }
-                        setDynamicTextFile(dynamicTextFile);
+                        setDynamicTextFiles(dynamicTextFiles);
                     }
                     setLoading(false);
                 }
@@ -286,7 +297,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         // useLanguageFile={useLanguageFile}
                         useDynamicText={useDynamicText}
                         language={language}
-                        dynamicTextFile={dynamicTextFile}
+                        dynamicTextFiles={dynamicTextFiles}
                     ></VisuElements>
                 )}
             </div>

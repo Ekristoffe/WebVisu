@@ -457,10 +457,12 @@ export function getVisuXMLbis(url: string): Promise<XMLDocument> {
 
 export function getDynamicXML(url: string): Promise<XMLDocument> {
     return new Promise((resolve) => {
+        /*
         // Get the root path
         const rootPathArray = url.split('/');
         rootPathArray.pop();
         const rootPath = rootPathArray.join('/') + '/';
+        */
         // Get the dynamic text file
         const zipped = checkCompression();
         // Fetch the xml as unzipped file

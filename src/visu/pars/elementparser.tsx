@@ -9,21 +9,24 @@ import { Scrollbar } from './Elements/Scrollbar/scrollbar';
 import { Bitmap } from './Elements/Bitmap/bitmap';
 import { Group } from './Elements/Group/group';
 import { Subvisu } from './Elements/Subvisu/subvisu';
-import { parseDynamicTextParameters } from './Elements/Features/Events/eventManager';
+import {
+    parseDynamicTextFont,
+    parseDynamicTextParameters,
+} from './Elements/Features/Events/eventManager';
 
 type Props = {
     visualisation: Element;
     // useLanguageFile: boolean;
     useDynamicText: boolean;
     language: string;
-    dynamicTextFile: string[];
+    dynamicTextFiles: string[];
 };
 export const VisuElements: React.FunctionComponent<Props> = React.memo(
     ({
         visualisation,
         useDynamicText,
         language,
-        dynamicTextFile,
+        dynamicTextFiles,
     }) => {
         const visuObjects: Array<{
             obj: JSX.Element;
@@ -37,16 +40,21 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
         //    ; // ;
         //}
         // eslint-disable-next-line no-console
-        console.log(useDynamicText);
+        console.log('useDynamicText', useDynamicText);
         // eslint-disable-next-line no-console
-        console.log(language);
+        console.log('language', language);
         // eslint-disable-next-line no-console
-        console.log(dynamicTextFile);
-        const dynamicTextParametesrs = parseDynamicTextParameters(
-            dynamicTextFile,
+        console.log('dynamicTextFiles', dynamicTextFiles);
+        const dynamicTextFont = parseDynamicTextFont(
+            dynamicTextFiles,
         );
         // eslint-disable-next-line no-console
-        console.log(dynamicTextParametesrs);
+        console.log('dynamicTextFont', dynamicTextFont);
+        const dynamicTextParameterss = parseDynamicTextParameters(
+            dynamicTextFiles,
+        );
+        // eslint-disable-next-line no-console
+        console.log('dynamicTextParameterss', dynamicTextParameterss);
         const dynamicTextParameters: Map<
             string,
             string[][]
@@ -145,7 +153,7 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                                 // useLanguageFile={useLanguageFile}
                                 useDynamicText={useDynamicText}
                                 language={language}
-                                dynamicTextFile={dynamicTextFile}
+                                dynamicTextFiles={dynamicTextFiles}
                             ></Subvisu>,
                         );
                         break;
