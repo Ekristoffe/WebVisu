@@ -10,16 +10,14 @@ type Props = {
     section: Element;
     // useLanguageFile: boolean;
     useDynamicText: boolean;
-    language: string;
-    dynamicTextFiles: string[];
+    dynamicTextXMLs: Element[];
 };
 
 export const Subvisu: React.FunctionComponent<Props> = ({
     section,
     // useLanguageFile,
     useDynamicText,
-    language,
-    dynamicTextFiles,
+    dynamicTextXMLs,
 }) => {
     const children = section.children;
     const referenceObject: { [id: string]: Element } = {};
@@ -123,8 +121,7 @@ export const Subvisu: React.FunctionComponent<Props> = ({
                 visualisation={section}
                 // useLanguageFile={useLanguageFile}
                 useDynamicText={useDynamicText}
-                language={language}
-                dynamicTextFiles={dynamicTextFiles}
+                dynamicTextXMLs={dynamicTextXMLs}
             ></VisuElements>
         </div>
     ));

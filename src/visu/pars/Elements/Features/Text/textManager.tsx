@@ -10,13 +10,19 @@ type Props = {
     section: Element;
     textParameters: Map<string, string[][]>;
     shapeParameters: Map<string, string[][]>;
-    dynamicTextParameters: Map<string, string[][]>;
+    // useLanguageFile: boolean;
+    useDynamicText: boolean;
+    dynamicTextFont: Map<string, string>;
+    dynamicTextParameters: Map<string, string>;
 };
 
 export const Textfield: React.FunctionComponent<Props> = ({
     section,
     textParameters,
     shapeParameters,
+    // useLanguageFile,
+    useDynamicText,
+    dynamicTextFont,
     dynamicTextParameters,
 }) => {
     // The static tags for the font
@@ -101,6 +107,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
         scale: 10, // a scale of 10 means a representation of 1:1
         angle: 0,
         transform: 'scale(1) rotate(0)',
+        language: '',
     };
 
     // relCoord are the width and the height in relation the div
@@ -346,6 +353,13 @@ export const Textfield: React.FunctionComponent<Props> = ({
             return position;
         },
     });
+
+    Object.defineProperty(initial, 'language', {
+        get: function () {
+            return localStorage.getItem('language').toLowerCase();
+        },
+    });
+
     Object.defineProperty(initial, 'yPos', {
         get: function () {
             const position =
@@ -644,7 +658,22 @@ export const Textfield: React.FunctionComponent<Props> = ({
                             /\|>\|/g,
                             '>',
                         );
-
+                        // translation key are : <text>_<number>_<language>
+                        const parsedText2 =
+                            parsedText
+                                .replace('%<', '')
+                                .replace('>', '') +
+                            '_' +
+                            initial.textVariable +
+                            '_' +
+                            initial.language;
+                        if (dynamicTextParameters.has(parsedText2)) {
+                            parsedText = dynamicTextParameters!.get(
+                                parsedText2,
+                            );
+                        } else {
+                            console.log('parsedText2', parsedText2);
+                        }
                         output = parsedText;
                     } else {
                         output = sprintf(

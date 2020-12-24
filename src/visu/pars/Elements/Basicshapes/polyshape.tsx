@@ -9,18 +9,24 @@ import { Inputfield } from '../Features/Input/inputManager';
 import {
     parseShapeParameters,
     parseTextParameters,
+    parseDynamicTextFont,
+    parseDynamicTextParameters,
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
 
 type Props = {
     section: Element;
-    dynamicTextParameters: Map<string, string[][]>;
+    // useLanguageFile: boolean;
+    useDynamicText: boolean;
+    dynamicTextXMLs: Element[];
 };
 
 export const PolyShape: React.FunctionComponent<Props> = ({
     section,
-    dynamicTextParameters,
+    // useLanguageFile,
+    useDynamicText,
+    dynamicTextXMLs,
 }) => {
     // Check if its on of the allowed shapes like polygon, bezier or polyline
     const shape = section.getElementsByTagName('poly-shape')[0]
@@ -136,11 +142,20 @@ export const PolyShape: React.FunctionComponent<Props> = ({
                 section,
                 // shape,
             );
+            const dynamicTextFont = parseDynamicTextFont(
+                dynamicTextXMLs,
+            );
+            const dynamicTextParameters = parseDynamicTextParameters(
+                dynamicTextXMLs,
+            );
             textField = (
                 <Textfield
                     section={section}
                     textParameters={textParameters}
                     shapeParameters={shapeParameters}
+                    // useLanguageFile={useLanguageFile}
+                    useDynamicText={useDynamicText}
+                    dynamicTextFont={dynamicTextFont}
                     dynamicTextParameters={dynamicTextParameters}
                 ></Textfield>
             );

@@ -208,7 +208,7 @@ export function evalRPN(
             token = '0';
         }
         // If the token is a number:
-        if (!isNaN(Number(token))) {
+        if (!isNaN(parseFloat(token))) {
             return parseFloat(token);
         }
         // Else the token is a string

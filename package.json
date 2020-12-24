@@ -42,7 +42,7 @@
         "webpack-cli": "^4.2.0"
     },
     "dependencies": {
-        "@emotion/react": "^11.0.0",
+        "@emotion/react": "^11.1.4",
         "@emotion/styled": "^11.0.0",
         "@material-ui/core": "next",
         "bmp-js": "^0.1.0",

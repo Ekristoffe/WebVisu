@@ -1,12 +1,5 @@
 import ComSocket from '../../../../communication/comsocket';
 import StateManager from '../../../../statemanagement/statemanager';
-import { get } from 'idb-keyval';
-import {
-    getDynamicXML,
-    getVisuXML,
-    stringifyVisuXML,
-    parseVisuXML,
-} from '../../../Utils/fetchfunctions';
 // This function is parsing all <expr-...> tags like toggle color and returns a map with the expression as key and the variable as value
 export function parseShapeParameters(
     section: Element,
@@ -162,259 +155,72 @@ export function parseTextParameters(
 }
 
 export function parseDynamicTextFont(
-    dynamicTextFiles: string[],
+    dynamicTextXMLs: Element[],
     // shape: string,
-): Map<string, string[][]> {
-    const exprMap: Map<string, string[][]> = new Map();
+): Map<string, string> {
+    const exprMap: Map<string, string> = new Map();
 
-    dynamicTextFiles.forEach((dynamicTextFile) => {
-        get(dynamicTextFile).then((plainxml) => {
-            // eslint-disable-next-line no-console
-            console.log('plainxml', plainxml);
-            if (
-                typeof plainxml !== 'undefined' &&
-                plainxml !== null
-            ) {
-                const xmlDoc = parseVisuXML(plainxml.toString());
-                const children = xmlDoc.children;
-                for (let i = 0; i < children.length; i++) {
-                    const exprName = children[i].nodeName;
-                    if (exprName === 'dynamic-text') {
-                        // Now parse the header stack
-                        // The stack is included in a <header></header>
-                        const header = children[
-                            i
-                        ].getElementsByTagName('header')[0].children;
-                        // Init a helper stack
-                        const stack: string[][] = [];
-                        // Iterate over all expressions
-                        for (let j = 0; j < header.length; j++) {
-                            const language =
-                                header[j].children[0].innerHTML;
-                            const fontName =
-                                header[j].children[1].innerHTML;
-                            
-                            // eslint-disable-next-line no-console
-                            console.log(i, j, language, fontName);
-
-                            stack.push([language, fontName]);
-                        }
-                        exprMap.set('language-fonts', stack);
-                    }
+    dynamicTextXMLs.forEach((dynamicTextXML) => {
+        const children = dynamicTextXML.children;
+        for (let i = 0; i < children.length; i++) {
+            const exprName = children[i].nodeName;
+            // Now parse the header stack
+            // The stack is included in a <header></header>
+            if (exprName === 'header') {
+                const defaultFontList = children[i].children;
+                // Iterate over all expressions
+                for (let j = 0; j < defaultFontList.length; j++) {
+                    const key =
+                        defaultFontList[j].children[0].innerHTML;
+                    const value =
+                        defaultFontList[j].children[1].innerHTML;
+                    exprMap.set(key, value);
                 }
             }
-            console.log('1 dynamicTextFont', exprMap);
-        });
-        console.log('2 dynamicTextFont', exprMap);
+        }
     });
-    // eslint-disable-next-line no-console
-    console.log('dynamicTextFont', exprMap);
     return exprMap;
 }
 
 export function parseDynamicTextParameters(
-    dynamicTextFiles: string[],
+    dynamicTextXMLs: Element[],
     // shape: string,
-): Map<string, string[][]> {
-    const exprMap: Map<string, string[][]> = new Map();
+): Map<string, string> {
+    const exprMap: Map<string, string> = new Map();
 
-    dynamicTextFiles.forEach((dynamicTextFile) => {
-        get(dynamicTextFile).then((plainxml) => {
-            // eslint-disable-next-line no-console
-            console.log('plainxml', plainxml);
-            if (
-                typeof plainxml !== 'undefined' &&
-                plainxml !== null
-            ) {
-                const xmlDoc = parseVisuXML(plainxml.toString());
-                const children = xmlDoc.children;
-                for (let i = 0; i < children.length; i++) {
-                    const exprName = children[i].nodeName;
-                    if (exprName === 'dynamic-text') {
-                        // Now parse the text-list stack
-                        // The stack is included in a <text-list></text-list>
-                        const textList = children[
-                            i
-                        ].getElementsByTagName('text-list')[0]
-                            .children;
-                        const stack: string[][] = [];
-                        // Iterate over all expressions
-                        for (let j = 0; j < textList.length; j++) {
-                            const id = textList[j].attributes.getNamedItem('id').value;
-                            const prefix = textList[j].attributes.getNamedItem('prefix').value;
-                            const children = textList[j].children;
-                            for (let k = 0; k < children.length; k++) {
-                                const language = children[k].tagName;
-                                const ident = prefix + '_' + id + '_' + language;
-                                const translation = children[k].innerHTML;
-
-                                // eslint-disable-next-line no-console
-                                console.log(i, j, k, id, prefix, ident, translation);
-
-                                stack.push([ident, translation]);
-                            }
-                        }
-                        exprMap.set('language-translation', stack);
-                    }
-                }
-            }
-            console.log('1 dynamicTextParameters', exprMap);
-        });
-        console.log('2 dynamicTextParameters', exprMap);
-    });
-    /*
-    // Iterate over the childs to find the dynamic text file
-    const p = 0;
-    const doNextPromise = (i: number) => {
-        // eslint-disable-next-line no-console
-        console.log('dynamicTextFile', i, dynamicTextFile[i]);
-        get(dynamicTextFile[i]).then((plainxml) => {
-            // eslint-disable-next-line no-console
-            console.log('plainxml', plainxml);
-            if (typeof plainxml !== 'undefined' && plainxml !== null) {
-                const xmlDoc = parseVisuXML(plainxml.toString());
-                // eslint-disable-next-line no-console
-                console.log('xmlDoc', xmlDoc);
-                const children = xmlDoc.children;
-                // eslint-disable-next-line no-console
-                console.log('children', children);
-                for (let i = 0; i < children.length; i++) {
-                    const exprName = children[i].nodeName;
-                    // eslint-disable-next-line no-console
-                    console.log('exprName', exprName);
-                    if (exprName === 'dynamic-text') {
-                        // Now parse the text-list stack
-                        // The stack is included in a <text-list></text-list>
-                        const textList = children[
-                            i
-                        ].getElementsByTagName('text-list')[0]
-                            .children;
-                        // eslint-disable-next-line no-console
-                        console.log('textList', textList);
-                        // Iterate over all expressions
-                        for (let j = 0; j < textList.length; j++) {
-                            // Init a helper stack
-                            const stack: string[][] = [];
-                            // Init a helper map
-                            const sideMap: Map<
-                                string,
-                                string[][]
-                            > = new Map();
-
-                            const prefix = textList[j].prefix;
-                            // eslint-disable-next-line no-console
-                            console.log('prefix', prefix);
-                            const id = textList[j].id;
-                            // eslint-disable-next-line no-console
-                            console.log('id', id);
-                            const value = textList[j].textContent;
-                            // eslint-disable-next-line no-console
-                            console.log('value', value);
-                            stack.push(['value', value]);
-                            /*
-                                switch (ident) {
-                                    case 'var': {
-                                        stack.push(['var', value.toLowerCase()]);
-                                        break;
-                                    }
-                                    case 'const': {
-                                        stack.push(['const', value]);
-                                        break;
-                                    }
-                                    case 'op': {
-                                        stack.push(['op', value]);
-                                        break;
-                                    }
-                                    default: {
-                                        console.warn(
-                                            'The expression ' +
-                                                exprName +
-                                                ' with ident ' +
-                                                ident +
-                                                ' which has for value ' +
-                                                value +
-                                                ' is not attached!',
-                                        );
-                                    }
-                                }
-                                * /
-                            sideMap.set(id, stack);
-                            exprMap.set(prefix, sideMap);
-                        }
-                    }
-                }
-            }
-            i++;
-            if (i < dynamicTextFile.length) doNextPromise(i);
-        });
-    };
-    doNextPromise(p);
-    */
-    /*
-    for (let i = 0; i < dynamicTextFile.length; i++) {
-        if (typeof dynamicTextFile[i] !== 'undefined' && dynamicTextFile[i] !== null && dynamicTextFile[i] !== '') {
-            if (typeof (await get(dynamicTextFile[i])) === 'undefined') {
-                plainxml = await get(dynamicTextFile[i]);
-                if (plainxml !== null) {
-                    const xmlDoc = parseVisuXML(plainxml);
-                    const children = xmlDoc.children;
-                    for (let i = 0; i < children.length; i++) {
-                        const exprName = children[i].nodeName;
-                        if (exprName === 'dynamic-text') {
-                            // Now parse the text-list stack
-                            // The stack is included in a <text-list></text-list>
-                            const textList = children[i].getElementsByTagName(
-                                'text-list',
-                            )[0].children;
-                            // Iterate over all expressions
-                            for (let j = 0; j < textList.length; j++) {
-                                // Init a helper stack
-                                const stack: string[][] = [];
-                                // Init a helper map
-                                const sideMap: Map<string, string[][]> = new Map();
-
-                                const prefix = textList[j].prefix;
-                                const id = textList[j].id;
-                                const value = textList[j].textContent;
-                                /*
-                                switch (ident) {
-                                    case 'var': {
-                                        stack.push(['var', value.toLowerCase()]);
-                                        break;
-                                    }
-                                    case 'const': {
-                                        stack.push(['const', value]);
-                                        break;
-                                    }
-                                    case 'op': {
-                                        stack.push(['op', value]);
-                                        break;
-                                    }
-                                    default: {
-                                        console.warn(
-                                            'The expression ' +
-                                                exprName +
-                                                ' with ident ' +
-                                                ident +
-                                                ' which has for value ' +
-                                                value +
-                                                ' is not attached!',
-                                        );
-                                    }
-                                }
-                                * /
-                                sideMap.set(id, stack);
-                                exprMap.set(prefix, sideMap);
-                            }
-                        }
+    dynamicTextXMLs.forEach((dynamicTextXML) => {
+        const children = dynamicTextXML.children;
+        for (let i = 0; i < children.length; i++) {
+            const exprName = children[i].nodeName;
+            // Now parse the text-list stack
+            // The stack is included in a <text-list></text-list>
+            if (exprName === 'text-list') {
+                const textList = children[i].children;
+                // Iterate over all expressions
+                for (let j = 0; j < textList.length; j++) {
+                    const id = textList[j].attributes.getNamedItem(
+                        'id',
+                    ).value;
+                    const prefix = textList[
+                        j
+                    ].attributes.getNamedItem('prefix').value;
+                    const children = textList[j].children;
+                    for (let k = 0; k < children.length; k++) {
+                        const language = children[k].tagName;
+                        const key =
+                            prefix +
+                            '_' +
+                            id +
+                            '_' +
+                            language.toLowerCase();
+                        const value = children[k].innerHTML;
+                        // translation key are : <text>_<number>_<language>
+                        exprMap.set(key, value);
                     }
                 }
             }
         }
-    }
-    */
-    // eslint-disable-next-line no-console
-    console.log('dynamicTextParameters', exprMap);
+    });
     return exprMap;
 }
 
@@ -579,16 +385,53 @@ export function parseClickEvent(section: Element): Function {
                 );
                 for (let i = 0; i < executes.length; i++) {
                     const execName = executes[i].textContent;
-                    switch (execName) {
-                        case 'INTERN CHANGEUSERLEVEL': {
-                            clickFunction = function (): void {
-                                StateManager.singleton().openPopup.set(
-                                    true,
-                                );
-                            };
-                            stack.push(clickFunction);
-                            clickEventDetected = true;
-                            break;
+                    const execList = execName.split(' ');
+                    if (
+                        typeof execList[0] !== 'undefined' ||
+                        execList[0] !== null
+                    ) {
+                        switch (execList[0]) {
+                            case 'INTERN': {
+                                if (
+                                    typeof execList[1] !==
+                                        'undefined' ||
+                                    execList[1] !== null
+                                ) {
+                                    switch (execList[1]) {
+                                        case 'CHANGEUSERLEVEL': {
+                                            clickFunction = function (): void {
+                                                StateManager.singleton().openPopup.set(
+                                                    true,
+                                                );
+                                            };
+                                            stack.push(clickFunction);
+                                            clickEventDetected = true;
+                                            break;
+                                        }
+                                        case 'LANGUAGE': {
+                                            if (
+                                                typeof execList[2] !==
+                                                    'undefined' ||
+                                                execList[2] !== null
+                                            ) {
+                                                clickFunction = function (): void {
+                                                    // Save the language
+                                                    localStorage.setItem(
+                                                        'language',
+                                                        execList[2],
+                                                    );
+                                                };
+                                                stack.push(
+                                                    clickFunction,
+                                                );
+                                                clickEventDetected = true;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
                         }
                     }
                 }

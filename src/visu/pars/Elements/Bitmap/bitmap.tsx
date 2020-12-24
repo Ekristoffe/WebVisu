@@ -7,6 +7,8 @@ import { IBasicShape } from '../../../Interfaces/javainterfaces';
 import {
     parseShapeParameters,
     parseTextParameters,
+    parseDynamicTextFont,
+    parseDynamicTextParameters,
     parseClickEvent,
     parseTapEvent,
 } from '../Features/Events/eventManager';
@@ -16,12 +18,16 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
     section: Element;
-    dynamicTextParameters: Map<string, string[][]>;
+    // useLanguageFile: boolean;
+    useDynamicText: boolean;
+    dynamicTextXMLs: Element[];
 };
 
 export const Bitmap: React.FunctionComponent<Props> = ({
     section,
-    dynamicTextParameters,
+    // useLanguageFile,
+    useDynamicText,
+    dynamicTextXMLs,
 }) => {
     // Parsing of the fixed parameters
     const bitmap: IBasicShape = {
@@ -126,11 +132,18 @@ export const Bitmap: React.FunctionComponent<Props> = ({
             section,
             // bitmap.shape,
         );
+        const dynamicTextFont = parseDynamicTextFont(dynamicTextXMLs);
+        const dynamicTextParameters = parseDynamicTextParameters(
+            dynamicTextXMLs,
+        );
         textField = (
             <Textfield
                 section={section}
                 textParameters={textParameters}
                 shapeParameters={shapeParameters}
+                // useLanguageFile={useLanguageFile}
+                useDynamicText={useDynamicText}
+                dynamicTextFont={dynamicTextFont}
                 dynamicTextParameters={dynamicTextParameters}
             ></Textfield>
         );

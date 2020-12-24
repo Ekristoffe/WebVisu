@@ -18,16 +18,10 @@ type Props = {
     visualisation: Element;
     // useLanguageFile: boolean;
     useDynamicText: boolean;
-    language: string;
-    dynamicTextFiles: string[];
+    dynamicTextXMLs: Element[];
 };
 export const VisuElements: React.FunctionComponent<Props> = React.memo(
-    ({
-        visualisation,
-        useDynamicText,
-        language,
-        dynamicTextFiles,
-    }) => {
+    ({ visualisation, useDynamicText, dynamicTextXMLs }) => {
         const visuObjects: Array<{
             obj: JSX.Element;
             id: string;
@@ -36,29 +30,10 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
             const obj = { obj: visuObject, id: uid(visuObject) };
             visuObjects.push(obj);
         };
-        //if (useDynamicText) {
-        //    ; // ;
-        //}
-        // eslint-disable-next-line no-console
-        console.log('useDynamicText', useDynamicText);
-        // eslint-disable-next-line no-console
-        console.log('language', language);
-        // eslint-disable-next-line no-console
-        console.log('dynamicTextFiles', dynamicTextFiles);
-        const dynamicTextFont = parseDynamicTextFont(
-            dynamicTextFiles,
+        const dynamicTextFont = parseDynamicTextFont(dynamicTextXMLs);
+        const dynamicTextParameters = parseDynamicTextParameters(
+            dynamicTextXMLs,
         );
-        // eslint-disable-next-line no-console
-        console.log('dynamicTextFont', dynamicTextFont);
-        const dynamicTextParameterss = parseDynamicTextParameters(
-            dynamicTextFiles,
-        );
-        // eslint-disable-next-line no-console
-        console.log('dynamicTextParameterss', dynamicTextParameterss);
-        const dynamicTextParameters: Map<
-            string,
-            string[][]
-        > = new Map();
         // The effect is called if the visualisation prop change
         // Rip all <element> sections
         for (let i = 0; i < visualisation.children.length; i++) {
@@ -72,9 +47,8 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <SimpleShape
                                 section={section}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></SimpleShape>,
                         );
                         break;
@@ -84,9 +58,8 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <Bitmap
                                 section={section}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Bitmap>,
                         );
                         break;
@@ -96,9 +69,8 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <Button
                                 section={section}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Button>,
                         );
                         break;
@@ -108,9 +80,8 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <PolyShape
                                 section={section}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></PolyShape>,
                         );
                         break;
@@ -120,9 +91,8 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <Piechart
                                 section={section}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Piechart>,
                         );
                         break;
@@ -132,9 +102,8 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                         addVisuObject(
                             <Group
                                 section={section}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Group>,
                         );
                         break;
@@ -152,8 +121,7 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
                                 section={section}
                                 // useLanguageFile={useLanguageFile}
                                 useDynamicText={useDynamicText}
-                                language={language}
-                                dynamicTextFiles={dynamicTextFiles}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Subvisu>,
                         );
                         break;

@@ -11,7 +11,9 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
     section: Element;
-    dynamicTextParameters: Map<string, string[][]>;
+    // useLanguageFile: boolean;
+    useDynamicText: boolean;
+    dynamicTextXMLs: Element[];
 };
 
 function getDimension(
@@ -68,7 +70,12 @@ function createInitial(section: Element) {
 }
 
 export const Group: React.FunctionComponent<Props> = React.memo(
-    ({ section, dynamicTextParameters }) => {
+    ({
+        section,
+        // useLanguageFile,
+        useDynamicText,
+        dynamicTextXMLs,
+    }) => {
         let scale = 'scale(1)';
         const rectParent = stringToArray(
             section.getElementsByTagName('rect')[0].innerHTML,
@@ -94,10 +101,9 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                     case 'simple': {
                         addVisuObject(
                             <SimpleShape
-                                section={element}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                section={section}
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></SimpleShape>,
                         );
                         getDimension(
@@ -113,10 +119,9 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                     case 'polygon': {
                         addVisuObject(
                             <PolyShape
-                                section={element}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                section={section}
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></PolyShape>,
                         );
                         const points = element.getElementsByTagName(
@@ -133,10 +138,9 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                     case 'button': {
                         addVisuObject(
                             <Button
-                                section={element}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                section={section}
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Button>,
                         );
                         break;
@@ -144,10 +148,9 @@ export const Group: React.FunctionComponent<Props> = React.memo(
                     case 'group': {
                         addVisuObject(
                             <Group
-                                section={element}
-                                dynamicTextParameters={
-                                    dynamicTextParameters
-                                }
+                                section={section}
+                                useDynamicText={useDynamicText}
+                                dynamicTextXMLs={dynamicTextXMLs}
                             ></Group>,
                         );
                         getDimension(

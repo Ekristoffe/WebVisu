@@ -540,7 +540,7 @@ export default class HTML5Visu {
             });
         });
     }
-
+    /*
     async preloadVisus() {
         const mainVisus: Array<string> = [];
         const loadedVisus: Array<string> = [];
@@ -621,4 +621,5 @@ export default class HTML5Visu {
         }
         return mainVisus;
     }
+    */
 }
