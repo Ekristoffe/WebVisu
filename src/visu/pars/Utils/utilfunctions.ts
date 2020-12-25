@@ -377,8 +377,10 @@ export function evalRPN(
                 }
                 default: {
                     console.warn(
-                        'The RPN-token: ' +
+                        'The RPN-combi: ' +
                             token +
+                            ' ' +
+                            operator +
                             ' is not a valid one!',
                     );
                     // return operator;

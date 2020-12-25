@@ -170,8 +170,9 @@ export function parseDynamicTextFont(
                 const defaultFontList = children[i].children;
                 // Iterate over all expressions
                 for (let j = 0; j < defaultFontList.length; j++) {
-                    const key =
-                        defaultFontList[j].children[0].innerHTML;
+                    const key = defaultFontList[
+                        j
+                    ].children[0].innerHTML.toLowerCase();
                     const value =
                         defaultFontList[j].children[1].innerHTML;
                     exprMap.set(key, value);
@@ -198,21 +199,19 @@ export function parseDynamicTextParameters(
                 const textList = children[i].children;
                 // Iterate over all expressions
                 for (let j = 0; j < textList.length; j++) {
-                    const id = textList[j].attributes.getNamedItem(
-                        'id',
-                    ).value;
-                    const prefix = textList[
-                        j
-                    ].attributes.getNamedItem('prefix').value;
+                    const id = textList[j].attributes
+                        .getNamedItem('id')
+                        .value.toLowerCase();
+                    const prefix = textList[j].attributes
+                        .getNamedItem('prefix')
+                        .value.toLowerCase();
                     const children = textList[j].children;
                     for (let k = 0; k < children.length; k++) {
-                        const language = children[k].tagName;
+                        const language = children[
+                            k
+                        ].tagName.toLowerCase();
                         const key =
-                            prefix +
-                            '_' +
-                            id +
-                            '_' +
-                            language.toLowerCase();
+                            prefix + '_' + id + '_' + language;
                         const value = children[k].innerHTML;
                         // translation key are : <text>_<number>_<language>
                         exprMap.set(key, value);
@@ -387,14 +386,14 @@ export function parseClickEvent(section: Element): Function {
                     const execName = executes[i].textContent;
                     const execList = execName.split(' ');
                     if (
-                        typeof execList[0] !== 'undefined' ||
+                        typeof execList[0] !== 'undefined' &&
                         execList[0] !== null
                     ) {
                         switch (execList[0]) {
                             case 'INTERN': {
                                 if (
                                     typeof execList[1] !==
-                                        'undefined' ||
+                                        'undefined' &&
                                     execList[1] !== null
                                 ) {
                                     switch (execList[1]) {
@@ -411,7 +410,7 @@ export function parseClickEvent(section: Element): Function {
                                         case 'LANGUAGE': {
                                             if (
                                                 typeof execList[2] !==
-                                                    'undefined' ||
+                                                    'undefined' &&
                                                 execList[2] !== null
                                             ) {
                                                 clickFunction = function (): void {

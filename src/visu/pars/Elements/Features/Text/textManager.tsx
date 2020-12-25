@@ -68,6 +68,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
         section.getElementsByTagName('text-id')[0].textContent,
     );
     */
+    const language = localStorage.getItem('language').toLowerCase();
     // relCoord are the width and the height in relation the div
     const relCoord = {
         width: 0,
@@ -107,7 +108,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
         scale: 10, // a scale of 10 means a representation of 1:1
         angle: 0,
         transform: 'scale(1) rotate(0)',
-        language: '',
+        language: language,
     };
 
     // relCoord are the width and the height in relation the div
@@ -304,17 +305,65 @@ export const Textfield: React.FunctionComponent<Props> = ({
         });
     }
     // 3) The font name:
-    if (textParameters.has('expr-font-name')) {
-        const element = textParameters!.get('expr-font-name');
-        Object.defineProperty(initial, 'fontName', {
-            get: function () {
-                const value = ComSocket.singleton().getFunction(
+    Object.defineProperty(initial, 'fontName', {
+        get: function () {
+            let value = '';
+
+            if (
+                useDynamicText &&
+                text.includes('%|<|') &&
+                text.includes('|>|')
+            ) {
+                const language = localStorage.getItem('language').toLowerCase()
+                if (dynamicTextFont.has(language)) {
+                    const dynamicFont = dynamicTextFont!.get(
+                        language,
+                    );
+                    if (
+                        dynamicFont !== null &&
+                        typeof dynamicFont !== 'undefined' &&
+                        dynamicFont !== '' &&
+                        dynamicFont !== ' ' &&
+                        dynamicFont.toLowerCase() !== 'arial'
+                    ) {
+                        value = dynamicFont;
+                    }
+                }
+            }
+
+            if (textParameters.has('expr-font-name')) {
+                const element = textParameters!.get('expr-font-name');
+                const elementFont = ComSocket.singleton().getFunction(
                     element,
                 )();
-                return value + ', Arial';
-            },
-        });
-    }
+                if (
+                    elementFont !== null &&
+                    typeof elementFont !== 'undefined' &&
+                    elementFont !== '' &&
+                    elementFont !== ' ' &&
+                    elementFont.toLowerCase() !== 'arial'
+                ) {
+                    if (value !== '') {
+                        value = value + ', ' + elementFont;
+                    } else {
+                        value = elementFont;
+                    }
+                }
+            }
+
+            console.log('text', text);
+
+            if (value !== '') {
+                value = value + ', Arial';
+            } else {
+                value = 'Arial';
+            }
+
+            console.log('font-family', value);
+
+            return value;
+        },
+    });
 
     // 5) The font color:
     if (textParameters.has('expr-text-color')) {
@@ -356,7 +405,9 @@ export const Textfield: React.FunctionComponent<Props> = ({
 
     Object.defineProperty(initial, 'language', {
         get: function () {
-            return localStorage.getItem('language').toLowerCase();
+            const language = localStorage.getItem('language').toLowerCase();
+            console.log(language);
+            return language;
         },
     });
 
@@ -371,6 +422,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             return position;
         },
     });
+
     Object.defineProperty(initial, 'dominantBaseline', {
         get: function () {
             const position =
@@ -382,6 +434,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             return position;
         },
     });
+
     Object.defineProperty(initial, 'fontStyle', {
         get: function () {
             const value =
@@ -389,6 +442,7 @@ export const Textfield: React.FunctionComponent<Props> = ({
             return value;
         },
     });
+
     Object.defineProperty(initial, 'textDecoration', {
         get: function () {
             let string = '';
@@ -662,17 +716,24 @@ export const Textfield: React.FunctionComponent<Props> = ({
                         const parsedText2 =
                             parsedText
                                 .replace('%<', '')
-                                .replace('>', '') +
+                                .replace('>', '')
+                                .toLowerCase() +
                             '_' +
-                            initial.textVariable +
+                            initial.textVariable.toLowerCase() +
                             '_' +
-                            initial.language;
+                            localStorage.getItem('language').toLowerCase();
                         if (dynamicTextParameters.has(parsedText2)) {
                             parsedText = dynamicTextParameters!.get(
                                 parsedText2,
                             );
                         } else {
-                            console.log('parsedText2', parsedText2);
+                            parsedText =
+                                parsedText
+                                    .replace('%<', '')
+                                    .replace('>', '')
+                                    .toLowerCase() +
+                                ' ' +
+                                initial.textVariable.toLowerCase();
                         }
                         output = parsedText;
                     } else {
@@ -713,7 +774,13 @@ export const Textfield: React.FunctionComponent<Props> = ({
             fill={state.fontColor}
             fontWeight={state.fontWeight}
             fontSize={Math.abs(state.fontHeight)}
-            fontFamily={state.fontName}
+            fontFamily={
+                state.fontName === null ||
+                typeof state.fontName === 'undefined' ||
+                state.fontName === ''
+                    ? 'Arial'
+                    : state.fontName
+            }
             textAnchor={state.textAnchor}
             dominantBaseline={
                 state.textLines === null ||

@@ -2,6 +2,8 @@ const path = require('path');
 // const webpack = require('webpack'); // used for image transparency modification (failed)
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+// Only to enable compression
+// const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
     mode: 'production', // "production" | "development" | "none"
@@ -33,6 +35,16 @@ module.exports = {
             template: './src/index.html',
             title: 'WebVisualisation',
         }),
+        // Only to enable compression
+        /*
+        new CompressionPlugin({
+            filename: '[path][base].gz',
+            algorithm: 'gzip',
+            test: /\.js$|\.css$|\.html$/,
+            threshold: 10240,
+            minRatio: 0.8,
+        }),
+        */
     ],
     resolve: {
         // options for resolving module requests
@@ -71,10 +83,21 @@ module.exports = {
         children: false,
         // show stats for child compilations
     },
+    |   Preset              |   Alternative |   Description
+    |   'errors-only'       |   none        |   Only output when errors happen
+    |   'errors-warnings'   |   none        |   Only output errors and warnings happen
+    |   'minimal'           |	none        |	Only output when errors or new compilation happen
+    |   'none'              |	false       |	Output nothing
+    |   'normal'            |   true        |	Standard output
+    |   'verbose'           |	none        |	Output everything
+    |   'detailed'          |	none        |	Output everything except chunkModules and chunkRootModules
     */
     stats: 'normal',
     performance: {
-        hints: false // enum
+        hints: false // enum string = 'warning': 'error' | 'warning' boolean: false
+        // maxAssetSize: 1048576, // 1024 1k byte, 1048576 1m byte, 1073741824, 1099511627776,
+        // maxEntrypointSize: 1048576,
+        // hints: 'error' // enum string = 'warning': 'error' | 'warning' boolean: false
     },
     optimization: {
         minimize: true,
@@ -88,5 +111,9 @@ module.exports = {
                 extractComments: false,
             }),
         ],
+        // removeAvailableModules: true,
+        // removeEmptyChunks: true,
+        // providedExports: true,
+        // usedExports: 'global',
     },
 };

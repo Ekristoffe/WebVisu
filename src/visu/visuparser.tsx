@@ -63,8 +63,9 @@ async function initVariables(XML: XMLDocument) {
             com.addObservableVar(varName, varAddress);
         }
     }
-
-    await com.updateVarList();
+    await com.updateVarList(1000).catch((error) => {
+        console.warn(error);
+    });
     com.startCyclicUpdate();
 }
 
@@ -111,6 +112,7 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                 // Files that are needed several times will be saved internally for loading speed up
                 let plainxml: string;
                 if (typeof (await get(visuName)) === 'undefined') {
+                    console.log(visuName);
                     const xml = await getVisuXML(url);
                     if (typeof xml === 'undefined' || xml === null) {
                         console.warn(
@@ -160,15 +162,18 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                         xmlDoc.getElementsByTagName('language')
                             .length > 0
                     ) {
-                        language = xmlDoc.getElementsByTagName('language')[0].textContent;
+                        language = xmlDoc
+                            .getElementsByTagName('language')[0]
+                            .textContent.toLowerCase();
                     }
                     // Check, if saved id and received id are not equal
-                    if ((typeof localStorage.getItem('language') === 'undefined') || (localStorage.getItem('language') === null)) {
+                    if (
+                        typeof localStorage.getItem('language') ===
+                            'undefined' ||
+                        localStorage.getItem('language') === null
+                    ) {
                         // Save the language
-                        localStorage.setItem(
-                            'language',
-                            language,
-                        );
+                        localStorage.setItem('language', language);
                     }
                     if (
                         xmlDoc.getElementsByTagName(
@@ -185,11 +190,11 @@ export const Visualisation: React.FunctionComponent<Props> = React.memo(
                             ).length;
                             i++
                         ) {
+                            // prettier-ignore
                             const dynamicTextName = xmlDoc
                                 .getElementsByTagName(
                                     'dynamic-text-file',
-                                )
-                                [i].textContent.toLowerCase();
+                                )[i].textContent.toLowerCase();
                             const url =
                                 StateManager.singleton().oState.get(
                                     'ROOTDIR',

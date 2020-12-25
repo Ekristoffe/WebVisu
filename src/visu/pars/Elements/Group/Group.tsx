@@ -3,6 +3,7 @@ import { uid } from 'react-uid';
 import ComSocket from '../../../communication/comsocket';
 import { useLocalStore, useObserver } from 'mobx-react-lite';
 import { Button } from '../Button/button';
+import { Bitmap } from '../Bitmap/bitmap';
 import { SimpleShape } from '../Basicshapes/simpleshape';
 import { PolyShape } from '../Basicshapes/polyshape';
 import { stringToArray } from '../../Utils/utilfunctions';
@@ -69,153 +70,170 @@ function createInitial(section: Element) {
     return initial;
 }
 
-export const Group: React.FunctionComponent<Props> = React.memo(
-    ({
-        section,
-        // useLanguageFile,
-        useDynamicText,
-        dynamicTextXMLs,
-    }) => {
-        let scale = 'scale(1)';
-        const rectParent = stringToArray(
-            section.getElementsByTagName('rect')[0].innerHTML,
-        );
-        // The rightdown corner coordinates of the subvisu will be stored
-        const rightDownCorner = [0, 0];
+export const Group: React.FunctionComponent<Props> = ({
+    section,
+    // useLanguageFile,
+    useDynamicText,
+    dynamicTextXMLs,
+}) => {
+    let scale = 'scale(1)';
+    const rectParent = stringToArray(
+        section.getElementsByTagName('rect')[0].innerHTML,
+    );
+    // The rightdown corner coordinates of the subvisu will be stored
+    const rightDownCorner = [0, 0];
 
-        const visuObjects: Array<{
-            obj: JSX.Element;
-            id: string;
-        }> = [];
-        const addVisuObject = (visuObject: JSX.Element) => {
-            const obj = { obj: visuObject, id: uid(visuObject) };
-            visuObjects.push(obj);
-        };
+    const visuObjects: Array<{
+        obj: JSX.Element;
+        id: string;
+    }> = [];
+    const addVisuObject = (visuObject: JSX.Element) => {
+        const obj = { obj: visuObject, id: uid(visuObject) };
+        visuObjects.push(obj);
+    };
 
-        for (let i = 0; i < section.children.length; i++) {
-            const element = section.children[i];
-            if (element.nodeName === 'element') {
-                // Determine the type of the element
-                const type = element.getAttribute('type');
-                switch (type) {
-                    case 'simple': {
-                        addVisuObject(
-                            <SimpleShape
-                                section={section}
-                                useDynamicText={useDynamicText}
-                                dynamicTextXMLs={dynamicTextXMLs}
-                            ></SimpleShape>,
-                        );
+    for (let i = 0; i < section.children.length; i++) {
+        const element = section.children[i];
+        if (element.nodeName === 'element') {
+            // Determine the type of the element
+            const type = element.getAttribute('type');
+            switch (type) {
+                case 'simple': {
+                    addVisuObject(
+                        <SimpleShape
+                            section={element}
+                            useDynamicText={useDynamicText}
+                            dynamicTextXMLs={dynamicTextXMLs}
+                        ></SimpleShape>,
+                    );
+                    getDimension(
+                        rightDownCorner,
+                        stringToArray(
+                            element.getElementsByTagName('rect')[0]
+                                .innerHTML,
+                        ),
+                    );
+                    break;
+                }
+                case 'polygon': {
+                    addVisuObject(
+                        <PolyShape
+                            section={element}
+                            useDynamicText={useDynamicText}
+                            dynamicTextXMLs={dynamicTextXMLs}
+                        ></PolyShape>,
+                    );
+                    const points = element.getElementsByTagName(
+                        'point',
+                    );
+                    for (let i = 0; i < points.length; i++) {
                         getDimension(
                             rightDownCorner,
-                            stringToArray(
-                                element.getElementsByTagName(
-                                    'rect',
-                                )[0].innerHTML,
-                            ),
+                            stringToArray(points[i].innerHTML),
                         );
-                        break;
                     }
-                    case 'polygon': {
-                        addVisuObject(
-                            <PolyShape
-                                section={section}
-                                useDynamicText={useDynamicText}
-                                dynamicTextXMLs={dynamicTextXMLs}
-                            ></PolyShape>,
-                        );
-                        const points = element.getElementsByTagName(
-                            'point',
-                        );
-                        for (let i = 0; i < points.length; i++) {
-                            getDimension(
-                                rightDownCorner,
-                                stringToArray(points[i].innerHTML),
-                            );
-                        }
-                        break;
-                    }
-                    case 'button': {
-                        addVisuObject(
-                            <Button
-                                section={section}
-                                useDynamicText={useDynamicText}
-                                dynamicTextXMLs={dynamicTextXMLs}
-                            ></Button>,
-                        );
-                        break;
-                    }
-                    case 'group': {
-                        addVisuObject(
-                            <Group
-                                section={section}
-                                useDynamicText={useDynamicText}
-                                dynamicTextXMLs={dynamicTextXMLs}
-                            ></Group>,
-                        );
-                        getDimension(
-                            rightDownCorner,
-                            stringToArray(
-                                element.getElementsByTagName(
-                                    'rect',
-                                )[0].innerHTML,
-                            ),
-                        );
-                        break;
-                    }
+                    break;
+                }
+                case 'button': {
+                    addVisuObject(
+                        <Button
+                            section={element}
+                            useDynamicText={useDynamicText}
+                            dynamicTextXMLs={dynamicTextXMLs}
+                        ></Button>,
+                    );
+                    getDimension(
+                        rightDownCorner,
+                        stringToArray(
+                            element.getElementsByTagName('rect')[0]
+                                .innerHTML,
+                        ),
+                    );
+                    break;
+                }
+                case 'bitmap': {
+                    addVisuObject(
+                        <Bitmap
+                            section={element}
+                            useDynamicText={useDynamicText}
+                            dynamicTextXMLs={dynamicTextXMLs}
+                        ></Bitmap>,
+                    );
+                    getDimension(
+                        rightDownCorner,
+                        stringToArray(
+                            element.getElementsByTagName('rect')[0]
+                                .innerHTML,
+                        ),
+                    );
+                    break;
+                }
+                case 'group': {
+                    addVisuObject(
+                        <Group
+                            section={element}
+                            useDynamicText={useDynamicText}
+                            dynamicTextXMLs={dynamicTextXMLs}
+                        ></Group>,
+                    );
+                    getDimension(
+                        rightDownCorner,
+                        stringToArray(
+                            element.getElementsByTagName('rect')[0]
+                                .innerHTML,
+                        ),
+                    );
+                    break;
                 }
             }
         }
+    }
 
-        // Calculate the scalefactor
-        const setY = rectParent[3] - rectParent[1];
-        const setX = rectParent[2] - rectParent[0];
-        const scaleOrientation = setX / setY;
-        if (
-            scaleOrientation <
-            rightDownCorner[0] / rightDownCorner[1]
-        ) {
-            const factor = setX / rightDownCorner[0];
-            scale = 'scale(' + factor + ')';
-        } else {
-            const factor = setY / rightDownCorner[1];
-            scale = 'scale(' + factor + ')';
-        }
+    // Calculate the scalefactor
+    const setY = rectParent[3] - rectParent[1];
+    const setX = rectParent[2] - rectParent[0];
+    const scaleOrientation = setX / setY;
+    if (scaleOrientation < rightDownCorner[0] / rightDownCorner[1]) {
+        const factor = setX / rightDownCorner[0];
+        scale = 'scale(' + factor + ')';
+    } else {
+        const factor = setY / rightDownCorner[1];
+        scale = 'scale(' + factor + ')';
+    }
 
-        // Convert object to an observable one
-        const state = useLocalStore(() => createInitial(section));
+    // Convert object to an observable one
+    const state = useLocalStore(() => createInitial(section));
 
-        return useObserver(() =>
-            state.display === 'visible' ? (
-                <div
-                    style={{
-                        pointerEvents: 'none',
-                        position: 'absolute',
-                        left: rectParent[0],
-                        top: rectParent[1],
-                        width: rectParent[2] - rectParent[0],
-                        height: rectParent[3] - rectParent[1],
-                    }}
-                >
-                    <ErrorBoundary fallback={<div>Oh no</div>}>
-                        <div
-                            style={{
-                                transformOrigin: 'left top',
-                                transform: scale,
-                            }}
-                        >
-                            {
-                                // visuObjects.map((element, index) => (
-                                visuObjects.map((element) => (
-                                    <React.Fragment key={element.id}>
-                                        {element.obj}
-                                    </React.Fragment>
-                                ))
-                            }
-                        </div>
-                    </ErrorBoundary>
-                </div>
-            ) : null,
-        );
-    },
-);
+    return useObserver(() =>
+        state.display === 'visible' ? (
+            <div
+                style={{
+                    pointerEvents: 'none',
+                    position: 'absolute',
+                    left: rectParent[0],
+                    top: rectParent[1],
+                    width: rectParent[2] - rectParent[0],
+                    height: rectParent[3] - rectParent[1],
+                }}
+            >
+                <ErrorBoundary fallback={<div>Oh no</div>}>
+                    <div
+                        style={{
+                            transformOrigin: 'left top',
+                            transform: scale,
+                        }}
+                    >
+                        {
+                            // visuObjects.map((element, index) => (
+                            visuObjects.map((element) => (
+                                <React.Fragment key={element.id}>
+                                    {element.obj}
+                                </React.Fragment>
+                            ))
+                        }
+                    </div>
+                </ErrorBoundary>
+            </div>
+        ) : null,
+    );
+};

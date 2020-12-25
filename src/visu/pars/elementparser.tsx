@@ -9,10 +9,6 @@ import { Scrollbar } from './Elements/Scrollbar/scrollbar';
 import { Bitmap } from './Elements/Bitmap/bitmap';
 import { Group } from './Elements/Group/group';
 import { Subvisu } from './Elements/Subvisu/subvisu';
-import {
-    parseDynamicTextFont,
-    parseDynamicTextParameters,
-} from './Elements/Features/Events/eventManager';
 
 type Props = {
     visualisation: Element;
@@ -30,10 +26,6 @@ export const VisuElements: React.FunctionComponent<Props> = React.memo(
             const obj = { obj: visuObject, id: uid(visuObject) };
             visuObjects.push(obj);
         };
-        const dynamicTextFont = parseDynamicTextFont(dynamicTextXMLs);
-        const dynamicTextParameters = parseDynamicTextParameters(
-            dynamicTextXMLs,
-        );
         // The effect is called if the visualisation prop change
         // Rip all <element> sections
         for (let i = 0; i < visualisation.children.length; i++) {

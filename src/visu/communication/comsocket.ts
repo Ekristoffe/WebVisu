@@ -28,6 +28,9 @@ export default class ComSocket implements IComSocket {
     // The ID of cyclic request
     private intervalID: number;
 
+    // Indicator if a request is running
+    private runningFetch: boolean;
+
     // this class shall be a singleton
     private constructor() {
         this.serverURL = '';
@@ -35,6 +38,7 @@ export default class ComSocket implements IComSocket {
         this.globalVariables = new Map();
         this.requestFrame = { frame: '', listings: 0 };
         this.lutKeyVariable = [];
+        this.runningFetch = false;
     }
 
     public static singleton() {
@@ -178,88 +182,116 @@ export default class ComSocket implements IComSocket {
         });
     }
 
-    updateVarList(): Promise<boolean> {
-        return new Promise((resolve) => {
-            fetch(this.serverURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body:
-                    '|0|' +
-                    this.requestFrame.listings +
-                    '|' +
-                    this.requestFrame.frame,
-            })
-                .then((response) => {
-                    response
-                        .arrayBuffer()
-                        .then((buffer: ArrayBuffer) => {
-                            const decoder = new TextDecoder(
-                                'iso-8859-1',
-                            );
-                            const text = decoder.decode(buffer);
-                            const transferarray: Array<string> = text
-                                .slice(1, text.length - 1)
-                                .split('|');
-                            if (
-                                transferarray.length ===
-                                this.requestFrame.listings
-                            ) {
-                                for (
-                                    let i = 0;
-                                    i < transferarray.length;
-                                    i++
-                                ) {
-                                    const varName = this
-                                        .lutKeyVariable[i];
+    updateVarList(timeoutTime: number): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            const controller = new AbortController();
+            const signal = controller.signal;
+            const timer = setTimeout(() => {
+                controller.abort();
+            }, timeoutTime);
+            // Check if a primer fetch is running yet
+            if (!this.runningFetch) {
+                this.runningFetch = true;
+                fetch(this.serverURL, {
+                    method: 'POST',
+                    signal: signal,
+                    headers: { 'Content-Type': 'text/plain' },
+                    body:
+                        '|0|' +
+                        this.requestFrame.listings +
+                        '|' +
+                        this.requestFrame.frame,
+                })
+                    .then(
+                        (response) => {
+                            response
+                                .arrayBuffer()
+                                .then((buffer: ArrayBuffer) => {
+                                    const decoder = new TextDecoder(
+                                        'iso-8859-1',
+                                    );
+                                    const text = decoder.decode(
+                                        buffer,
+                                    );
+                                    const transferarray: Array<string> = text
+                                        .slice(1, text.length - 1)
+                                        .split('|');
                                     if (
-                                        this.oVisuVariables.get(
-                                            varName,
-                                        ).value !== transferarray[i]
+                                        transferarray.length ===
+                                        this.requestFrame.listings
                                     ) {
-                                        action(
-                                            (this.oVisuVariables.get(
-                                                varName,
-                                            )!.value =
-                                                transferarray[i]),
+                                        for (
+                                            let i = 0;
+                                            i < transferarray.length;
+                                            i++
+                                        ) {
+                                            const varName = this
+                                                .lutKeyVariable[i];
+                                            if (
+                                                this.oVisuVariables.get(
+                                                    varName,
+                                                ).value !==
+                                                transferarray[i]
+                                            ) {
+                                                action(
+                                                    (this.oVisuVariables.get(
+                                                        varName,
+                                                    )!.value =
+                                                        transferarray[
+                                                            i
+                                                        ]),
+                                                );
+                                            }
+                                        }
+                                        StateManager.singleton().oState.set(
+                                            'ISONLINE',
+                                            'TRUE',
                                         );
                                     }
-                                }
-                                StateManager.singleton().oState.set(
-                                    'ISONLINE',
-                                    'TRUE',
-                                );
-                            }
-                            resolve(true);
-                        });
-                })
-                .catch(() => {
-                    console.error('Connection lost');
-                    StateManager.singleton().oState.set(
-                        'ISONLINE',
-                        'FALSE',
-                    );
-                    resolve(false);
-                });
+                                    resolve(true);
+                                });
+                        },
+                        (err) => {
+                            reject(err);
+                        },
+                    )
+                    .catch(() => {
+                        console.warn('Connection lost');
+                        StateManager.singleton().oState.set(
+                            'ISONLINE',
+                            'FALSE',
+                        );
+                        resolve(false);
+                    })
+                    .finally(() => {
+                        clearTimeout(timer);
+                        this.runningFetch = false;
+                    });
+            } else {
+                /*
+                console.warn(
+                    'The duration of the variable fetch request is greater then the specified cyclus time in the webvisu.htm!',
+                );
+                */
+                resolve(false);
+            }
         });
     }
 
     startCyclicUpdate() {
-        // The updateVarList function will be called once at beginning
-        this.updateVarList();
-
-        // And then in an interval
+        // Call the the updateVarList function cyclicly
         let updateTime = Number(
             StateManager.singleton().oState.get('UPDATETIME'),
         );
         if (typeof updateTime === 'undefined') {
-            updateTime = 1000;
+            updateTime = 500;
         }
-        // TODO: for testing purpose only
-        if (updateTime < 2000) {
-            updateTime = 2000;
-        }
+        const timeout = 5 * updateTime;
         this.intervalID = window.setInterval(
-            () => this.updateVarList(),
+            () =>
+                this.updateVarList(timeout).catch((error) => {
+                    console.warn(error, timeout + 'ms');
+                }),
             updateTime,
         );
     }

@@ -252,6 +252,7 @@ export function getVisuXML(url: string): Promise<XMLDocument> {
         const rootPath = rootPathArray.join('/') + '/';
         // Get the main visualisation
         const protoXml = await getVisuXML_(url);
+        // const subvisus : Map<string, XMLDocument> = new Map();
         // eslint-disable-next-line no-console
         console.log("protoXml", protoXml);
 
@@ -284,6 +285,7 @@ export function getVisuXML(url: string): Promise<XMLDocument> {
                     for (let j = 0; j < length; j++) {
                         if (childs[j].nodeName === 'name') {
                             const visuName = childs[j].textContent;
+// 
                             const subvisuXml = await getVisuXML_(
                                 rootPath +
                                     visuName.toLowerCase() +

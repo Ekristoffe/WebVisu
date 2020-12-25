@@ -172,161 +172,169 @@ export const ImageField: React.FunctionComponent<Props> = ({
             ) {
                 rawFileName = initial.fixedFileName;
             }
-            // Try to get the image from cache
-            let plainImg: string = null;
-            if (typeof (await get(rawFileName)) === 'undefined') {
-                const path =
-                    ComSocket.singleton()
-                        .getServerURL()
-                        .replace('webvisu.htm', '') + rawFileName;
-                plainImg = await getImage(path);
-                if (
-                    typeof plainImg === 'undefined' ||
-                    plainImg === null
-                ) {
-                    console.warn(
-                        'The requested image ' +
-                            rawFileName +
-                            ' is not available!',
-                    );
-                } else {
-                    await set(rawFileName, plainImg);
-                }
-            } else {
-                plainImg = await get(rawFileName);
-            }
-
-            if (plainImg !== null) {
-                /* // used for image transparency modification (failed)
-                if (
-                    initial.transparent && 
-                    initial.transparencyColor !== null &&
-                    typeof initial.transparencyColor !== 'undefined' &&
-                    initial.transparencyColor !== ''
-                ) {
-                    // Transparency conversion
-
-                    console.log('plainImg', plainImg);
-                    let regEx = plainImg.match(/.*(?<=base64,)/);
-                    console.log('regEx', regEx);
-                    if (typeof regEx !== 'undefined' || regEx !== null) {
-                        const base64Flag = regEx[0];
-                        console.log('base64Flag', base64Flag);
-                        regEx = plainImg.match(/(?<=base64,).* /);
-                        console.log('regEx', regEx);
-                        if (typeof regEx !== 'undefined' || regEx !== null) {
-                            let base64Img = regEx[0];
-                            console.log('base64Img', base64Img);
-                            let binaryImg = window.atob(base64Img);
-                            console.log('binaryImg', binaryImg);
-                            const binaryLen = binaryImg.length;
-                            let binaryData = new Uint8Array(binaryLen);
-                            for (let i = 0; i < binaryLen; i++) {
-                                binaryData[i] = binaryImg.charCodeAt(i);
-                            }
-                            console.log('binaryData', binaryData);
-//                            Buffer
-                            if (base64Flag === 'data:image/bmp;base64,') {
-//                                const Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
-                                const pixelsIn = bmpHelper.decode(Buffer.Buffer.from(binaryData.buffer));
-                                console.log('pixelsIn', pixelsIn);
-                                const pixelsOut = pixelsIn;
-                                // bmp stores the pixels as ABGR
-                                for (let i = 0; i < pixelsIn.data.byteLength; i += 4) {
-/*                                    if(pixelsData.data[i + 1] === 0x00 && pixelsData.data[i + 2] === 0x00 && pixelsData.data[i + 3] === 0x00){
-                                        pixelsData.data[i + 0] = 0x00; // A
-                                    } else {
-                                        pixelsData.data[i + 0] = 0xFF; // A
-                                    }
-*/
-                /*                                    if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
-                                        pixelsOut.data[i + 0] = 0x00; // R
-                                        pixelsOut.data[i + 1] = 0xFF; // G
-                                        pixelsOut.data[i + 2] = 0x00; // B
-                                        pixelsOut.data[i + 3] = 0x00; // A
-                                    } else {
-                                        pixelsOut.data[i + 0] = 0x00; // R
-                                        pixelsOut.data[i + 1] = 0x00; // G
-                                        pixelsOut.data[i + 2] = 0xFF; // B
-                                        pixelsOut.data[i + 3] = 0xFF; // A
-                                    }
-                                    * /
-                                    if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
-                                        pixelsOut.data[i + 0] = 0x00; // A
-                                        pixelsOut.data[i + 1] = 0x00; // B
-                                        pixelsOut.data[i + 2] = 0xFF; // G
-                                        pixelsOut.data[i + 3] = 0x00; // R
-                                    } else {
-                                        pixelsOut.data[i + 0] = 0xFF; // A
-                                        pixelsOut.data[i + 1] = 0xFF; // B
-                                        pixelsOut.data[i + 2] = 0x00; // G
-                                        pixelsOut.data[i + 3] = 0x00; // R
-                                    }
-                                }
-                                console.log('pixelsOut', pixelsOut);
-                                binaryData = bmpHelper.encode(pixelsOut).data;
-                            }
-                            
-                            console.log('binaryData', binaryData);
-                            binaryImg = '';
-                            for (let i = 0; i < binaryLen; i++) {
-                                binaryImg += String.fromCharCode(binaryData[i]);
-                            }
-                            console.log('binaryImg', binaryImg);
-                            base64Img = window.btoa(binaryImg);
-                            console.log('base64Img', base64Img);
-                            plainImg = base64Flag + base64Img;
-                            console.log('plainImg', plainImg);
-                        }
+            if (
+                rawFileName !== null &&
+                typeof rawFileName !== 'undefined' &&
+                rawFileName !== ''
+            ) {
+                // Try to get the image from cache
+                let plainImg: string = null;
+                if (typeof (await get(rawFileName)) === 'undefined') {
+                    const path =
+                        ComSocket.singleton()
+                            .getServerURL()
+                            .replace('webvisu.htm', '') + rawFileName;
+                    plainImg = await getImage(path);
+                    if (
+                        typeof plainImg === 'undefined' ||
+                        plainImg === null
+                    ) {
+                        console.warn(
+                            'The requested image ' +
+                                rawFileName +
+                                ' is not available!',
+                        );
+                    } else {
+                        await set(rawFileName, plainImg);
                     }
-                    /**
-                    const regEx = new RegExp(/(?<=base64,).* /);
-                    const match = regEx.exec(visuName);
-                    if (typeof match === 'undefined' || match === null) {
-                    const base64Flag = 'data:' + mimeType + ';base64,';
-                    const base64 = window.btoa(binary);
-                    resolve(base64Flag + base64);
+                } else {
+                    plainImg = await get(rawFileName);
+                }
 
+                if (plainImg !== null) {
+                    /*
+                    // used for image transparency modification (failed)
+                    if (
+                        initial.transparent && 
+                        initial.transparencyColor !== null &&
+                        typeof initial.transparencyColor !== 'undefined' &&
+                        initial.transparencyColor !== ''
+                    ) {
+                        // Transparency conversion
 
-                    const image = new Image();
-                    image.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = image.width;
-                        canvas.height = image.height;
-
-                        const context = canvas.getContext('2d');
-                        context.drawImage(image, 0, 0);
-
-                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-                        for (let i = 0; i < imageData.data.length; i+= 4) {
-                            if(imageData.data[i] === 0 && imageData.data[i+1] === 0 && imageData.data[i+2] === 0){
-                                console.log('modified' + i, imageData.data[i], imageData.data[i+1], imageData.data[i+2], imageData.data[i+3]);
-                                imageData.data[i+3] = 0;
+                        console.log('plainImg', plainImg);
+                        let regEx = plainImg.match(/.*(?<=base64,)/);
+                        console.log('regEx', regEx);
+                        if (typeof regEx !== 'undefined' && regEx !== null) {
+                            const base64Flag = regEx[0];
+                            console.log('base64Flag', base64Flag);
+                            regEx = plainImg.match(/(?<=base64,).* /);
+                            console.log('regEx', regEx);
+                            if (typeof regEx !== 'undefined' && regEx !== null) {
+                                let base64Img = regEx[0];
+                                console.log('base64Img', base64Img);
+                                let binaryImg = window.atob(base64Img);
+                                console.log('binaryImg', binaryImg);
+                                const binaryLen = binaryImg.length;
+                                let binaryData = new Uint8Array(binaryLen);
+                                for (let i = 0; i < binaryLen; i++) {
+                                    binaryData[i] = binaryImg.charCodeAt(i);
+                                }
+                                console.log('binaryData', binaryData);
+                                // Buffer
+                                if (base64Flag === 'data:image/bmp;base64,') {
+                                    // const Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
+                                    const pixelsIn = bmpHelper.decode(Buffer.Buffer.from(binaryData.buffer));
+                                    console.log('pixelsIn', pixelsIn);
+                                    const pixelsOut = pixelsIn;
+                                    // bmp stores the pixels as ABGR
+                                    for (let i = 0; i < pixelsIn.data.byteLength; i += 4) {
+                                        /*
+                                        if(pixelsData.data[i + 1] === 0x00 && pixelsData.data[i + 2] === 0x00 && pixelsData.data[i + 3] === 0x00){
+                                            pixelsData.data[i + 0] = 0x00; // A
+                                        } else {
+                                            pixelsData.data[i + 0] = 0xFF; // A
+                                        }
+                                        */ /*
+                                        if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
+                                            pixelsOut.data[i + 0] = 0x00; // R
+                                            pixelsOut.data[i + 1] = 0xFF; // G
+                                            pixelsOut.data[i + 2] = 0x00; // B
+                                            pixelsOut.data[i + 3] = 0x00; // A
+                                        } else {
+                                            pixelsOut.data[i + 0] = 0x00; // R
+                                            pixelsOut.data[i + 1] = 0x00; // G
+                                            pixelsOut.data[i + 2] = 0xFF; // B
+                                            pixelsOut.data[i + 3] = 0xFF; // A
+                                        }
+                                        * /
+                                        if(pixelsIn.data[i + 0] === 0x00 && pixelsIn.data[i + 1] === 0x00 && pixelsIn.data[i + 2] === 0x00){
+                                            pixelsOut.data[i + 0] = 0x00; // A
+                                            pixelsOut.data[i + 1] = 0x00; // B
+                                            pixelsOut.data[i + 2] = 0xFF; // G
+                                            pixelsOut.data[i + 3] = 0x00; // R
+                                        } else {
+                                            pixelsOut.data[i + 0] = 0xFF; // A
+                                            pixelsOut.data[i + 1] = 0xFF; // B
+                                            pixelsOut.data[i + 2] = 0x00; // G
+                                            pixelsOut.data[i + 3] = 0x00; // R
+                                        }
+                                    }
+                                    console.log('pixelsOut', pixelsOut);
+                                    binaryData = bmpHelper.encode(pixelsOut).data;
+                                }
+                                
+                                console.log('binaryData', binaryData);
+                                binaryImg = '';
+                                for (let i = 0; i < binaryLen; i++) {
+                                    binaryImg += String.fromCharCode(binaryData[i]);
+                                }
+                                console.log('binaryImg', binaryImg);
+                                base64Img = window.btoa(binaryImg);
+                                console.log('base64Img', base64Img);
+                                plainImg = base64Flag + base64Img;
+                                console.log('plainImg', plainImg);
                             }
                         }
-                        // Draw the ImageData at the given (x,y) coordinates.
-                        context.putImageData(imageData, 0, 0);
+                        /**
+                        const regEx = new RegExp(/(?<=base64,).* /);
+                        const match = regEx.exec(visuName);
+                        if (typeof match === 'undefined' || match === null) {
+                        const base64Flag = 'data:' + mimeType + ';base64,';
+                        const base64 = window.btoa(binary);
+                        resolve(base64Flag + base64);
 
-                        // Now you can access pixel data from imageData.data.
-                        // It's a one-dimensional array of RGBA values.
-                        // Here's an example of how to get a pixel's color at (x,y)
-                        /*
-                        var index = (y*imageData.width + x) * 4;
-                        var red = imageData.data[index];
-                        var green = imageData.data[index + 1];
-                        var blue = imageData.data[index + 2];
-                        var alpha = imageData.data[index + 3];
+
+                        const image = new Image();
+                        image.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = image.width;
+                            canvas.height = image.height;
+
+                            const context = canvas.getContext('2d');
+                            context.drawImage(image, 0, 0);
+
+                            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+                            for (let i = 0; i < imageData.data.length; i+= 4) {
+                                if(imageData.data[i] === 0 && imageData.data[i+1] === 0 && imageData.data[i+2] === 0){
+                                    console.log('modified' + i, imageData.data[i], imageData.data[i+1], imageData.data[i+2], imageData.data[i+3]);
+                                    imageData.data[i+3] = 0;
+                                }
+                            }
+                            // Draw the ImageData at the given (x,y) coordinates.
+                            context.putImageData(imageData, 0, 0);
+
+                            // Now you can access pixel data from imageData.data.
+                            // It's a one-dimensional array of RGBA values.
+                            // Here's an example of how to get a pixel's color at (x,y)
+                            /*
+                            var index = (y*imageData.width + x) * 4;
+                            var red = imageData.data[index];
+                            var green = imageData.data[index + 1];
+                            var blue = imageData.data[index + 2];
+                            var alpha = imageData.data[index + 3];
+                            * /
+
+                        };
+                        console.log('plainImg', plainImg);
+                        image.src = plainImg;
+                        console.log('image.src', image.src);
                         * /
-
-                    };
-                    console.log('plainImg', plainImg);
-                    image.src = plainImg;
-                    console.log('image.src', image.src);
-                    * /
+                    }
+                    */
+                    setFileName(plainImg);
                 }
-                */
-                setFileName(plainImg);
             }
         };
         fetchImage();

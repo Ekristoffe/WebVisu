@@ -1,6 +1,6 @@
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { observable, action } from 'mobx';
 import Popup from 'reactjs-popup';
 import ComSocket from './visu/communication/comsocket';
@@ -9,10 +9,7 @@ import { clear } from 'idb-keyval';
 import { Visualisation } from './visu/visuparser';
 import { ConnectionFault } from './supplements/InfoBox/infobox';
 import { ExecutionPopup } from './supplements/PopUps/popup';
-import {
-    getVisuXML,
-    stringifyVisuXML,
-} from './visu/pars/Utils/fetchfunctions';
+// import { getVisuXML, stringifyVisuXML} from './visu/pars/Utils/fetchfunctions';
 import { Spinner } from './supplements/Spinner/spinner';
 
 export default class HTML5Visu {
