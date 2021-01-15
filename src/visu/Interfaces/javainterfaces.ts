@@ -34,6 +34,15 @@ export interface ISubvisuShape extends IBasicShape {
     originalScrollableFrame: boolean;
 }
 
+export interface IGroupShape extends IBasicShape {
+    groupSize: number[];
+    showFrame: boolean;
+    clipFrame: boolean;
+    isoFrame: boolean;
+    originalFrame: boolean;
+    animateChilds: string;
+}
+
 export interface IScrollbarShape {
     shape: string;
     rect: number[];

@@ -3,12 +3,14 @@ import { createPolyObject } from './Objects/polyObject';
 import { createPiechartObject } from './Objects/piechartObject';
 import { createScrollbarObject } from './Objects/scrollbarObject';
 import { createSubvisuObject } from './Objects/subvisuObject';
+import { createGroupObject } from './Objects/groupObject';
 import {
     IBasicShape,
     IPiechartShape,
     IPolyShape,
     IScrollbarShape,
     ISubvisuShape,
+    IGroupShape,
 } from '../../Interfaces/javainterfaces';
 
 export function createVisuObject(
@@ -55,6 +57,12 @@ export function createVisuObject(
         // Its a scrollbar
         return createScrollbarObject(
             javaObject as IScrollbarShape,
+            shapeParameters,
+        );
+    } else if (javaObject.shape === 'group') {
+        // Its a group
+        return createGroupObject(
+            javaObject as IGroupShape,
             shapeParameters,
         );
     }

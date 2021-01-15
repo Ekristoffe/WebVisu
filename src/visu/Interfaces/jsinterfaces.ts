@@ -114,3 +114,7 @@ export interface IScrollbarObject {
 export interface ISubvisuObject extends IBasicObject {
     visuScale: string;
 }
+
+export interface IGroupObject extends IBasicObject {
+    groupScale: string;
+}

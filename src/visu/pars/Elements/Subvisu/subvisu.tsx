@@ -103,6 +103,7 @@ export const Subvisu: React.FunctionComponent<Props> = ({
                 display:
                     state.display === 'visible' ? 'inline' : 'none',
                 position: 'absolute',
+                overflow: subvisu.clipFrame ? 'hidden' : 'visible',
                 left: state.transformedCornerCoord.x1 - state.edge,
                 top: state.transformedCornerCoord.y1 - state.edge,
                 width: state.relCoord.width + 2 * state.edge,
@@ -112,6 +113,17 @@ export const Subvisu: React.FunctionComponent<Props> = ({
             }}
         >
             <VisuElements visualisation={section}></VisuElements>
+            {subvisu.showFrame ? (
+                <svg width="100%" height="100%">
+                    <rect
+                        width="100%"
+                        height="100%"
+                        fill="none"
+                        stroke={state.stroke}
+                        strokeWidth="1"
+                    ></rect>
+                </svg>
+            ) : null}
         </div>
     ));
 };

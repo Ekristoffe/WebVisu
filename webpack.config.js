@@ -103,6 +103,7 @@ module.exports = {
         minimize: true,
         minimizer: [
             new TerserPlugin({
+                parallel: true,
                 terserOptions: {
                     format: {
                         comments: false,
@@ -111,9 +112,11 @@ module.exports = {
                 extractComments: false,
             }),
         ],
-        // removeAvailableModules: true,
-        // removeEmptyChunks: true,
-        // providedExports: true,
+        mangleWasmImports: true,
+        removeAvailableModules: true,
+        removeEmptyChunks: true,
+        mergeDuplicateChunks: true,
+        providedExports: true,
         // usedExports: 'global',
     },
 };

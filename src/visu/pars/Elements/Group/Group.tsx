@@ -6,7 +6,7 @@ import { Button } from '../Button/button';
 import { Bitmap } from '../Bitmap/bitmap';
 import { SimpleShape } from '../Basicshapes/simpleshape';
 import { PolyShape } from '../Basicshapes/polyshape';
-import { stringToArray } from '../../Utils/utilfunctions';
+import { stringToBoolean, stringToArray } from '../../Utils/utilfunctions';
 import { parseShapeParameters } from '../Features/Events/eventManager';
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -73,6 +73,15 @@ export const Group: React.FunctionComponent<Props> = ({
     let scale = 'scale(1)';
     const rectParent = stringToArray(
         section.getElementsByTagName('rect')[0].innerHTML,
+    );
+    const showFrame = stringToBoolean(
+        section.getElementsByTagName('show-frame')[0].innerHTML,
+    );
+    const clipFrame = stringToBoolean(
+        section.getElementsByTagName('clip-frame')[0].innerHTML,
+    );
+    const isoFrame = stringToBoolean(
+        section.getElementsByTagName('iso-frame')[0].innerHTML,
     );
     // The rightdown corner coordinates of the subvisu will be stored
     const rightDownCorner = [0, 0];
@@ -182,6 +191,7 @@ export const Group: React.FunctionComponent<Props> = ({
                 style={{
                     pointerEvents: 'none',
                     position: 'absolute',
+                    overflow: clipFrame ? 'hidden' : 'visible',
                     left: rectParent[0],
                     top: rectParent[1],
                     width: rectParent[2] - rectParent[0],
@@ -205,6 +215,17 @@ export const Group: React.FunctionComponent<Props> = ({
                         }
                     </div>
                 </ErrorBoundary>
+                {showFrame ? (
+                    <svg width="100%" height="100%">
+                        <rect
+                            width="100%"
+                            height="100%"
+                            fill="none"
+                            stroke="0"
+                            strokeWidth="1"
+                        ></rect>
+                    </svg>
+                ) : null}
             </div>
         ) : null,
     );
