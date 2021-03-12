@@ -37,7 +37,7 @@
         "eslint-plugin-react-hooks": "^4.2.0",
         "html-webpack-plugin": "^4.5.1",
         "prettier": "^2.2.1",
-        "react-dev-utils": "^11.0.2",
+        "react-dev-utils": "^11.0.4",
         "source-map-loader": "^2.0.0",
         "style-loader": "^2.0.0",
         "ts-loader": "^8.0.14",
